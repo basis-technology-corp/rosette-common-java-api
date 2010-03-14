@@ -178,7 +178,7 @@
             <plugin>
                 <groupId>com.basistech.maven.plugins</groupId>
                 <artifactId>autogen</artifactId>
-                <version>3-SNAPSHOT</version>
+                <version>3</version>
                 <executions>
                     <execution>
                         <id>generate</id>
