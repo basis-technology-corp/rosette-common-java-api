@@ -161,6 +161,19 @@
         </profile>
     </profiles>
     <build>
+      <pluginManagement>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            <configuration>
+              <excludeRoots>
+                <excludeRoot>target/generated-sources</excludeRoot>
+              </excludeRoots>
+            </configuration>
+          </plugin>
+        </plugins>
+      </pluginManagement>
         <plugins>
             <plugin>
                 <inherited>true</inherited>
