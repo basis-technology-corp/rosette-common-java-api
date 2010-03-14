@@ -1,0 +1,55 @@
+    --------------------------
+    Common Code Project
+    --------------------------
+    Modified 14 March 2010
+    --------------------------
+
+Introduction
+
+	This Maven project contains code that we wish to reuse, compatibly, across any any all Java code
+	at Basis Technology. 
+	
+Policies
+
+	This code must be maintained with perfect backward-compatibility. If a customer receives version 1 
+	of this with product 'a', and then receives version 2 with product 'b', they must, absolutely,
+	be able to use the new, version 2, library with code that was written to version 1.
+	
+	Do not make incompatible changes. When in doubt, make a copy of a class in a new package 
+	so that old code using the old names will continue to work.
+	
+Documentation
+
+	Maintain the javadoc.
+	
+Notes on the build
+
+	This project includes several classes built from 'autogen' templates. Only the templates
+	are checked in here, not the resulting classes.
+	
+	The templates are checked into source/main/templates. The pom.xml calls out the 'autogen' plugin
+	to generate the classes.
+	
+	As of this writing, the data files are checked into src/main/data. This means that they are
+	checked into two places. It would be better to make arrangements for them to be in source control
+	in only one place.
+	
+	The autogen plugin is local to Basis: 
+	http://svn.basistech.net/engineering/maven-support/maven-plugins/autogen. It uses jython
+	to execute the python implementation.
+	
+Releases
+
+	This code is released internally. That is to say, we do the full maven release process,
+	tagging a version of the code with a plain, non-snapshot, release number, and we deploy
+	the resulting artifact to maven.basistech.net. In general, a developer can do this via:
+	
+	mvn --batch-mode release:prepare
+	 
+	svn up
+	
+	mvn --batch-mode release:perform
+	
+	Checked-in versions of the projects that depend on this should always depend on released versions,
+	not on snapshots.
+ 
