@@ -34,7 +34,7 @@ public class ISO15924Utils {
         blockToScript.put(Character.UnicodeBlock.BENGALI, ISO15924.Beng);
         blockToScript.put(Character.UnicodeBlock.BOPOMOFO, ISO15924.Bopo); // map to Chinese, eventually.
         blockToScript.put(Character.UnicodeBlock.BOPOMOFO_EXTENDED, ISO15924.Bopo); // map to Chinese,
-                                                                                    // eventually.
+        // eventually.
         blockToScript.put(Character.UnicodeBlock.CHEROKEE, ISO15924.Cher);
         blockToScript.put(Character.UnicodeBlock.CJK_COMPATIBILITY, ISO15924.Hani);
         blockToScript.put(Character.UnicodeBlock.CJK_COMPATIBILITY_FORMS, ISO15924.Hani);
@@ -44,10 +44,13 @@ public class ISO15924Utils {
         // what about T versus S? Not our problem at this level.
         blockToScript.put(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS, ISO15924.Hani);
         blockToScript.put(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A, ISO15924.Hani);
+        blockToScript.put(Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B, ISO15924.Hani);
         blockToScript.put(Character.UnicodeBlock.CYRILLIC, ISO15924.Cyrl);
         blockToScript.put(Character.UnicodeBlock.DEVANAGARI, ISO15924.Deva);
         blockToScript.put(Character.UnicodeBlock.ENCLOSED_CJK_LETTERS_AND_MONTHS, ISO15924.Hani);
         blockToScript.put(Character.UnicodeBlock.ETHIOPIC, ISO15924.Ethi);
+        // this is a convention. It might not be what we want.
+        blockToScript.put(Character.UnicodeBlock.GENERAL_PUNCTUATION, ISO15924.Latn);
         blockToScript.put(Character.UnicodeBlock.GREEK, ISO15924.Grek);
         blockToScript.put(Character.UnicodeBlock.GREEK_EXTENDED, ISO15924.Grek);
         blockToScript.put(Character.UnicodeBlock.GUJARATI, ISO15924.Gujr);
@@ -66,6 +69,7 @@ public class ISO15924Utils {
         blockToScript.put(Character.UnicodeBlock.KATAKANA, ISO15924.Kana);
         blockToScript.put(Character.UnicodeBlock.KHMER, ISO15924.Khmr);
         blockToScript.put(Character.UnicodeBlock.LAO, ISO15924.Laoo);
+        blockToScript.put(Character.UnicodeBlock.LETTERLIKE_SYMBOLS, ISO15924.Latn);
         blockToScript.put(Character.UnicodeBlock.LATIN_1_SUPPLEMENT, ISO15924.Latn);
         blockToScript.put(Character.UnicodeBlock.LATIN_EXTENDED_A, ISO15924.Latn);
         blockToScript.put(Character.UnicodeBlock.LATIN_EXTENDED_ADDITIONAL, ISO15924.Latn);
@@ -107,11 +111,42 @@ public class ISO15924Utils {
         int[] histogram = new int[1000];
         return extractFromStringInternal(input, histogram);
     }
+    
+    /**
+     * Return an ISO15924 script code for a single character.
+     * @param c
+     * @return the script for this character.
+     */
+    public static ISO15924 scriptForChar(char c) {
+        Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+        if (block == null) {
+            return ISO15924.Zyyy;
+        }
+        ISO15924 script = blockToScript.get(block);
+        if (script == null) {
+            return ISO15924.Zyyy;
+        }
+        return script;
+    }
+    
+    /**
+     * Return an ISO15924 script code for a single code point.
+     * @param codePoint
+     * @return the script for this code point.
+     */
+    public static ISO15924 scriptForCodePoint(int codePoint) {
+        Character.UnicodeBlock block = Character.UnicodeBlock.of(codePoint);
+        if (block == null) {
+            return ISO15924.Zyyy;
+        }
+        ISO15924 script = blockToScript.get(block);
+        if (script == null) {
+            return ISO15924.Zyyy;
+        }
+        return script;
+    }
 
     private static ISO15924 extractFromStringInternal(String input, int[] histogram) {
-        for (int x = 0; x < histogram.length; x++) {
-            histogram[x] = 0;
-        }
         for (int x = 0; x < input.length(); x++) {
             Character.UnicodeBlock block = Character.UnicodeBlock.of(input.charAt(x));
             ISO15924 scr = blockToScript.get(block);
@@ -151,6 +186,9 @@ public class ISO15924Utils {
      * @return The resulting code.
      */
     public ISO15924 forString(String input) {
+        for (int x = 0; x < histogram.length; x++) {
+            histogram[x] = 0;
+        }
         return extractFromStringInternal(input, histogram);
     }
 }
