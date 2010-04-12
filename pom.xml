@@ -26,6 +26,10 @@
         <connection>scm:svn:http://svn.basistech.net/engineering/common/trunk</connection>
         <developerConnection>scm:svn:http://svn.basistech.net/engineering/common/trunk</developerConnection>
     </scm>
+    <issueManagement>
+        <system>jira</system>
+        <url>http://jira.basistech.net/browse/COMN</url>
+    </issueManagement>
     <ciManagement>
         <system>hudson</system>
         <url>http://hudson.basistech.net:8280/hudson/job/common/</url>
