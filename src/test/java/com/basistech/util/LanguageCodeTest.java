@@ -15,8 +15,8 @@ package com.basistech.util;
 
 import junit.framework.TestCase;
 
-public class LanguageCodeTests extends TestCase {
-    static final int SIZE_OF_ENUM = 62;
+public class LanguageCodeTest extends TestCase {
+    static final int SIZE_OF_ENUM = 83;
     static final int DONT_TEST_ID = -1;
     /**
      * Checks that different lookup paths are consistent with each other.
@@ -34,9 +34,10 @@ public class LanguageCodeTests extends TestCase {
             assertTrue(LanguageCode.LanguageIDIsValid(code.languageID()));
             assertEquals(code, LanguageCode.lookupByLanguageID(code.languageID()));
 
-            // Check lookup by code identifier (valueOf()). When we generated this Enum we derived the code
-            // identifier
-            // from the language name. This is white-box, but that's OK I guess.
+            // Check lookup by code identifier (valueOf()). When we
+            // generated this Enum we derived the code identifier from
+            // the language name. This is white-box, but that's OK I
+            // guess.
             String languageName = code.languageName();
             if (code.languageName().indexOf(',') != -1) { // reverse e.g. "Chinese, Simplified"
                 String[] twoParts = code.languageName().split("[, ]+");
@@ -101,19 +102,17 @@ public class LanguageCodeTests extends TestCase {
      * different format and check all the data instead of just a sample, but this way is cheaper.
      */
     public void testDataSpotCheck() {
-        // Spot-check the first, the last, 3 other important ones, and the total size. This is meant to catch
-        // errors
-        // where the source file got corrupted, and to ensure that if a language gets added, the test data
-        // gets updated.
-        // Also test UNKNOWN, since it has gets special mention in the spec.
-
-        
+        // Spot-check the first, the last, 3 other important ones, and
+        // the total size. This is meant to catch errors where the
+        // source file got corrupted, and to ensure that if a language
+        // gets added, the test data gets updated.  Also test UNKNOWN,
+        // since it has gets special mention in the spec.
 
         assertEquals(LanguageCode.values().length, SIZE_OF_ENUM);
 
         LanguageCode[] testSet = {
             LanguageCode.UNKNOWN, LanguageCode.ALBANIAN, LanguageCode.ENGLISH, LanguageCode.ARABIC,
-            LanguageCode.JAPANESE, LanguageCode.WESTERN_FARSI
+            LanguageCode.JAPANESE, LanguageCode.TSONGA
         };
         String[][] stringResults = {
             {
@@ -127,17 +126,17 @@ public class LanguageCodeTests extends TestCase {
             }, {
                 "Japanese", "ja", "jpn"
             }, {
-                "Western Farsi", LanguageCode.UNCODED_ISO639_1, "pes"
+                "Tsonga", "ts", "tso"
             },
         };
         int[] idResults = {
             0, 1, DONT_TEST_ID, DONT_TEST_ID, DONT_TEST_ID, LanguageCode.values().length - 1,
         };
-        // This part is white box. We could also test the IDs of the middle ones, but I'm not sure what that
-        // would
-        // add over testing the IDs of the first and last.
+        // This part is white box. We could also test the IDs of the
+        // middle ones, but I'm not sure what that would add over
+        // testing the IDs of the first and last.
         ISO15924[] scriptResults = {
-            ISO15924.Zyyy, ISO15924.Latn, ISO15924.Latn, ISO15924.Arab, ISO15924.Hani, ISO15924.Arab,
+            ISO15924.Zyyy, ISO15924.Latn, ISO15924.Latn, ISO15924.Arab, ISO15924.Hani, ISO15924.Latn,
         };
 
         for (int i = 0; i < testSet.length; ++i) {

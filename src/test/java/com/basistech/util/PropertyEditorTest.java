@@ -15,7 +15,7 @@ package com.basistech.util;
 
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
-public class PropertyEditorTests extends AbstractDependencyInjectionSpringContextTests {
+public class PropertyEditorTest extends AbstractDependencyInjectionSpringContextTests {
     protected String[] getConfigLocations() {
         return new String[] {
             "classpath:com/basistech/util/test-util-enums.xml"

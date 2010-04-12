@@ -676,6 +676,15 @@ QUESTIONS?
 <symbol>TRADITIONAL_CHINESE</symbol>
 </language>
 <language>
+<id>82</id>
+<name>Tsonga</name>
+<doc>Tsonga</doc>
+<iso639-3>tso</iso639-3>
+<iso639-1>ts</iso639-1>
+<script>Latn</script>
+<symbol>TSONGA</symbol>
+</language>
+<language>
 <id>80</id>
 <name>Tswana</name>
 <doc>Tswana</doc>
