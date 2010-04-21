@@ -16,7 +16,7 @@ package com.basistech.rosette;
 /**
  * Exception resulting from attempt to use an unsupported language.
  */
-public class RosetteUnsupportedLanguageException extends Exception {
+public class RosetteUnsupportedLanguageException extends RosetteRuntimeException {
  
     private static final long serialVersionUID = 1L;
 

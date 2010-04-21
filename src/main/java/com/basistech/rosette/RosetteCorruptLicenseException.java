@@ -13,7 +13,7 @@
  ******************************************************************************/
 package com.basistech.rosette;
 
-public class RosetteCorruptLicenseException extends RosetteException {
+public class RosetteCorruptLicenseException extends RosetteRuntimeException {
 
     private static final long serialVersionUID = 1L;
 
