@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.basistech</groupId>
     <artifactId>common</artifactId>
-    <version>4</version>
+    <version>5-SNAPSHOT</version>
     <name>Common Java Code</name>
     <packaging>jar</packaging>
     <parent>
@@ -23,8 +23,8 @@
         <spring.version>2.5.4</spring.version>
     </properties>
     <scm>
-        <connection>scm:svn:http://svn.basistech.net/engineering/common/tags/common-4</connection>
-        <developerConnection>scm:svn:http://svn.basistech.net/engineering/common/tags/common-4</developerConnection>
+        <connection>scm:svn:http://svn.basistech.net/engineering/common/trunk</connection>
+        <developerConnection>scm:svn:http://svn.basistech.net/engineering/common/trunk</developerConnection>
     </scm>
     <issueManagement>
         <system>jira</system>
