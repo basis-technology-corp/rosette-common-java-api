@@ -108,7 +108,7 @@ public class LManager {
     public boolean checkLanguage(LanguageCode languageCode, 
                                  int functions, boolean throwErrors) throws RosetteNoLicenseException,
         RosetteExpiredLicenseException {
-    	// skipping license check for language unknown since it is not required
+        // skipping license check for language unknown since it is not required
         if (languageCode == LanguageCode.UNKNOWN) { return true; }
         // treat Uppercase English language code as English since we do not need separation at this level
         if (languageCode == LanguageCode.ENGLISH_UPPERCASE) { languageCode = LanguageCode.ENGLISH; }
