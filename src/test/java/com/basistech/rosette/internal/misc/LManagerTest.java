@@ -14,6 +14,7 @@
 package com.basistech.rosette.internal.misc;
 
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -36,6 +37,16 @@ public class LManagerTest {
     public void testLicenseLookups() throws Exception {
         manager.checkFeature("RLI", 0, true);
         manager.checkLanguage(LanguageCode.ARABIC, 1, false);
+    }
+    
+    @Test
+    public void testLicenseUnknownLanguage() throws Exception {
+        Assert.assertTrue(manager.checkLanguage(LanguageCode.UNKNOWN, 1, false));
+    }
+    
+    @Test
+    public void testLicenseEnUCLanguage() throws Exception {
+        Assert.assertTrue(manager.checkLanguage(LanguageCode.ENGLISH_UPPERCASE, 1, false));
     }
     
     @Test(expected = RosetteNoLicenseException.class)
