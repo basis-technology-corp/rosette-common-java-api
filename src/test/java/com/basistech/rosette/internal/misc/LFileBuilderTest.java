@@ -31,7 +31,7 @@ public class LFileBuilderTest {
         assertEquals("Basis Internal Development", result.getCustomer());
         assertEquals("Perpetual", result.getExpiration());
         List<Entry> entries = result.getEntries();
-        assertEquals(3, entries.size());
+        assertEquals(4, entries.size());
         Entry e = entries.get(0);
         assertEquals("RLP", e.getProduct());
         assertEquals("RLI", e.getFeature());
