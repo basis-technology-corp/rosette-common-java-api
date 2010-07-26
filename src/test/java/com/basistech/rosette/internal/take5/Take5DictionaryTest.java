@@ -25,19 +25,44 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * 
+ *
  */
 public class Take5DictionaryTest extends Assert {
-    
+
     private Take5Dictionary daysDictionary;
     private ByteBuffer daysData;
-    
+    private Take5Dictionary nextLettersDictionary;
+
+    private String[] days = {
+        "Friday",
+        "Monday",
+        "Saturday",
+        "Sun",
+        "Sundae",
+        "Sundaes",
+        "Sunday",
+        "Thursday",
+        "Tuesday",
+        "Wednesday",
+        "july 4th",
+    };
+
+    private String[] nextLetters = {
+        "a", "b", "c", "d", "e", "f",
+        "gaa", "gab", "gac",
+        "gb", "gc", "gd", "ge", "gf", "gg", "gh", "gi",
+        "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
+        "r", "s", "t", "u", "v", "w", "x", "y", "z",
+    };
+
     static String endianDictionaryName(String name) {
         if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) {
             return name + "-BE.bin";
@@ -45,8 +70,13 @@ public class Take5DictionaryTest extends Assert {
             return name + "-LE.bin";
         }
     }
-    
-    static Take5Dictionary openDictionary(String path, ByteBuffer[] outData) 
+
+    static Take5Dictionary openDictionary(String path, ByteBuffer[] outData)
+        throws IOException, Take5Exception {
+        return openDictionary(path, "main", outData);
+    }
+
+    static Take5Dictionary openDictionary(String path, String entryPoint, ByteBuffer[] outData)
         throws IOException, Take5Exception {
         String fullName = endianDictionaryName(path);
         RandomAccessFile randomAccessFile = new RandomAccessFile(fullName, "r");
@@ -55,19 +85,20 @@ public class Take5DictionaryTest extends Assert {
         if (outData != null) {
             outData[0] = mappedDict;
         }
-        return new Take5Dictionary(mappedDict, randomAccessFile.length());
+        return new Take5Dictionary(mappedDict, randomAccessFile.length(), entryPoint);
     }
-    
+
     @Before
     public void before() throws IOException, Take5Exception {
         ByteBuffer[] data = new ByteBuffer[1];
         daysDictionary = openDictionary("src/test/dicts/days", data);
         daysData = data[0];
+        nextLettersDictionary = openDictionary("src/test/dicts/next_letters", null);
     }
 
     /**
-     * Test method for 
-     * {@link 
+     * Test method for
+     * {@link
      * com.basistech.rosette.internal.take5.Take5Dictionary#Take5Dictionary(java.nio.ByteBuffer, long)}.
      */
     @Test
@@ -93,7 +124,7 @@ public class Take5DictionaryTest extends Assert {
     }
 
     /**
-     * Test method for 
+     * Test method for
      * {@link com.basistech.rosette.internal.take5.Take5Dictionary#getMinimumContentVersion()}.
      */
     @Test
@@ -102,7 +133,7 @@ public class Take5DictionaryTest extends Assert {
     }
 
     /**
-     * Test method for 
+     * Test method for
      * {@link com.basistech.rosette.internal.take5.Take5Dictionary#getMaximumContentVersion()}.
      */
     @Test
@@ -124,6 +155,7 @@ public class Take5DictionaryTest extends Assert {
     @Test
     public void testMaximumWordLength() {
         assertEquals(9, daysDictionary.maximumWordLength());
+        assertEquals(3, nextLettersDictionary.maximumWordLength());
     }
 
     /**
@@ -156,6 +188,7 @@ public class Take5DictionaryTest extends Assert {
     @Test
     public void testWordCount() {
         assertEquals(11, daysDictionary.wordCount());
+        assertEquals(nextLetters.length, nextLettersDictionary.wordCount());
     }
 
     /**
@@ -203,20 +236,29 @@ public class Take5DictionaryTest extends Assert {
      * Test method for {@link com.basistech.rosette.internal.take5.Take5Dictionary#creationDate()}.
      */
     @Test
-    public void testCreationDate() {
-        Date cd = daysDictionary.creationDate();
+    public void testCreationDate()  throws IOException, Take5Exception {
+        Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
+        Date cd = dict.creationDate();
         assertNotNull(cd);
-        Calendar calendar = new GregorianCalendar();
+        Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         calendar.setTime(cd);
-        // We don't want to check exact dates because LE/BE binaries aren't
-        // built at the same exact time.
-        assertTrue(2009 <= calendar.get(Calendar.YEAR));
+        // The mixed binaries were built with "-X", so they have a known
+        // date, 2005/12/31 23:59:60.259 UTC, which
+        // Take5Dictionary.creationDate clamps down to 2005/12/31
+        // 23:59:59.999 UTC.
+        assertEquals(2005, calendar.get(Calendar.YEAR));
+        assertEquals(11, calendar.get(Calendar.MONTH));
+        assertEquals(31, calendar.get(Calendar.DAY_OF_MONTH));
+        assertEquals(23, calendar.get(Calendar.HOUR_OF_DAY));
+        assertEquals(59, calendar.get(Calendar.MINUTE));
+        assertEquals(59, calendar.get(Calendar.SECOND));
+        assertEquals(999, calendar.get(Calendar.MILLISECOND));
     }
 
     /**
      * Test method for {@link com.basistech.rosette.internal.take5.Take5Dictionary#getMetadata()}.
-     * @throws Take5Exception 
-     * @throws IOException 
+     * @throws Take5Exception
+     * @throws IOException
      */
     @Test
     public void testGetMetadata() throws IOException, Take5Exception {
@@ -224,32 +266,44 @@ public class Take5DictionaryTest extends Assert {
         Map<String, String> md = tsDict.getMetadata();
         String euro = md.get("euro");
         assertEquals("\u20ac", euro);
-        
+
     }
 
     /**
-     * Test method for {@link com.basistech.rosette.internal.take5.Take5Dictionary#setSkipBits(byte[])}.
-     * @throws Take5Exception 
-     * @throws IOException 
+     * Test {@link com.basistech.rosette.internal.take5.Take5Dictionary#setSkipBits}.
+     * @throws Take5Exception
+     * @throws IOException
      */
     @Test
     public void testSetSkipBits() throws IOException, Take5Exception {
         byte[] skipBits = new byte[8192];
         char c = 'x';
         skipBits[c >> 3] |= 1 << (c & 7);
-        
+
         Take5Dictionary tsDict = openDictionary("src/test/dicts/trie_strings", null);
         byte[] oldSkipBits = tsDict.setSkipBits(skipBits);
         assertNull(oldSkipBits);
+
+        // The C++ unit test does this first test, but for us it is a
+        // terrible test because the result would be exactly the same even
+        // if skipBits wern't set at all!  But what the heck:
         Take5Match match = tsDict.matchLongest("tryixxxx");
         assertEquals(3, match.getLength());
+        assertEquals(3, match.getIndex());
+
+        // But these next two actually check that the thing is working:
+        match = tsDict.matchLongest("xtxrxyixxxx");
+        assertEquals(6, match.getLength());
+        assertEquals(3, match.getIndex());
+        match = tsDict.matchLongest("xtxrxyxixxxx");
+        assertEquals(7, match.getLength());
         assertEquals(3, match.getIndex());
     }
 
     /**
-     * Test method for 
+     * Test method for
      * {@link com.basistech.rosette.internal.take5.Take5Dictionary#matchExact(java.lang.String)}.
-     * @throws Take5Exception 
+     * @throws Take5Exception
      */
     @Test
     public void testMatchExact() throws Take5Exception {
@@ -259,19 +313,21 @@ public class Take5DictionaryTest extends Assert {
         char[] buffer = new char[100];
         System.arraycopy("Wednesday".toCharArray(), 0, buffer, 33, "Wednesday".length());
         match = daysDictionary.matchExact(buffer, 33, "Wednesday".length());
+        assertNotNull(match);
+        assertEquals(9, match.getIndex());
     }
 
     /**
-     * Test method for 
+     * Test method for
      * {@link com.basistech.rosette.internal.take5.Take5Dictionary#matchLongest(java.lang.String)}.
-     * @throws Take5Exception 
+     * @throws Take5Exception
      */
     @Test
     public void testMatchLongest() throws Take5Exception {
         Take5Match match = daysDictionary.matchLongest("Sund");
         assertEquals(3, match.getLength()); // the matching word is Sun
         assertEquals("yellow", match.getStringValue());
-        
+
         char[] buffer = new char[100];
         System.arraycopy("Sund".toCharArray(), 0, buffer, 33, "Sund".length());
         match = daysDictionary.matchLongest(buffer, 33, 4);
@@ -280,10 +336,10 @@ public class Take5DictionaryTest extends Assert {
     }
 
     /**
-     * Test method for 
-     * {@link com.basistech.rosette.internal.take5.Take5Dictionary#matchMultiple(java.lang.String, 
+     * Test method for
+     * {@link com.basistech.rosette.internal.take5.Take5Dictionary#matchMultiple(java.lang.String,
      *        com.basistech.rosette.internal.take5.Take5Match[])}.
-     * @throws Take5Exception 
+     * @throws Take5Exception
      */
     @Test
     public void testMatchMultiple() throws Take5Exception {
@@ -291,7 +347,7 @@ public class Take5DictionaryTest extends Assert {
         int count = daysDictionary.matchMultiple("Sund", matches);
         // not a very interesting test.
         assertEquals(1, count);
-        
+
         char[] buffer = new char[100];
         System.arraycopy("Sund".toCharArray(), 0, buffer, 33, "Sund".length());
         count = daysDictionary.matchMultiple(buffer, 33, 4, matches);
@@ -299,10 +355,10 @@ public class Take5DictionaryTest extends Assert {
     }
 
     /**
-     * Test method for 
-     * {@link com.basistech.rosette.internal.take5.Take5Dictionary#take5Search(char[], 
+     * Test method for
+     * {@link com.basistech.rosette.internal.take5.Take5Dictionary#take5Search(char[], int, int,
      *  com.basistech.rosette.internal.take5.Take5Match, com.basistech.rosette.internal.take5.Take5Match[])}.
-     * @throws Take5Exception 
+     * @throws Take5Exception
      */
     @Test
     public void testTake5SearchCharArrayTake5MatchTake5MatchArray() throws Take5Exception {
@@ -313,40 +369,220 @@ public class Take5DictionaryTest extends Assert {
     }
 
     /**
-     * Test method for {@link com.basistech.rosette.internal.take5.Take5Dictionary#nextLetters(int, int)}.
-     * @throws Take5Exception 
-     * @throws IOException 
+     * Test method for {@link com.basistech.rosette.internal.take5.Take5Dictionary#nextLetters}.
+     * @throws Take5Exception
+     * @throws IOException
      */
     @Test
     public void testNextLetters() throws IOException, Take5Exception {
-        Take5Dictionary dict = openDictionary("src/test/dicts/next_letters", null);
-        Take5Match startMatch = dict.getStartMatch();
-        Take5Match[] matches = dict.nextLetters(startMatch.getState(), startMatch.getIndex());
+        Take5Dictionary dict = nextLettersDictionary;
+        Take5Match match = dict.getStartMatch();
+
+        // There should be 26 edges out of the "" state:
+        Take5Match[] matches = dict.nextLetters(match);
         assertNotNull(matches);
+        assertEquals(26, matches.length);
+
+        match = matches[5];
+        assertNotNull(match);
+        assertEquals('f', match.c);
+        assertTrue(match.isAcceptState());
+
+        match = matches[6];
+        assertNotNull(match);
+        assertEquals('g', match.c);
+        assertFalse(match.isAcceptState());
+
+        // There should be 9 edges out of the "g" state:
+        matches = dict.nextLetters(match);
+        assertEquals(9, matches.length);
     }
 
     /**
-     * Test method for {@link com.basistech.rosette.internal.take5.
-     *  Take5Dictionary#advanceByChar(com.basistech.rosette.internal.take5.Take5Match, char)}.
+     * Test {@link
+     * com.basistech.rosette.internal.take5.Take5Dictionary#reverseLookup}
      */
     @Test
-    @org.junit.Ignore
+    public void testReverseLookup() throws Take5Exception {
+        testReverseLookupAll(nextLettersDictionary, nextLetters);
+        testReverseLookupAll(daysDictionary, days);
+    }
+
+    private static void testReverseLookupAll(Take5Dictionary dict,
+                                             String[] keys)
+        throws Take5Exception {
+        char[] buffer = new char[dict.maximumWordLength()];
+        for (int i = 0; i < keys.length; i++) {
+            int len = dict.reverseLookup(i, buffer);
+            assertEquals(keys[i].length(), len);  
+            assertEquals(keys[i], new String(buffer, 0, len));
+        }
+    }
+
+    /**
+     * Test {@link
+     * com.basistech.rosette.internal.take5.Take5Dictionary#walk}
+     */
+    @Test
+    public void testWalk() throws Take5Exception {
+        Take5Dictionary dict = daysDictionary;
+        Take5Match start = dict.getStartMatch();
+        char[] buffer = new char[50];
+        TestWalker walker = new TestWalker(days);
+
+        // The numbers below were generated using pencil and paper for what
+        // seemed to be the interesting tree depths.  If you mess with the
+        // keys in days.txt, you'll just have to recompute what they should
+        // be.
+
+        // Depth 9 -- just deep enough.
+        walker.reset();
+        dict.walk(walker, start, buffer, 9);
+        walker.check(11, 0, 0);
+
+        // Depth 8 -- just one short of enough.
+        walker.reset();
+        dict.walk(walker, start, buffer, 8);
+        walker.check(10, 1, 0);
+
+        // Depth 6 -- "Sundae" gives both a match and a sub-tree iterator
+        // for "Sundaes".
+        walker.reset();
+        dict.walk(walker, start, buffer, 6);
+        walker.check(4, 5, 1);
+
+        // Depth 3 -- "Sun" gives both a match and a sub-tree iterator for
+        // "Sundae", "Sundaes" and "Sunday".
+        walker.reset();
+        dict.walk(walker, start, buffer, 3);
+        walker.check(0, 7, 1);
+
+        // Depth 1 -- sub-tree iterators for each initial letter.
+        walker.reset();
+        dict.walk(walker, start, buffer, 1);
+        walker.check(0, 6, 0);
+
+        // Depth 0 -- degenerate case: no room, so you just get an iterator
+        // for the whole tree.
+        walker.reset();
+        dict.walk(walker, start, buffer, 0);
+        walker.check(0, 1, 0);
+    }
+
+    private static class TestWalker implements Take5Walker {
+        int countAccept;
+        int countLimit;
+        int countBoth;
+        String[] keys;
+        TestWalker(String[] keys) { this.keys = keys; }
+        void reset() {
+            countAccept = 0;
+            countLimit = 0;
+            countBoth = 0;
+        }
+        private void keyCheck(Take5Match m, char[] buf) {
+            int idx = m.getIndex();
+            int len = m.getLength();
+            assertTrue(0 <= idx && idx < keys.length);
+            assertEquals(keys[idx].length(), len);
+            assertEquals(keys[idx], new String(buf, 0, len));
+        }
+        public void foundAccept(Take5Match m, char[] buf, int len) {
+            // The documentation promises nothing about isAcceptState() in
+            // these cases, but the code makes sure the accept bit is not
+            // set so that the foundBoth case returns a useful iterator, so
+            // here we check to make sure that that useful property is
+            // actually true.
+            assertFalse("walker match isAcceptState() should be false", m.isAcceptState());
+            keyCheck(m, buf);
+            countAccept++;
+        }
+        public void foundLimit(Take5Match m, char[] buf, int len) {
+            // See above.
+            assertFalse("walker match isAcceptState() should be false", m.isAcceptState());
+            countLimit++;
+        }
+        public void foundBoth(Take5Match m, char[] buf, int len) {
+            // See above.
+            assertFalse("walker match isAcceptState() should be false", m.isAcceptState());
+            keyCheck(m, buf);
+            countBoth++;
+        }
+        void check(int nA, int nL, int nB) {
+            assertEquals(nA, countAccept);
+            assertEquals(nL, countLimit);
+            assertEquals(nB, countBoth);
+        }
+    }
+
+    /**
+     * Test {@link
+     * com.basistech.rosette.internal.take5.Take5Dictionary#setEntryPoint}
+     * and entry points in general.
+     */
+    @Test
+    public void testEntryPoints() throws IOException, Take5Exception {
+        Take5Dictionary dict = openDictionary("src/test/dicts/unified", "next_letters", null);
+        
+        // The last values in the entry point block are the kin and max
+        // character values, so checking them makes fairly sure that the
+        // whole block was read correctly.
+        assertEquals(0x61, dict.minimumCharacter());
+        assertEquals(0x7A, dict.maximumCharacter());
+
+        // There should be 26 edges out of the "" state:
+        Take5Match start = dict.getStartMatch();
+        Take5Match[] matches = dict.nextLetters(start);
+        assertEquals(26, matches.length);
+        // There should be 9 edges out of the "g" state:
+        matches = dict.nextLetters(matches[6]);
+        assertEquals(9, matches.length);
+
+        Take5Match match = dict.matchExact("gab");
+        assertNotNull(match);
+        assertEquals(3, match.getLength());
+        assertEquals(7, match.getIndex());
+
+        testReverseLookupAll(dict, nextLetters);
+
+        dict.setEntryPoint("main"); // this is the "days" dictionary
+        assertEquals(0x20, dict.minimumCharacter());
+        assertEquals(0x79, dict.maximumCharacter());
+
+        match = dict.matchExact("Sundae");
+        assertNotNull(match);
+        assertEquals(6, match.getLength());
+        assertEquals(4, match.getIndex());
+
+        testReverseLookupAll(dict, days);
+    }
+
+    /**
+     * Test method for {@link
+     * com.basistech.rosette.internal.take5.Take5Dictionary#advanceByChar(
+     * com.basistech.rosette.internal.take5.Take5Match, char)}.
+     */
+    @Test
+    @Ignore
     public void testAdvanceByChar() {
+        // We're not even sure this is doing the right thing...
         fail("Not yet implemented");
     }
 
     /**
      * Test method for {@link com.basistech.rosette.internal.take5.
-     * Take5Dictionary#take5Search(char[], com.basistech.rosette.internal.take5.Take5Match, 
+     * Take5Dictionary#take5Search(char[], com.basistech.rosette.internal.take5.Take5Match,
      * com.basistech.rosette.internal.take5.Take5Match[], int, int)}.
      */
     @Test
-    @org.junit.Ignore
+    @Ignore
     public void testTake5SearchCharArrayTake5MatchTake5MatchArrayIntInt() {
+        // The signature given above doesn't actually exist.  But we should
+        // probably actually test take5Search(char[], int, int, Take5Match,
+        // Take5Match[], Take5Match)
         fail("Not yet implemented");
     }
-    
-    @SuppressWarnings("deprecation")
+
     @Test
     public void testGetComplexData() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
@@ -371,7 +607,7 @@ public class Take5DictionaryTest extends Assert {
         assertEquals(0.33f, floats.get(2), 0.0001);
         assertEquals(-0.44, floats.get(3), 0.0001);
     }
-    
+
     @Test
     public void testGetOffsetValue() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);

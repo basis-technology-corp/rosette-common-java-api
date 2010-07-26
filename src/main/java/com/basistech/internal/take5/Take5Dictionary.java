@@ -462,7 +462,7 @@ public class Take5Dictionary {
     
     /**
      * To use take5Search or nextLetters, use this to obtain starting values.
-     * @return
+     * @return a new match object.
      */
     public Take5Match getStartMatch() {
         Take5Match result = new Take5Match();

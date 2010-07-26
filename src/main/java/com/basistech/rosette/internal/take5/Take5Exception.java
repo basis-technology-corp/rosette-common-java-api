@@ -30,6 +30,9 @@ public class Take5Exception extends Exception {
     public static final int NO_NUMBERS_HERE = 9;
     public static final int NO_POINTERS_HERE = 10;
     public static final int UNSUPPORTED_STATE_TYPE = 11;
+    public static final int ENTRY_POINT_NOT_FOUND = 12;
+    public static final int IMPOSSIBLE_HASH = 13;
+    public static final int BUFFER_TOO_SMALL = 14;
 
     private int type;
 
@@ -79,6 +82,15 @@ public class Take5Exception extends Exception {
             break;
         case UNSUPPORTED_STATE_TYPE:
             message = "Unsupported state type.";
+            break;
+        case ENTRY_POINT_NOT_FOUND:
+            message = "Entry point not found.";
+            break;
+        case IMPOSSIBLE_HASH:
+            message = "Impossible hash.";
+            break;
+        case BUFFER_TOO_SMALL:
+            message = "Buffer too small.";
             break;
         default:
             message = "Unknown error type.";

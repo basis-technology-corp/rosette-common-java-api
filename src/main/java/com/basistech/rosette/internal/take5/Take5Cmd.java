@@ -37,7 +37,7 @@ public final class Take5Cmd {
 
     }
 
-    public boolean readSkipBits(byte[] localSkipBits, String bits) {
+    private boolean readSkipBits(byte[] localSkipBits, String bits) {
         String[] codePoints = bits.split(" ");
         for (String codePoint2 : codePoints) {
             if (codePoint2.length() != 4) {
@@ -51,13 +51,8 @@ public final class Take5Cmd {
         return true;
     }
 
-    private void parseArgs(String[] args) {
-        if (args.length < 3) {
-            System.err.println("Usage:");
-            System.err.println("  com.basistech.internal.take5.Take5Cmd [-v] [-s skiplist]");
-            System.err.println("                               lookupFunc dictionary wordList");
-            return;
-        }
+    private boolean parseArgs(String[] args) {
+        boolean tooMany = false;
 
         for (int i = 0; i < args.length; i++) {
             if (args[i].equals("-v")) {
@@ -65,11 +60,11 @@ public final class Take5Cmd {
             } else if (args[i].equals("-s")) {
                 if (i + 1 == args.length) {
                     System.err.println("Missing argument to '-s'.");
-                    return;
+                    return false;
                 }
                 skipBits = new byte[8192];
                 if (!readSkipBits(skipBits, args[++i])) {
-                    return;
+                    return false;
                 }
             } else if (lookupFunc == null) {
                 lookupFunc = args[i];
@@ -78,33 +73,32 @@ public final class Take5Cmd {
             } else if (wordList == null) {
                 wordList = args[i];
             } else {
-                System.err.println("Too few arguments.");
+                tooMany = true;
             }
         }
 
-        if (lookupFunc == null) {
-            System.err.println("Missing lookup function.");
-        }
-
-        if (dictionary == null) {
-            System.err.println("Missing dictionary.");
-        }
-
-        if (wordList == null) {
-            System.err.println("Word list missing.");
+        if (wordList == null || tooMany) {
+            System.err.println("Usage:");
+            System.err.println("  com.basistech.internal.take5.Take5Cmd [-v] [-s skiplist]");
+            System.err.println("                               lookupFunc dictionary wordList");
+            return false;
         }
 
         if (!"FindExact".equals(lookupFunc) && !"FindLongest".equals(lookupFunc)
             && !"FindAllMatches".equals(lookupFunc)) {
             System.err.println("Unknown lookup function '" + lookupFunc + "'.");
+            return false;
         }
+
+        return true;
     }
 
     public static void main(String[] args) {
         Take5Cmd cmd = new Take5Cmd();
-        cmd.parseArgs(args);
         try {
-            cmd.work();
+            if (cmd.parseArgs(args)) {
+                cmd.work();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

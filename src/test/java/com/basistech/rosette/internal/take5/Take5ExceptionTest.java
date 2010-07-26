@@ -44,6 +44,9 @@ public class Take5ExceptionTest extends Assert {
         messages.add("No numbers here.");
         messages.add("No pointers here.");
         messages.add("Unsupported state type.");
+        messages.add("Entry point not found.");
+        messages.add("Impossible hash.");
+        messages.add("Buffer too small.");
         messages.add("Unknown error type.");
 
         // create a Take5Exception of every flavor
@@ -59,21 +62,24 @@ public class Take5ExceptionTest extends Assert {
         exceptions.add(new Take5Exception(Take5Exception.NO_NUMBERS_HERE));
         exceptions.add(new Take5Exception(Take5Exception.NO_POINTERS_HERE));
         exceptions.add(new Take5Exception(Take5Exception.UNSUPPORTED_STATE_TYPE));
-        exceptions.add(new Take5Exception(12));
+        exceptions.add(new Take5Exception(Take5Exception.ENTRY_POINT_NOT_FOUND));
+        exceptions.add(new Take5Exception(Take5Exception.IMPOSSIBLE_HASH));
+        exceptions.add(new Take5Exception(Take5Exception.BUFFER_TOO_SMALL));
+        exceptions.add(new Take5Exception(15));
 
 
         // assert that the returned messages are correct
-        for (int i = 1; i < 13; i++) {
+        for (int i = 1; i < 16; i++) {
             Assert.assertEquals(messages.get(i - 1), exceptions.get(i - 1).getMessage());
         }
 
         // assert that the type returned by getType() is correct
-        for (int i = 1; i < 12; i++) {
+        for (int i = 1; i < 15; i++) {
             Assert.assertEquals(i, exceptions.get(i - 1).getType());
         }
 
-        // the getType for the last exception should be 12 (from above)
-        Assert.assertEquals(12, exceptions.get(11).getType()); 
+        // the getType for the last exception should be 15 (from above)
+        Assert.assertEquals(15, exceptions.get(14).getType()); 
     }
 
 }

@@ -66,7 +66,7 @@ public class Take5Match {
      * Retrieve a ByteBuffer containing a complex Take5 value. It is up to the caller to disassemble it.
      * 
      * @param dataLength
-     * @return
+     * @return a ByteBuffer
      * @throws Take5Exception
      */
     public ByteBuffer getComplexData(int dataLength) throws Take5Exception {
