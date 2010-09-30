@@ -279,7 +279,25 @@ declaration += ")"
             throw new IllegalArgumentException("Invalid ISO639 " + iso639);
         else
             return result;
-    }   
+    }
+    
+    /**
+    * If the given <code>LanguageCode</code> is non-standard, returns the ISO 639-3 standard <code>LanguageCode</code> that best encapsulates it.
+    * This does not apply to {@link #UNKNOWN UNKNOWN}. If the given <code>LanguageCode</code> is already standard, it is returned as it is.
+    * @param lc A <code>LanguageCode</code>.
+    * @return the standard <code>LanguageCode</code> that encapsulates <code>lc</code> if it is non-standard. Otherwise returns <code>lc</code>.
+    */
+    public static LanguageCode normalizeNonStandard(LanguageCode lc) {
+        switch(lc) {
+            case SIMPLIFIED_CHINESE:
+            case TRADITIONAL_CHINESE:
+                return LanguageCode.CHINESE;
+            case ENGLISH_UPPERCASE:
+                return LanguageCode.ENGLISH;
+            default: 
+                return lc;
+        }
+    }
     
     /** The string <code>"zz"</code>, used as the ISO 639-1 attribute for languages present in the ISO 639-3
      * specification, but for which the ISO 639-1 specification does not define a code.
