@@ -21,8 +21,8 @@ public final class UnicodeHelper {
     /**
      * Return an escaped Unicode representation of a string
      * 
-     * @param The Unicode input string
-     * @param boolean specifying whether to escape ASCII chars or not
+     * @param str The Unicode input string
+     * @param escapeAscii boolean specifying whether to escape ASCII chars or not
      * @return The escaped output string
      */
     public static String escapeUnicodeString(String str, boolean escapeAscii) {
@@ -47,7 +47,7 @@ public final class UnicodeHelper {
      * Overloaded version of escapeUnicodeString(String,boolean) just calls escapeUnicodeString(String,false)
      * i.e. and always leaves the ASCII chars unescaped.
      * 
-     * @param The Unicode input string
+     * @param str The Unicode input string
      * @return The escaped output string
      */
     public static String escapeUnicodeString(String str) {

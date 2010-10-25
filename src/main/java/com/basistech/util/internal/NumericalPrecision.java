@@ -24,8 +24,8 @@ public final class NumericalPrecision {
     /**
      * Compare to floats using default precision (defaultUlps)
      * 
-     * @param A first float
-     * @param B second float
+     * @param a first float
+     * @param b second float
      * @return true or false
      */
     public static boolean AlmostEqual(double a, double b) {
