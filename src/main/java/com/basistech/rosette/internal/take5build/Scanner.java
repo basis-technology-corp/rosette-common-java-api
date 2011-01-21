@@ -22,7 +22,7 @@ import java.nio.CharBuffer;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-class Scanner implements Iterator<Take5Pair> {
+public class Scanner implements Iterator<Take5Pair> {
     String inputName;
     int keyNumber;
     BufferedReader in;
@@ -35,7 +35,7 @@ class Scanner implements Iterator<Take5Pair> {
     ByteBuffer bytebuf;
     CharBuffer charbuf;
 
-    Scanner(BufferedReader source, String inputName) {
+    public Scanner(BufferedReader source, String inputName) {
         in = source;
         this.inputName = inputName;
         keyNumber = 0;
