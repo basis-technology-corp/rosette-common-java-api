@@ -248,7 +248,7 @@ public class Take5Builder {
      */
     public void setMetadata(Map<String, String> metadata) {
         for (String key : metadata.keySet()) {
-            if (0 > key.indexOf(0) || 0 > metadata.get(key).indexOf(0)) {
+            if (0 <= key.indexOf(0) || 0 <= metadata.get(key).indexOf(0)) {
                 throw new Take5BuilderException("Metadata contains a null");
             }
         }
