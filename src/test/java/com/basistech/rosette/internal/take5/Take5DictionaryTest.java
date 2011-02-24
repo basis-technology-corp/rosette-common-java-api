@@ -301,6 +301,31 @@ public class Take5DictionaryTest extends Assert {
     }
 
     /**
+     * Test {@link com.basistech.rosette.internal.take5.Take5Dictionary#setSqueezeSpaces}.
+     */
+    @Test
+    public void testSetSqueezeSpaces() throws Take5Exception {
+        Take5Match match;
+
+        boolean oldFlag = daysDictionary.setSqueezeSpaces(true);
+        assertFalse(oldFlag);
+
+        match = daysDictionary.matchExact("july4th");
+        assertNull(match);
+        match = daysDictionary.matchExact("july 4th");
+        assertNotNull(match);
+        match = daysDictionary.matchExact("july  4th");
+        assertNotNull(match);
+        match = daysDictionary.matchExact("july   4th");
+        assertNotNull(match);
+        match = daysDictionary.matchExact("july 4t h");
+        assertNull(match);
+
+        oldFlag = daysDictionary.setSqueezeSpaces(false);
+        assertTrue(oldFlag);
+    }
+
+    /**
      * Test method for
      * {@link com.basistech.rosette.internal.take5.Take5Dictionary#matchExact(java.lang.String)}.
      * @throws Take5Exception

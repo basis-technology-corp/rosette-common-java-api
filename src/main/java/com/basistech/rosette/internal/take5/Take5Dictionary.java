@@ -57,6 +57,7 @@ public class Take5Dictionary {
     ByteBuffer data; /* Binary dictionary data. */
     long dataSize; /* Size of dictionary data. */
     byte[] skipBits; /* Characters to skip. */
+    boolean squeezeSpaces;      /* Should we squeeze spaces? */
 
     int valueData; /* Beginning of value data section. */
     int valueFormat; /* Value data format. */
@@ -125,6 +126,7 @@ public class Take5Dictionary {
         data = fileData.duplicate();
         dataSize = fileSize;
         skipBits = null;
+        squeezeSpaces = false;
         metadata = new HashMap<String, String>();
         readHeader();
         readEntryPoint(entryPoint);
@@ -291,6 +293,21 @@ public class Take5Dictionary {
 
         byte[] previous = this.skipBits;
         this.skipBits = skipBits;
+        return previous;
+    }
+
+    /**
+     * Turn space squeezing on or off.  When space squeezing is enabled,
+     * all but the first space in a run of consecutive spaces will be
+     * skipped over when performing a match.  (Only the character 0x0020
+     * counts as a space!)  Space squeezing is disabled by default.
+     *
+     * @param squeezeSpaces Should we squeeze spaces?
+     * @return the previous setting
+     */
+    public boolean setSqueezeSpaces(boolean squeezeSpaces) {
+        boolean previous = this.squeezeSpaces;
+        this.squeezeSpaces = squeezeSpaces;
         return previous;
     }
 
@@ -999,6 +1016,7 @@ public class Take5Dictionary {
         int ptr;
         int cnt;
         char c;
+        boolean squeezing = false;
 
         if (input == null) {
             throw new IllegalArgumentException("'input' must not be null");
@@ -1014,6 +1032,17 @@ public class Take5Dictionary {
         int limit = offset + length;
         loop: for (cnt = offset; cnt < limit; cnt++) {
             c = input[cnt];
+
+            // If we're squeezing spaces, then we skip all but the first
+            // space in a run of spaces.
+            if (squeezeSpaces) {
+                if (c == 0x0020) {
+                    if (squeezing) continue;
+                    squeezing = true;
+                } else {
+                    squeezing = false;
+                }
+            }
 
             // Check value in skipBits.
             if (skipBits != null && (skipBits[c >> 3] & 1 << (c & 7)) != 0) {
