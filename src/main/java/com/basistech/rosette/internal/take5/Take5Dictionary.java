@@ -330,7 +330,7 @@ public class Take5Dictionary {
      * @param data the key
      * @return the match object
      */
-    public Take5Match matchExact(String data) throws Take5Exception {
+    public Take5Match matchExact(String data) {
         Take5Match match = new Take5Match();
         int c = take5SearchInternal(data.toCharArray(), 0, data.length(), match, null,
                                     stateStart, indexStart);
@@ -353,7 +353,7 @@ public class Take5Dictionary {
      * @param length length of the key
      * @return the match object
      */
-    public Take5Match matchExact(char[] data, int offset, int length) throws Take5Exception {
+    public Take5Match matchExact(char[] data, int offset, int length) {
         Take5Match match = new Take5Match();
         int c = take5SearchInternal(data, offset, length, match, null,
                                     stateStart, indexStart);
@@ -377,9 +377,8 @@ public class Take5Dictionary {
      * @param length length of the key
      * @param result object to fill with the match results
      * @return true for success
-     * @throws Take5Exception
      */
-    public boolean matchExact(char[] data, int offset, int length, Take5Match result) throws Take5Exception {
+    public boolean matchExact(char[] data, int offset, int length, Take5Match result) {
         result.reset();         // XXX this is the <EM>only</EM> use of reset!!
         int c = take5SearchInternal(data, offset, length, result, null,
                                     stateStart, indexStart);
@@ -400,7 +399,7 @@ public class Take5Dictionary {
      * @param data the key
      * @return the match object
      */
-    public Take5Match matchLongest(String data) throws Take5Exception {
+    public Take5Match matchLongest(String data) {
         Take5Match match = new Take5Match();
         int c = take5SearchInternal(data.toCharArray(), 0, data.length(), match, null,
                                     stateStart, indexStart);
@@ -418,9 +417,8 @@ public class Take5Dictionary {
      * @param offset offset of the key in the buffer.
      * @param length length of the key.
      * @return the match object.
-     * @throws Take5Exception
      */
-    public Take5Match matchLongest(char[] data, int offset, int length) throws Take5Exception {
+    public Take5Match matchLongest(char[] data, int offset, int length) {
         Take5Match match = new Take5Match();
         int c = take5SearchInternal(data, offset, length, match, null,
                                     stateStart, indexStart);
@@ -438,7 +436,7 @@ public class Take5Dictionary {
      * @param matches an array to store the resulting matches in
      * @return the number of valid results
      */
-    public int matchMultiple(String data, Take5Match[] matches) throws Take5Exception {
+    public int matchMultiple(String data, Take5Match[] matches) {
         int c = take5SearchInternal(data.toCharArray(), 0, data.length(), null, matches,
                                     stateStart, indexStart);
         return c > matches.length ? matches.length : c;
@@ -455,7 +453,7 @@ public class Take5Dictionary {
      * @param matches an array to store the resulting matches in
      * @return the number of valid results
      */
-    public int matchMultiple(char[] data, int offset, int length, Take5Match[] matches) throws Take5Exception {
+    public int matchMultiple(char[] data, int offset, int length, Take5Match[] matches) {
         int c = take5SearchInternal(data, offset, length, null, matches,
                                     stateStart, indexStart);
         return c > matches.length ? matches.length : c;
@@ -740,12 +738,12 @@ public class Take5Dictionary {
     /**
      * Count the number of transitons out of the given state.
      */
-    private int edgeCount(int state) throws Take5Exception {
+    private int edgeCount(int state) {
         state &= -2;            // clear accept bit
         int ptr = state;
         int type = data.getShort(ptr);
         if (type < 0) {
-            throw new Take5Exception(Take5Exception.UNSUPPORTED_STATE_TYPE);
+            throw new Take5RuntimeException(Take5Exception.UNSUPPORTED_STATE_TYPE);
         } else if (type == SEARCH_TYPE_BINARY + 0) {
             return 1;
         } else if (type == SEARCH_TYPE_BINARY + 1) {
@@ -831,7 +829,7 @@ public class Take5Dictionary {
                 ;
             }
         } else {
-            throw new Take5Exception(Take5Exception.UNSUPPORTED_STATE_TYPE);
+            throw new Take5RuntimeException(Take5Exception.UNSUPPORTED_STATE_TYPE);
         }
         /* If we get here, ptr points to the last character, but that may,
            or may not, be a guard edge. */
@@ -944,8 +942,7 @@ public class Take5Dictionary {
      * @return the number of matches found
      */
     public int take5Search(char[] input, int offset, int length,
-                           Take5Match match, Take5Match[] matches)
-        throws Take5Exception {
+                           Take5Match match, Take5Match[] matches) {
         return take5SearchInternal(input, offset, length, match, matches,
                                    stateStart, indexStart);
     }
@@ -968,8 +965,7 @@ public class Take5Dictionary {
      */
     public int take5Search(char[] input, int offset, int length,
                            Take5Match match, Take5Match[] matches,
-                           Take5Match start)
-        throws Take5Exception {
+                           Take5Match start) {
         return take5SearchInternal(input, offset, length, match, matches,
                                    start.state, start.index);
     }
@@ -1008,8 +1004,7 @@ public class Take5Dictionary {
 
     private int take5SearchInternal(char[] input, int offset, int length,
                                     Take5Match match, Take5Match[] matches,
-                                    int startState, int startIndex)
-        throws Take5Exception {
+                                    int startState, int startIndex) {
         int state = startState;
         int index = startIndex;
         int out_cnt = 0;
@@ -1068,9 +1063,8 @@ public class Take5Dictionary {
             short stateType = data.getShort(ptr);
             switch (stateType) {
             default:
-                throw new Take5Exception(Take5Exception.UNSUPPORTED_STATE_TYPE,
-                                         "State: "
-                                         + Integer.toString(stateType));
+                throw new Take5RuntimeException(Take5Exception.UNSUPPORTED_STATE_TYPE,
+                                                "State: " + Integer.toString(stateType));
 
                 // SEARCH_TYPE_DISPATCH is depreciated.  The code to
                 // support it has been deleted from here.  The compiler

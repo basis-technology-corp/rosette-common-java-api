@@ -45,9 +45,8 @@ public class Take5Exception extends Exception {
         super(additionalMessage);
         this.type = type;
     }
-
-    @Override
-    public String getMessage() {
+    
+    public static String getTypeString(int type) {
         String message;
         switch (type) {
         case FILE_TOO_SHORT:
@@ -95,6 +94,12 @@ public class Take5Exception extends Exception {
         default:
             message = "Unknown error type.";
         }
+        return message;
+    }
+
+    @Override
+    public String getMessage() {
+        String message = Take5Exception.getTypeString(type);
         String additional = super.getMessage();
         if (additional != null) {
             return message + " " + super.getMessage();
