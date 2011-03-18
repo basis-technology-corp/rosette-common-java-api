@@ -13,28 +13,14 @@
  ******************************************************************************/
 package com.basistech.rosette.internal.misc;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
  * Parse a License file. Class name inspired by DocumentBuilder.
@@ -44,75 +30,26 @@ public final class LFileBuilder {
     }
 
     public static LFile parse(String content) {
-        try {
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            InputSource inputSource = new InputSource();
-            inputSource.setCharacterStream(new StringReader(content));
-            return domToLFile(db.parse(inputSource));
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return domToLFile(new ByteArrayInputStream(content.getBytes()));
     }
 
     public static LFile parse(InputStream content) {
-        try {
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            db.setErrorHandler(new ErrorHandler() {
-
-                public void error(SAXParseException exception) throws SAXException {
-                    throw exception;
-                }
-
-                public void fatalError(SAXParseException exception) throws SAXException {
-                    throw exception;
-                }
-
-                public void warning(SAXParseException exception) throws SAXException {
-                    throw exception;
-                }
-            });
-            return domToLFile(db.parse(content));
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        } catch (SAXException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return domToLFile(content);
     }
 
-    private static LFile domToLFile(Document doc) {
-        XPath xpath = XPathFactory.newInstance().newXPath();
+    private static LFile domToLFile(InputStream content) {
         try {
-            String generator = xpath.evaluate("/BTLicense/generator", doc);
-            String customer = xpath.evaluate("/BTLicense/customer", doc);
-            String expiration = xpath.evaluate("/BTLicense/expiration", doc);
-            NodeList licenseNodes = (NodeList)xpath.evaluate("/BTLicense/license", doc,
-                                                             XPathConstants.NODESET);
-            List<Entry> elist = new ArrayList<Entry>();
-            for (int x = 0; x < licenseNodes.getLength(); x++) {
-                Element licElement = (Element)licenseNodes.item(x);
-                String product = xpath.evaluate("product", licElement);
-                String feature = xpath.evaluate("feature", licElement);
-                if ("".equals(feature)) {
-                    feature = null;
-                }
-                String licenseKey = xpath.evaluate("license_key", licElement);
-                String language = xpath.evaluate("language", licElement);
-                if ("".equals(language)) {
-                    language = null;
-                }
-                Entry e = new Entry(product, feature, language, licenseKey);
-                elist.add(e);
-            }
-            return new LFile(generator, customer, expiration, elist);
-        } catch (XPathExpressionException e) {
-            throw new RuntimeException(e);
+            XMLReader xr = XMLReaderFactory.createXMLReader();
+            LFileParser handler = new LFileParser();
+            xr.setContentHandler(handler);
+            xr.parse(new InputSource(content));
+            
+            return handler.getResult();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
         }
+        return new LFile(null, null, null, null); 
     }
 }
