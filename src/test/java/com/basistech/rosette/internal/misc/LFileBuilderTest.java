@@ -49,15 +49,9 @@ public class LFileBuilderTest {
         assertEquals("PLR", e.getProduct());
     }
     
-    @Test
+    @Test(expected = RosetteCorruptLicenseException.class)
     public void testLFInvalid() throws Exception {
         String badLF = "Invalid License File";
-        try {
-            LFileBuilder.parse(badLF);
-        } catch (Exception ex) {
-            Assert.assertTrue(ex instanceof RosetteCorruptLicenseException);
-            return;
-        }
-        throw new Exception("License file should not have been parsed...");
+        LFileBuilder.parse(badLF);
     }
 }
