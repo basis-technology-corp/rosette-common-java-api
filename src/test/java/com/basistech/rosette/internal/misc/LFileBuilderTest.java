@@ -16,7 +16,10 @@ package com.basistech.rosette.internal.misc;
 import java.io.InputStream;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
+
+import com.basistech.rosette.RosetteCorruptLicenseException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -44,5 +47,17 @@ public class LFileBuilderTest {
         e = entries.get(2);
         // spotcheck
         assertEquals("PLR", e.getProduct());
+    }
+    
+    @Test
+    public void testLFInvalid() throws Exception {
+        String badLF = "Invalid License File";
+        try {
+            LFileBuilder.parse(badLF);
+        } catch (Exception ex) {
+            Assert.assertTrue(ex instanceof RosetteCorruptLicenseException);
+            return;
+        }
+        throw new Exception("License file should not have been parsed...");
     }
 }
