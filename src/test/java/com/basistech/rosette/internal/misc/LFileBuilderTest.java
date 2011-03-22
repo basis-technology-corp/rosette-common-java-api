@@ -16,7 +16,6 @@ package com.basistech.rosette.internal.misc;
 import java.io.InputStream;
 import java.util.List;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import com.basistech.rosette.RosetteCorruptLicenseException;

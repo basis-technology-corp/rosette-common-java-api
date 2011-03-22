@@ -25,6 +25,7 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.basistech.rosette.RosetteCorruptLicenseException;
+import com.basistech.rosette.RosetteRuntimeException;
 
 /**
  * Parse a License file. Class name inspired by DocumentBuilder.
@@ -63,10 +64,9 @@ public final class LFileBuilder {
             
             return handler.getResult();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RosetteRuntimeException(e);
         } catch (SAXException e) {
-            e.printStackTrace();
-        }
-        return new LFile(null, null, null, null); 
+            throw new RosetteRuntimeException(e);
+        } 
     }
 }
