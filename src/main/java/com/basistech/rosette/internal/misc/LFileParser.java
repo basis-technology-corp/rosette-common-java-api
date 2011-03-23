@@ -30,7 +30,6 @@ public class LFileParser implements ContentHandler {
     private LFile result;
     
     private Tag tag; // Top level layer we're in
-    private License license; // sub-category of the license we're in
     
     private String generator;
     private String customer;
@@ -44,48 +43,11 @@ public class LFileParser implements ContentHandler {
     private String licenseKey;
     private String language;
     
-    public void characters(char[] arg0, int arg1, int arg2) {
-        char[] out = new char[arg2];
-        System.arraycopy(arg0, arg1, out, 0, arg2);
-
-        String text = new String(out);
-        
-        if (tag == null || ((tag == Tag.LICENSE) && (license == null))) {
-            return;
-        }
-        
-        switch (tag) {
-        case CUSTOMER:
-            this.customer = text;
-            break;
-        case EXPIRATION:
-            this.expiration = text;
-            break;
-        case GENERATOR:
-            this.generator = text;
-            break;
-        case LICENSE:
-            switch (license) {
-            case FEATURE:
-                this.feature = "".equals(text) ? null : text;
-                break;
-            case KEY:
-                this.licenseKey = text;
-                break;
-            case PRODUCT:
-                this.product = text;
-                break;
-            case LANGUAGE:
-                this.language = "".equals(text) ? null : text;
-                break;
-            case FUNCTION:
-                // we don't really do anything with this stuff.
-                break;
-            default:
-            }
-            break;
-        default:
-        }
+    private String buffer;
+    
+    public void characters(char[] charbuffer, int start, int length) {
+        String input = new String(charbuffer, start, length);
+        buffer = buffer.concat(input);
     }
 
     public void endDocument() throws SAXException {
@@ -93,9 +55,36 @@ public class LFileParser implements ContentHandler {
     }
 
     public void endElement(String arg0, String arg1, String arg2) {
-        if ((tag != null) && (tag == Tag.LICENSE)) {
-            license = null;
+        
+       
+        if (tag != null) {
+            switch (tag) {
+            case CUSTOMER:
+                this.customer = buffer;
+                break;
+            case EXPIRATION:
+                this.expiration = buffer;
+                break;
+            case GENERATOR:
+                this.generator = buffer;
+                break;
+            case LICENSE:
+                if ("product".equals(arg1)) {
+                    this.product = buffer;
+                } else if ("feature".equals(arg1)) {
+                    this.feature = "".equals(buffer) ? null : buffer;
+                } else if ("license_key".equals(arg1)) {
+                    this.licenseKey = buffer;
+                } else if ("language".equals(arg1)) {
+                    this.language = "".equals(buffer) ? null : buffer;
+                } else if ("function".equals(arg1)) {
+                    // DO NOTHING FOR NOW
+                }
+                break;
+            default:
+            }
         }
+        
         
         if ("license".equals(arg1)) {
             elist.add(new Entry(product, feature, language, licenseKey));
@@ -133,20 +122,6 @@ public class LFileParser implements ContentHandler {
             Attributes arg3) {
         
         // we are in a license tag
-        if (tag == Tag.LICENSE) {
-            if ("product".equals(arg1)) {
-                license = License.PRODUCT;
-            } else if ("feature".equals(arg1)) {
-                license = License.FEATURE;
-            } else if ("license_key".equals(arg1)) {
-                license = License.KEY;
-            } else if ("language".equals(arg1)) {
-                license = License.LANGUAGE;
-            } else if ("function".equals(arg1)) {
-                license = License.FUNCTION;
-            }
-            return;
-        }
         
         if ("generator".equals(arg1)) {
             tag = Tag.GENERATOR;
@@ -157,6 +132,7 @@ public class LFileParser implements ContentHandler {
         } else if ("license".equals(arg1)) {
             tag = Tag.LICENSE;
         }
+        buffer = "";
 
     }
 
