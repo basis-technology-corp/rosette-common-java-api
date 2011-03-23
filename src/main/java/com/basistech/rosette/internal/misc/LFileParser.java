@@ -25,7 +25,6 @@ import org.xml.sax.SAXException;
 public class LFileParser implements ContentHandler {
     
     private enum Tag { GENERATOR, CUSTOMER, EXPIRATION, LICENSE };
-    private enum License { PRODUCT, FEATURE, KEY, LANGUAGE, FUNCTION };
     
     private LFile result;
     
@@ -43,41 +42,40 @@ public class LFileParser implements ContentHandler {
     private String licenseKey;
     private String language;
     
-    private String buffer;
+    private StringBuilder buffer;
     
     public void characters(char[] charbuffer, int start, int length) {
-        String input = new String(charbuffer, start, length);
-        buffer = buffer.concat(input);
+        buffer.append(charbuffer, start, length);
     }
 
     public void endDocument() throws SAXException {
         result = new LFile(generator, customer, expiration, elist);
     }
 
-    public void endElement(String arg0, String arg1, String arg2) {
+    public void endElement(String uri, String name, String qname) {
         
        
         if (tag != null) {
             switch (tag) {
             case CUSTOMER:
-                this.customer = buffer;
+                this.customer = buffer.toString();
                 break;
             case EXPIRATION:
-                this.expiration = buffer;
+                this.expiration = buffer.toString();
                 break;
             case GENERATOR:
-                this.generator = buffer;
+                this.generator = buffer.toString();
                 break;
             case LICENSE:
-                if ("product".equals(arg1)) {
-                    this.product = buffer;
-                } else if ("feature".equals(arg1)) {
-                    this.feature = "".equals(buffer) ? null : buffer;
-                } else if ("license_key".equals(arg1)) {
-                    this.licenseKey = buffer;
-                } else if ("language".equals(arg1)) {
-                    this.language = "".equals(buffer) ? null : buffer;
-                } else if ("function".equals(arg1)) {
+                if ("product".equals(name)) {
+                    this.product = buffer.toString();
+                } else if ("feature".equals(name)) {
+                    this.feature = "".equals(buffer.toString()) ? null : buffer.toString();
+                } else if ("license_key".equals(name)) {
+                    this.licenseKey = buffer.toString();
+                } else if ("language".equals(name)) {
+                    this.language = "".equals(buffer.toString()) ? null : buffer.toString();
+                } else if ("function".equals(name)) {
                     // DO NOTHING FOR NOW
                 }
                 break;
@@ -86,16 +84,16 @@ public class LFileParser implements ContentHandler {
         }
         
         
-        if ("license".equals(arg1)) {
+        if ("license".equals(name)) {
             elist.add(new Entry(product, feature, language, licenseKey));
             product = null;
             feature = null;
             language = null;
             licenseKey = null;
             tag = null;
-        } else if ("generator".equals(arg1)
-                || "customer".equals(arg1)
-                || "expiration".equals(arg1)) {
+        } else if ("generator".equals(name)
+                || "customer".equals(name)
+                || "expiration".equals(name)) {
             tag = null;
         }
     }
@@ -118,21 +116,21 @@ public class LFileParser implements ContentHandler {
     public void startDocument() {
     }
 
-    public void startElement(String arg0, String arg1, String arg2,
+    public void startElement(String uri, String name, String qname,
             Attributes arg3) {
         
         // we are in a license tag
         
-        if ("generator".equals(arg1)) {
+        if ("generator".equals(name)) {
             tag = Tag.GENERATOR;
-        } else if ("customer".equals(arg1)) {
+        } else if ("customer".equals(name)) {
             tag = Tag.CUSTOMER;
-        } else if ("expiration".equals(arg1)) {
+        } else if ("expiration".equals(name)) {
             tag = Tag.EXPIRATION;
-        } else if ("license".equals(arg1)) {
+        } else if ("license".equals(name)) {
             tag = Tag.LICENSE;
         }
-        buffer = "";
+        buffer = new StringBuilder();
 
     }
 
