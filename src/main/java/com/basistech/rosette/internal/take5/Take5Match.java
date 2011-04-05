@@ -159,24 +159,24 @@ public class Take5Match {
     /**
      * Retrieve a ByteBuffer containing a Take5 value of a known size.
      * <P>
-     * If you <EM>don't</EM> know the size, you should be calling {@link
-     * #getOffsetValue()}.
+     * If you don't know the size, you should be calling {@link
+     * #getOffsetValue()} and {@link Take5Dictionary#getData()}.  If you do
+     * know the size, you should <EM>still</EM> probably be doing that.
      *
      * @param dataLength
      * @return a ByteBuffer
      */
-    // Although most callers of this probably actually want getOffsetValue,
-    // there is no reason to deprecate this:
+    // Although most callers of this probably actually want getOffsetValue
+    // and getData, there is no reason to deprecate this:
     // @deprecated 1.3.7: use {@link #getOffsetValue()}.
     // @Deprecated
     public ByteBuffer getComplexData(int dataLength) throws Take5Exception {
         int ptr = getOffsetValue();
-        dict.data.position(ptr);
-        dict.data.limit(ptr + dataLength);
-        ByteBuffer rbb = dict.data.slice();
+        ByteBuffer tmp = dict.data.asReadOnlyBuffer();
+        tmp.position(ptr);
+        tmp.limit(ptr + dataLength);
+        ByteBuffer rbb = tmp.slice();
         rbb.order(ByteOrder.nativeOrder());
-        dict.data.position(0);
-        dict.data.limit(dict.data.capacity());
         return rbb;
     }
 

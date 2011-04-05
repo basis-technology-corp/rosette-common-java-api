@@ -123,7 +123,7 @@ public class Take5Dictionary {
      * @throws Take5Exception if there is a problem with the given input.
      */
     public Take5Dictionary(ByteBuffer fileData, long fileSize, String entryPoint) throws Take5Exception {
-        data = fileData.duplicate();
+        data = fileData.asReadOnlyBuffer();
         dataSize = fileSize;
         skipBits = null;
         squeezeSpaces = false;
@@ -241,7 +241,7 @@ public class Take5Dictionary {
         ByteBuffer buffer = data.asReadOnlyBuffer();
         buffer.position(0);
         buffer.limit(buffer.capacity());
-        buffer.order(data.order());
+        buffer.order(ByteOrder.nativeOrder());
         return buffer;
     }
 
