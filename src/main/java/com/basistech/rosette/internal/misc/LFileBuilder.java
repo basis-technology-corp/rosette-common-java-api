@@ -13,9 +13,9 @@
  ******************************************************************************/
 package com.basistech.rosette.internal.misc;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
@@ -35,14 +35,16 @@ public final class LFileBuilder {
     }
 
     public static LFile parse(String content) {
-        return domToLFile(new ByteArrayInputStream(content.getBytes()));
+        InputSource source = new InputSource(new StringReader(content));
+        return domToLFile(source);
     }
 
     public static LFile parse(InputStream content) {
-        return domToLFile(content);
+        InputSource source = new InputSource(content);
+        return domToLFile(source);
     }
 
-    private static LFile domToLFile(InputStream content) {
+    private static LFile domToLFile(InputSource content) {
         try {
             XMLReader xr = XMLReaderFactory.createXMLReader();
             LFileParser handler = new LFileParser();
@@ -60,7 +62,7 @@ public final class LFileBuilder {
                     throw new RosetteCorruptLicenseException(exception);
                 }
             });
-            xr.parse(new InputSource(content));
+            xr.parse(content);
             
             return handler.getResult();
         } catch (IOException e) {
