@@ -16,8 +16,8 @@
     </prerequisites>
     <inceptionYear>2010</inceptionYear>
     <properties>
-        <site.deploy.base>scp://hudson.basistech.net/home/projects/common</site.deploy.base>
-        <url.base>http://hudson.basistech.net:8280/projects/common</url.base>
+        <site.deploy.base>scp://souvenir.basistech.net:/basis/trees/maven-projects/common/${project.version}</site.deploy.base>
+        <url.base>http://maven-projects.basistech.net/common/${project.version}</url.base>
         <compiler.fork>false</compiler.fork>
         <jdk.level>1.5</jdk.level>
         <spring.version>2.5.4</spring.version>
