@@ -101,10 +101,6 @@ import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_5;
  * using {@link Take5EntryPoint#loadContent Take5EntryPoint.loadContent},
  * call {@link #buildBuffer buildBuffer} or {@link #buildFile buildFile} to
  * create the Take5 binary in memory or in the file system.
- * <P>
- * Note that if you want to create both big and little endian binaries, it
- * <EM>will</EM> work to call <CODE>buildFile</CODE>, then change the byte
- * order and call <CODE>buildFile</CODE> again.
  */
 public class Take5Builder {
     // Currently this builder is up to version 5.5:
