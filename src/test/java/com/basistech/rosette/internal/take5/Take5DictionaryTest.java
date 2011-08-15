@@ -403,6 +403,8 @@ public class Take5DictionaryTest extends Assert {
         Take5Dictionary dict = nextLettersDictionary;
         Take5Match match = dict.getStartMatch();
 
+        assertEquals(0, match.length);
+
         // There should be 26 edges out of the "" state:
         Take5Match[] matches = dict.nextLetters(match);
         assertNotNull(matches);
@@ -410,17 +412,20 @@ public class Take5DictionaryTest extends Assert {
 
         match = matches[5];
         assertNotNull(match);
+        assertEquals(1, match.length);
         assertEquals('f', match.c);
         assertTrue(match.isAcceptState());
 
         match = matches[6];
         assertNotNull(match);
+        assertEquals(1, match.length);
         assertEquals('g', match.c);
         assertFalse(match.isAcceptState());
 
         // There should be 9 edges out of the "g" state:
         matches = dict.nextLetters(match);
         assertEquals(9, matches.length);
+        assertEquals(2, matches[8].length);
     }
 
     /**

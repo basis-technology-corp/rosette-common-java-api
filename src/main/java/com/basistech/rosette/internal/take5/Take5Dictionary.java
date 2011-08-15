@@ -856,7 +856,7 @@ public class Take5Dictionary {
      */
     public Take5Match[] nextLetters(Take5Match start)
         throws Take5Exception {
-        return nextLettersInternal(start.state, start.index);
+        return nextLettersInternal(start.state, start.index, start.length + 1);
     }
 
     /**
@@ -880,10 +880,10 @@ public class Take5Dictionary {
     @Deprecated
     public Take5Match[] nextLetters(int state, int index)
         throws Take5Exception {
-        return nextLettersInternal(state, index);
+        return nextLettersInternal(state, index, 0);
     }
 
-    private Take5Match[] nextLettersInternal(int state, int index)
+    private Take5Match[] nextLettersInternal(int state, int index, int length)
         throws Take5Exception {
         state &= -2;        // clear accept bit
         int edges = edgeCount(state);
@@ -894,7 +894,7 @@ public class Take5Dictionary {
         for (int i = 0; i < edges; ++i) {
             edge -= 8;
             ptr += 2;
-            match = new Take5Match(this, 0,
+            match = new Take5Match(this, length,
                                    index + data.getInt(edge + 4),
                                    state + data.getInt(edge));
             match.c = data.getChar(ptr);
