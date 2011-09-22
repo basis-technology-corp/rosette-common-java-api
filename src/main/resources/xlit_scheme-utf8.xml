@@ -1,0 +1,382 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<xlitSchemesdefinitions>
+<!-- These schemes could expand with legal source/target script/lang.
+     groups: 0-199: multi-lingual and arabic
+             200-299: Korean
+             300-399: Chinese and other East Asian languages
+             400-499: Japanese
+	     500-599: South Asian Languages
+             600-699: Persian
+             1000-2000: Special use?
+   -->
+<scheme>
+<numeric>0</numeric>
+<name>fbis</name>
+<presentationName>FBIS</presentationName>
+<description>US Foreign Broadcast Information Service</description>
+</scheme>
+<scheme>
+<numeric>1</numeric>
+<name>bgn</name>
+<presentationName>BGN</presentationName>
+<description>US Board on Geographic Names</description>
+</scheme>
+<scheme>
+<numeric>2</numeric>
+<name>basis</name>
+<presentationName>Basis</presentationName>
+<description>Basis Technology Corp.</description>
+<doc>aka MTS</doc>
+</scheme>
+<scheme>
+<numeric>3</numeric>
+<name>ic</name>
+<presentationName>IC</presentationName>
+<description>US Intelligence Community</description>
+<doc>aka USG1</doc>
+</scheme>
+<scheme>
+<numeric>4</numeric>
+<name>satts</name>
+<presentationName>SATTS</presentationName>
+<description>Standard Arabic Technical Transliteration System</description>
+</scheme>
+<scheme>
+<numeric>5</numeric>
+<name>buckwalter</name>
+<presentationName>Buckwalter</presentationName>
+<description>Tim Buckwalter/Qamus</description>
+</scheme>
+<scheme>
+<numeric>6</numeric>
+<name>unrsgn</name>
+<presentationName>UNRSGN</presentationName>
+<description>United Nations Romanization System for Geographic Names</description>
+</scheme>
+<scheme>
+<numeric>7</numeric>
+<name>ala_lc</name>
+<presentationName>Library of Congress</presentationName>
+<description>American Library Association/Library of Congress Transliteration</description>
+</scheme>
+<scheme>
+<numeric>8</numeric>
+<name>ign</name>
+<presentationName>I.G.N. System 1973</presentationName>
+<description>Also called Variant B of the Amended Beirut System</description>
+<doc>Présentation de la variante B du système de translittération de l’arabe "Beyrouth amendé". UNGEGN, 17th Session. New York, 13-24 June 1994. WP No. 61.  See http://www.eki.ee/wgrs/rom1_ar.htm.</doc>
+</scheme>
+<scheme>
+<numeric>9</numeric>
+<name>rjgc</name>
+<presentationName>Royal Jordanian Geographic Centre System</presentationName>
+<description>Essentially the same as the amended Beirut system. The sub-macron is used instead of the cedilla.</description>
+<doc>Activities in Jordan on the Standardization of Geographical Names. UNGEGN, 18th Session. Geneva, 12-23 August 1996. WP. No. 86.  See http://www.eki.ee/wgrs/rom1_ar.htm</doc>
+</scheme>
+<scheme>
+<numeric>10</numeric>
+<name>iso233_1984</name>
+<presentationName>ISO 233:1984</presentationName>
+<description>Gives every character and diacritical mark a unique equivalent.</description>
+<doc>See http://www.eki.ee/wgrs/rom1_ar.htm</doc>
+</scheme>
+<scheme>
+<numeric>11</numeric>
+<name>ses</name>
+<presentationName>Survey of Egypt System</presentationName>
+<description>Survey of Egypt System.</description>
+<doc>See http://www.eki.ee/wgrs/rom1_ar.htm</doc>
+</scheme>
+<scheme>
+<numeric>12</numeric>
+<name>dmg</name>
+<presentationName>Deutsche Morgenlandishe Gesellschaft</presentationName>
+</scheme>
+<scheme>
+<numeric>13</numeric>
+<name>ei</name>
+<presentationName>Encyclopedia of Islam</presentationName>
+</scheme>
+<scheme>
+<numeric>14</numeric>
+<name>knab</name>
+<presentationName>Kohanimeandmebaas</presentationName>
+<doc>Latiniseeritud nimede haaldusjuhiseid/Guide to the Pronounciation of Romanized Names. KNAB: Kohanimeandmebaas. Eesti Keeli Instituut, 1998.</doc>
+</scheme>
+<scheme>
+<numeric>15</numeric>
+<name>allworth</name>
+<presentationName>Allworth</presentationName>
+<doc>Allworth, Edward: Nationalities of the Soviet East. Publications and Writing Systems. New York, 1971.</doc>
+</scheme>
+<scheme>
+<numeric>16</numeric>
+<name>iso9_1995</name>
+<presentationName>ISO 9:1995</presentationName>
+<doc>ISO 9:1995. Information and documentation -- Transliteration of Cyrillic characters into Latin characters -- Slavic and non-Slavic languages. International Organization for Standardization, 1995.</doc>
+</scheme>
+<scheme>
+<numeric>17</numeric>
+<name>wws</name>
+<presentationName>The World's Writing Systems</presentationName>
+<doc>The World's Writing Systems. Peter T. Daniels &amp; William Bright (eds.). New York, 1996.</doc>
+</scheme>
+<scheme>
+<numeric>18</numeric>
+<name>jdec_af</name>
+<presentationName>JDEC - Afghanistan</presentationName>
+<description>Joint Document Exploitation Center - Afghanistan</description>
+<doc>As specified, June 2007</doc>
+</scheme>
+<scheme>
+<numeric>19</numeric>
+<name>melts</name>
+<presentationName>MELTS</presentationName>
+<description>Middle East Languages Transliteration Standard</description>
+<doc>Used by the GCHQ (British)</doc>
+</scheme>
+<scheme>
+<numeric>20</numeric>
+<name>iso233_2_1993</name>
+<presentationName>ISO 233-2:1993</presentationName>
+<description>Establishes a simplified system vs the stringent rules established by ISO 233:1984 for Arabic.</description>
+<doc>Establishes a simplified system for the transliteration. This simplification of the stringent rules established by ISO 233:1984 is especially intended to facilitate the processing of bibliographic information (e.g. catalogues, indices, citations, etc.). Annex A gives the diacritical signs used (taken from the code table of ISO 5436:1983).  http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=4118</doc>
+</scheme>
+<scheme>
+<numeric>21</numeric>
+<name>iso233_3_1999</name>
+<presentationName>ISO 233-3:1999</presentationName>
+<description>ISO 233 Part 3, for Persian</description>
+<doc>http://www.iso.org/iso/iso_catalogue/catalogue_tc/catalogue_detail.htm?csnumber=2398</doc>
+</scheme>
+<scheme>
+<numeric>22</numeric>
+<name>wikipedia_ascii</name>
+<presentationName>ASCII-limited Transliteration Scheme used in Wikipedia</presentationName>
+<description>ASCII restricted; possibly a variation on more formal transliteration schemes.</description>
+<doc></doc>
+</scheme>
+<!-- added for Vietnamese -->
+<scheme>
+<numeric>99</numeric>
+<name>ascii</name>
+<presentationName>ASCII subset of Latin Script</presentationName>
+<description>Custom scheme to Basis for transliterating characters using a broader portion of the Latin Script to solely ASCII, based on removing diacritics and using the closest letter visually.</description>
+</scheme>
+<scheme>
+<numeric>100</numeric>
+<name>ic_bgn</name>
+<presentationName>IC (+BGN for places)</presentationName>
+<description>IC for everything but places, BGN for those</description>
+</scheme>
+<scheme>
+<numeric>101</numeric>
+<name>und_bgn</name>
+<presentationName>Undiacritized BGN</presentationName>
+<description>US Board on Geographic Names - diacritics removed</description>
+</scheme>
+<scheme>
+<numeric>102</numeric>
+<name>ext_ic</name>
+<presentationName>Extended IC</presentationName>
+<description>US Intelligence Community - extended</description>
+</scheme>
+<scheme>
+<numeric>199</numeric>
+<name>basis_dia</name>
+<presentationName>Basis Diacritization</presentationName>
+<description>Diacritization according to a private-use standard by Basis Technology Corp.</description>
+</scheme>  
+<scheme>
+<numeric>200</numeric>
+<name>korda</name>
+<presentationName>KORDA</presentationName>
+<description>Korean Romanization for Data Applications</description><!--  by Peter Kang - CIA-->
+</scheme>
+<scheme>
+<numeric>201</numeric>
+<name>morse</name>
+<presentationName>Morse</presentationName>
+<description>Morse</description> <!-- (aka SKATS?)-->
+</scheme>
+<scheme>
+<numeric>202</numeric>
+<name>yale</name>
+<presentationName>Yale</presentationName>
+<description>Yale</description>
+<doc>Yale romanizations are four systems created during World War II for use by United States military personnel. They romanize the four East Asian languages of Mandarin, Cantonese, Korean, and Japanese.</doc>
+</scheme>
+<scheme>
+<numeric>203</numeric>
+<name>mcr</name>
+<presentationName>McCune-Reischauer</presentationName>
+<description>McCune-Reischauer</description>
+<doc>BGN Korean == McCune-Reischauer</doc>
+</scheme>
+<scheme>
+<numeric>204</numeric>
+<name>lukoff</name>
+<presentationName>Lukoff</presentationName>
+<description>Lukoff</description>
+<doc>Developed 1945-47 for Fred Lukoff's Spoken Korean coursebooks</doc>
+</scheme>
+<scheme>
+<numeric>205</numeric>
+<name>sk</name>
+<presentationName>2959-SK</presentationName>
+<description>2959-SK, Developed by South Korea's Ministry of Education</description>
+</scheme>
+<scheme>
+<numeric>206</numeric>
+<name>jg</name>
+<presentationName>Joseon Gwahagwon</presentationName>
+<description>Joseon Gwahagwon</description>
+</scheme>
+<scheme>
+<numeric>207</numeric>
+<name>moct</name>
+<presentationName>Revised Romanization of Korean</presentationName>
+<description>2000 Revised Romanization of Korean by Ministry of Culture and Tourism</description>
+</scheme>
+<scheme>
+<numeric>300</numeric>
+<name>hypy</name>
+<presentationName>Pinyin</presentationName>
+<description>Hanyu Pinyin (without tone annotations)</description>
+<doc>was approved in 1958 and adopted in 1979 by the government in the People's Republic of China</doc>
+</scheme>
+<scheme>
+<numeric>301</numeric>
+<name>hypy_toned</name>
+<presentationName>Hanyu Pinyin Toned</presentationName>
+<description>Hanyu Pinyin with tone annotations</description>
+</scheme>
+<scheme>
+<numeric>302</numeric>
+<name>wade_giles</name>
+<presentationName>Wade-Giles</presentationName>
+<description>Wade-Giles</description>
+<doc>Developed from a system produced by Thomas Wade in the mid-19th century, and reached settled form with Herbert Giles's Chinese-English dictionary of 1912.</doc>
+</scheme>
+<scheme>
+<numeric>303</numeric>
+<name>typy</name>
+<presentationName>Tongyong Pinyin</presentationName>
+<description>Tongyong  Pinyin (without tone annotations)</description>
+<doc>Official romanization of the Chinese language adopted by the national government (although not all local governments) of the Republic of China (Taiwan) since 2002</doc>
+</scheme>
+<scheme>
+<numeric>304</numeric>
+<name>typy_toned</name>
+<presentationName>Tongyong Pinyin Toned</presentationName>
+<description>Tongyong Pinyin with tone annotations</description>
+</scheme>
+<scheme>
+<numeric>305</numeric>
+<name>zwpy</name>
+<presentationName>Zongwen (Tibetan) Pinyin</presentationName>
+<description>Zongwen (Tibetan) Pinyin</description>
+<doc>The official transcription system for the Tibetan language in China.</doc>
+</scheme>
+<scheme>
+<numeric>306</numeric>
+<name>ctpy</name>
+<presentationName>Cantonese Pinyin</presentationName>
+<description>Standard Cantonese Pinyin</description>
+<doc>A romanization system for Standard Cantonese developed by Yu Bingzhao in 1971, and subsequently modified by the Education Department (merged into the Education and Manpower Bureau since 2003) and Zhan Bohui.  . It is the only romanization system accepted by Education and Manpower Bureau of Hong Kong and Hong Kong Examinations and Assessment Authority. source: http://en.wikipedia.org/wiki/Standard_Cantonese_Pinyin</doc>
+</scheme>
+<scheme>
+<numeric>307</numeric>
+<name>poj</name>
+<presentationName>POJ</presentationName>
+<description>Peh-oe-ji (POJ)</description>
+<doc>Pe̍h-ōe-jī: An orthography in the Latin alphabet created and introduced to Fujian and Taiwan by Presbyterian missionaries in the 19th century. POJ is a popular orthography for the Taiwanese language or Min Nan in general.. source: http://en.wikipedia.org/wiki/POJ</doc>
+</scheme>
+<scheme>
+<numeric>308</numeric>
+<name>gaungdong</name>
+<presentationName>Guangdong Romanization</presentationName>
+<description>Guangdong Romanization</description>
+<doc>The four romanization schemes published by the Guangdong Provincial Education Department in 1960 for transliterating the Standard Cantonese, Teochew, Hakka, and Hainanese spoken varieties of Chinese.  http://en.wikipedia.org/wiki/Guangdong_Romanization</doc>
+</scheme>
+<scheme>
+<numeric>309</numeric>
+<name>ctc</name>
+<presentationName>Chinese Telegraph Code</presentationName>
+<description>Chinese Telegraph Code</description>
+<doc>Used for sending Chinese characters over the electrical (hand-keyed, Morse) telegraph. For each of approximately 9800 characters (arranged in dictionary order) a 4 digit code number was assigned. Source: http://www.dtc.umn.edu/~reedsj/ctc.html</doc>
+</scheme>
+<scheme>
+<numeric>310</numeric>
+<name>iso_11940</name>
+<presentationName>ISO :11940</presentationName>
+<description>Romanization of the Thai</description>
+<doc>ISO 11940 is an ISO standard for the romanization of the Thai alphabet, published in 1998 and updated in September 2003. http://en.wikipedia.org/wiki/ISO_11940</doc>
+</scheme>
+<scheme>
+<numeric>400</numeric>
+<name>hebon</name>
+<presentationName>Hebon Romaji</presentationName>
+<description>Hebon-shiki Romaji (or Hepburn) scheme for Japanese</description>
+<doc>Named after the Reverend James Curtis Hepburn who used it to transcribe the sounds of the Japanese language into the Latin alphabet in the third edition of his Japanese--English dictionary, published in 1887</doc>
+</scheme>
+<scheme>
+<numeric>401</numeric>
+<name>kunrei</name>
+<presentationName>Kunrei-shiki Romaji</presentationName>
+<description>Kunrei-shiki Romaji scheme for Japanese</description>
+<doc>Based on the older Nihon-shiki (Nipponsiki) system, modified for modern standard Japanese.  Also referred to as ISO 3602 or the Monbusho system.</doc>
+</scheme>
+<scheme>
+<numeric>500</numeric>
+<name>iscii</name>
+<presentationName>ISCII</presentationName>
+<description>Indian Script Code for Information Interchange</description>
+<doc>A coding scheme for representing various writing systems of India. It encodes the main Indic scripts and a Roman transliteration. The supported scripts are: Assamese, Bengali, Devanagari, Gujarati, Gurmukhi, Kannada, Malayalam, Oriya, Tamil, and Telugu. (source: http://en.wikipedia.org/wiki/ISCII)</doc>
+</scheme>
+<scheme>
+<numeric>501</numeric>
+<name>pascii</name>
+<presentationName>PASCII</presentationName>
+<description>Perso-Arabic Script Code for Information Interchange</description>
+<doc>The Indian government standard for encoding languages using writing systems based on that of Arabic, in particular Kashmiri, Persian, Sindhi, and Urdu. The ISCII encoding was originally intended to cover both the Brahmi-derived writing systems of India and the Arabic-based systems, but this approach was subsequently abandoned. (source: http://en.wikipedia.org/wiki/PASCII)</doc>
+</scheme>
+<scheme>
+<numeric>502</numeric>
+<name>arabtex</name>
+<presentationName>ArabTeX</presentationName>
+<doc>Lagally, Klaus: ArabTeX -- a System for Typesetting Arabic. User Manual Version 3.09. Institut für Informatik. Universität Stuttgart, 1999. (ftp.informatik.uni-stuttgart.de/pub/arabtex/doc/arabdoc.pdf).</doc>
+</scheme>
+<scheme>
+<numeric>503</numeric>
+<name>lsi</name>
+<presentationName>Linguistic Survey of India</presentationName>
+<doc>Linguistic Survey of India. G.A Grierson (ed.). Delhi/Varanasi/Patna 1927 (Reprint 1967).</doc>
+</scheme>
+<scheme>
+<numeric>600</numeric>
+<name>ncc</name>
+<presentationName>National Cartography Center (NCC) of Iran</presentationName>
+<description>The Transliteration/Transcription system of the National Cartography Center (NCC) of Iran.</description>
+<doc>developed in partnership with linguists from Tehran University, was approved for use by the NCC in 2003, as the system and procedure for preparing broad transcriptions of toponymic items be (sic)</doc>
+</scheme>
+<scheme>
+<numeric>1997</numeric>
+<name>folk</name>
+<presentationName>Folk</presentationName>
+<description>Folk</description>
+</scheme>
+<scheme>
+<numeric>1998</numeric>
+<name>unknown</name>
+<presentationName>Unknown</presentationName>
+<description>Unknown</description>
+</scheme>
+<scheme>
+<numeric>1999</numeric>
+<name>native</name>
+<presentationName>Native</presentationName>
+<description>Native</description>
+<doc>Native</doc>
+</scheme>
+</xlitSchemesdefinitions>

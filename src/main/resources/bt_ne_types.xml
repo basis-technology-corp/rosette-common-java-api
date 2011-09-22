@@ -1,0 +1,204 @@
+<!--
+This file defines the named entity types and subtypes that RLP may (or
+may not) return. These data are then used to generate various files that
+use these values.
+
+DISTRIBUTION:
+
+     This file should *NOT* be distributed in SDK releases.
+
+WARNING:
+
+     Please don't change the order of the entity_types or the subtypes
+     within, if you do this then the numbering shared by the templates
+     will also change, and that means someone may get out of sync.
+
+     You can add types and subtypes, but please only do so at the *end* of
+     each section.
+
+-->
+
+<ne_types>
+<entity_types>
+<type>
+  <name>NONE</name>
+  <doc>Unknown or uncodable.</doc>
+</type>
+<type>
+  <name>PERSON</name>
+  <doc>Persons</doc>
+</type>
+<type>
+  <name>ORGANIZATION</name>
+  <doc>Organizations.</doc>
+</type>
+<type>
+  <name>LOCATION</name>
+  <doc>Location name.</doc>
+</type>
+<type>
+  <name>FACILITY</name>
+  <doc>Facility name.</doc>
+</type>
+<type>
+  <name>GPE</name>
+  <doc>Geo-political entity.</doc>
+</type>
+<type>
+  <name>VEHICLE</name>
+  <doc>Vehicle types.</doc>
+</type>
+<type>
+  <name>WEAPON</name>
+  <doc>Weapon types.</doc>
+</type>
+<type>
+  <name>TEMPORAL</name>
+  <doc>Times and Dates.</doc>
+  <subtypes>
+    <stype>
+      <name>DATE</name>
+      <doc>A date</doc>
+    </stype>
+    <stype>
+      <name>TIME</name>
+      <doc>A time</doc>
+    </stype>
+  </subtypes>
+</type>
+
+<type>
+  <name>IDENTIFIER</name>
+  <doc>Electronic or other ephemeral identifier.</doc>
+  <subtypes>
+    <stype>
+      <name>EMAIL</name>
+      <doc>An E-mail address</doc>
+    </stype>
+    <stype>
+      <name>URL</name>
+      <doc>A URL</doc>
+    </stype>
+    <stype>
+      <name>DOMAIN_NAME</name>
+      <doc>An Internet domain name</doc>
+    </stype>
+    <stype>
+      <name>IP_ADDRESS</name>
+      <doc>An Internet IP address</doc>
+    </stype>
+    <stype>
+      <name>PHONE_NUMBER</name>
+      <doc>A telephone (landline, mobile) number</doc>
+    </stype>
+    <stype>
+      <name>FAX_NUMBER</name>
+      <doc>A fax number</doc>
+    </stype>
+    <stype>
+      <name>PERSONAL_ID_NUM</name>
+      <doc>Personal ID number, such as a US SSN.</doc>
+    </stype>
+    <stype>
+      <name>LATITUDE_LONGITUDE</name>
+      <doc>Latitude Longitude Coordinates</doc>
+    </stype>
+    <stype>
+      <name>CREDIT_CARD_NUM</name>
+      <doc>A credit card number</doc>
+    </stype>
+    <stype>
+      <name>MONEY</name>
+      <doc>Monetary amounts</doc>
+    </stype>
+    <stype>
+      <name>PERCENT</name>
+      <doc>Percentages</doc>
+    </stype>
+    <stype>
+      <name>UTM</name>
+	  <doc>Universal Transverse Mercator Coordinates</doc>
+    </stype>
+    <stype>
+      <name>DISTANCE</name>
+          <doc>Distance</doc>
+    </stype>
+    <stype>
+      <name>NUMBER</name>
+          <doc>Number</doc>
+    </stype>
+  </subtypes>
+</type>
+<type>
+  <name>RELIGION</name>
+  <doc>Religion types.</doc>
+</type>
+<type>
+  <name>NATIONALITY</name>
+  <doc>Nationality types.</doc>
+</type>
+<type>
+  <name>TITLE</name>
+  <doc>Title types.</doc>
+</type>
+</entity_types>
+
+<!--
+The new type/subtype scheme is incompatible with some of the old NE
+constants. To minimize the impact on new code the following data maps
+the old constant names to the new type/subtype pair. This allows the
+templates to include the old names for backwards compatibility, as
+long as they are deprecated appropriately.
+-->
+
+<deprecated>
+<type>
+  <old>ABS_DATE</old>
+  <doc>An absolute date</doc>
+  <name>TEMPORAL</name>
+  <subtype>DATE</subtype>
+</type>
+
+<type>
+  <old>REL_DATE</old>
+  <doc>A relative date</doc>
+  <name>TEMPORAL</name>
+  <subtype>DATE</subtype>
+</type>
+
+<type>
+  <old>ABS_TIME</old>
+  <doc>An absolute time</doc>
+  <name>TEMPORAL</name>
+  <subtype>TIME</subtype>
+</type>
+
+<type>
+  <old>REL_TIME</old>
+  <doc>A relative time</doc>
+  <name>TEMPORAL</name>
+  <subtype>TIME</subtype>
+</type>
+
+<type>
+  <old>TEL_NUMBER</old>
+  <doc>A telephone number</doc>
+  <name>IDENTIFIER</name>
+  <subtype>PHONE_NUMBER</subtype>
+</type>
+
+<type>
+  <old>EMAIL_ADDRESS</old>
+  <doc>An E-mail address</doc>
+  <name>IDENTIFIER</name>
+  <subtype>EMAIL</subtype>
+</type>
+
+<type>
+  <old>URL</old>
+  <doc>A URL</doc>
+  <name>IDENTIFIER</name>
+  <subtype>URL</subtype>
+</type>
+</deprecated>
+</ne_types>
