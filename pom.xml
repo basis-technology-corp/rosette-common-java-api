@@ -168,6 +168,9 @@
 	<resource>
 	  <directory>src/main/data</directory>
 	  <filtering>false</filtering>
+          <includes>
+            <include>**/*.xml</include>
+          </includes>
 	</resource>
       </resources>
       <pluginManagement>
