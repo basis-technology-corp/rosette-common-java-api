@@ -154,15 +154,22 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * {@inheritDoc}
      */
     public int compareTo(TextDomain o) {
-        int cv = theScript.code4().compareTo(o.getScript().code4());
-        if (cv != 0) {
-            return cv;
+        if (theScript.numeric() > o.getScript().numeric()) {
+            return 1;
+        } else if (theScript.numeric() < o.getScript().numeric()) {
+            return -1;
         }
-        cv = theLanguage.ISO639_1().compareTo(o.getLanguage().ISO639_1());
-        if (cv != 0) {
-            return cv;
+        if (theLanguage.languageID() > o.getLanguage().languageID()) {
+            return 1;
+        } else if (theLanguage.languageID() < o.getLanguage().languageID()) {
+            return -1;
         }
-
-        return theScheme.getName().compareTo(o.getTransliterationScheme().getName());
+        if (theScheme.getNativeCode() > o.getTransliterationScheme().getNativeCode()) {
+            return 1;
+        } else if (theScheme.getNativeCode() < o.getTransliterationScheme().getNativeCode()) {
+            return -1;
+        }
+ 
+        return 0;
     }
 }
