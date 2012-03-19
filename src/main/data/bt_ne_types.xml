@@ -142,6 +142,18 @@ WARNING:
   <doc>Title types.</doc>
 </type>
 </entity_types>
+<type>
+  <name>TWITTER_USERNAME</name>
+  <doc>Twitter username types.</doc>
+</type>
+</entity_types>
+<type>
+  <name>HASHTAG</name>
+  <doc>Hashtag types.</doc>
+</type>
+</entity_types>
+
+
 
 <!--
 The new type/subtype scheme is incompatible with some of the old NE
