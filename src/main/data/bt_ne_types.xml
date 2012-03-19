@@ -141,12 +141,10 @@ WARNING:
   <name>TITLE</name>
   <doc>Title types.</doc>
 </type>
-</entity_types>
 <type>
   <name>TWITTER_USERNAME</name>
   <doc>Twitter username types.</doc>
 </type>
-</entity_types>
 <type>
   <name>HASHTAG</name>
   <doc>Hashtag types.</doc>
