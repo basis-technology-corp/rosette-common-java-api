@@ -143,11 +143,17 @@ WARNING:
 </type>
 <type>
   <name>TWITTER_USERNAME</name>
-  <doc>Twitter username types.</doc>
+  <doc>Twitter username including the leading at-mark.</doc> 
+  <!-- Couldn't give an example like @john here because doxygen requires @ to be escaped as \@ but javadoc shows the backslash.
+       &x40 would work for javadoc but not for doxygen. -->
 </type>
 <type>
   <name>HASHTAG</name>
-  <doc>Hashtag types.</doc>
+  <doc>Hashtag (e.g. #quake)</doc>
+</type>
+<type>
+  <name>PRODUCT</name>
+  <doc>Something that you can buy, certain categories exluded.</doc>
 </type>
 </entity_types>
 
