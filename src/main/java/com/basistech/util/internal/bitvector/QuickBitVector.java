@@ -279,3 +279,4 @@ public class QuickBitVector {
     //equivalent to bitIndex/64
   }
 }
+//CHECKSTYLE:ON

@@ -870,3 +870,4 @@ public class BitVector {
     }
   }
 }
+//CHECKSTYLE:ON
