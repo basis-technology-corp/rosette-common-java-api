@@ -153,7 +153,7 @@ WARNING:
 </type>
 <type>
   <name>PRODUCT</name>
-  <doc>Something that you can buy, certain categories exluded.</doc>
+  <doc>Something that you can buy, certain categories excluded.</doc>
 </type>
 </entity_types>
 
