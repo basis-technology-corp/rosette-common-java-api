@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>basis-parent</artifactId>
-        <version>23</version>
+        <version>40</version>
     </parent>
     <prerequisites>
         <maven>2.2.0</maven>
@@ -30,22 +30,6 @@
         <system>jira</system>
         <url>http://jira.basistech.net/browse/COMN</url>
     </issueManagement>
-    <ciManagement>
-        <system>hudson</system>
-        <url>http://hudson.basistech.net:8280/hudson/job/common/</url>
-        <notifiers>
-            <notifier>
-                <type>mail</type>
-                <sendOnError>true</sendOnError>
-                <sendOnFailure>true</sendOnFailure>
-                <sendOnSuccess>true</sendOnSuccess>
-                <sendOnWarning>true</sendOnWarning>
-                <configuration>
-                    <address>bim2009@basistech.com</address>
-                </configuration>
-            </notifier>
-        </notifiers>
-    </ciManagement>
     <distributionManagement>
         <site>
             <id>common.website</id>
