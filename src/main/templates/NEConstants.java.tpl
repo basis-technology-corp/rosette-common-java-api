@@ -16,7 +16,8 @@
 */
 package com.basistech.util;
 
-import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -60,45 +61,39 @@ end-for >]
     /** Internal hash for mapping numeric value to string value */
     private static Map<Integer, String> neMap;
     
-    private NEConstants() {
-    }
-    
+    /** Map built-in type string to int value */
+    private static final Map<String, Integer> neTypeMap;
 
-/**
- * Takes a named entity type constant and returns the human-readable name.
- * @param v The named entity type.
- * @return Human-readable name.
- **/
+    private NEConstants() {
+    }    
+
+    /**
+     * Takes a named entity type constant and returns the human-readable name.
+     * @param v The named entity type.
+     * @return Human-readable name.
+     **/
     public static String toString(int v) {
         return neMap.get(new Integer(v));
     }
+
     /**
      * Takes a standard human-readable named entity type name
-     * and returns the integer constant.
+     * and returns the integer constant.  Note that only built-in types are
+     * supported.  For custom types, use RLPNENameMap.parse().
      * @param s Named entity type name.
      * @throws InvalidNamedEntityTypeNameException when an ID for the string can not be found.
      * @return  Integer constant for the given entity type.
      **/
     public static int parse(String s) throws InvalidNamedEntityTypeNameException {
-        /* There is a bit of name rewriting to do here.
-         * the fields don't have colons in their names, and we want, 
-         * effectively, a case-insensitive comparison.
-         */
-        String normalizedName = "NE_TYPE_" + s.replace(':', '_').toUpperCase();
-        Class<NEConstants> thisClass = NEConstants.class;
-        Field f = null;
-        try {
-            f = thisClass.getField(normalizedName);
-        } catch (NoSuchFieldException nsfe) {
-            throw new InvalidNamedEntityTypeNameException("No type. Named entity \"" 
-                                                         + s 
-                                                         + "\" is not supported.");
+        // COMN-27: Look for built-in types first to avoid the costly
+        // reflection below.
+        String key = s.toUpperCase(Locale.ENGLISH);
+        if (neTypeMap.containsKey(key)) {
+            return neTypeMap.get(key);
         }
-        try {
-            return f.getInt(null);
-        } catch (IllegalAccessException e1) {
-            throw new BasisInternalException("Can not retrieve type for named entity \"" + s + "\"");
-        }
+        throw new InvalidNamedEntityTypeNameException("No type. Named entity \""
+                                                      + key
+                                                      + "\" is not supported.");
     }
 
     /**
@@ -156,6 +151,17 @@ end-for >]
                   NEConstants.NAMED_ENTITY_[= type['name'] =]_OTHER);[<
 end-if >][<
 end-for >]
+
+        neTypeMap = new HashMap<String, Integer>();
+[< for ne_types['entity_types'] >]
+        neTypeMap.put(NAMED_ENTITY_[= type['name'] =], NE_TYPE_[= type['name'] =]);[<
+if 'subtypes' in type >][<
+for type['subtypes'] >]
+        neTypeMap.put(NAMED_ENTITY_[= type['name'] =]_[= stype['name'] =], NE_TYPE_[= type['name'] =]_[= stype['name'] =]);[<
+end-for >]
+        neTypeMap.put(NAMED_ENTITY_[= type['name'] =]_OTHER, NE_TYPE_[= type['name'] =]_OTHER);[<
+end-if >][<
+end-for >]
     }
 
     /**
@@ -166,6 +172,7 @@ end-for >]
     public static int extractType(int t) {
         return t & 0xffff0000;
     }
+
     /**
      * Returns the subtype of the Named Entity Type
      * @param t Named entity type ID
@@ -186,6 +193,7 @@ end-for >]
     public static int extractLP(int s) {
         return s & 0xff000000;
     }
+
     /**
      * Returns the subsource of the Named Entity Source.
      * If source is statistical or regex, return value is 0;
@@ -214,6 +222,7 @@ end-for >]
      */
     public static boolean is[= type['name'] =](int t) {
         return extractType(t) == NEConstants.NE_TYPE_[= type['name'].upper() =]; 
-    }[<
+    }
+[<
 end-for >]
 };
