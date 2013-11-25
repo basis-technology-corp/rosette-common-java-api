@@ -54,8 +54,13 @@ public class Take5Dictionary {
      */
     public static final int RT_MAX_VERSION = VERSION_5_5;
 
+    /* constant used to convert byte index to a char index */
+    public static final int BYTES_PER_CHAR = Character.SIZE/Byte.SIZE;
+
     ByteBuffer data; /* Binary dictionary data. */
+    char[] charData; /* Binary dictionary data in the heap.  */
     long dataSize; /* Size of dictionary data. */
+    int charDataSize;
     byte[] skipBits; /* Characters to skip. */
     boolean squeezeSpaces;      /* Should we squeeze spaces? */
 
@@ -130,6 +135,10 @@ public class Take5Dictionary {
         metadata = new HashMap<String, String>();
         readHeader();
         readEntryPoint(entryPoint);
+        charDataSize = (valueData <= 0 ? (int) dataSize : valueData);
+        charData = new char[(charDataSize+1)/BYTES_PER_CHAR];
+        data.rewind();
+        data.asCharBuffer().get(charData);
     }
 
     /**
@@ -755,63 +764,63 @@ public class Take5Dictionary {
             ptr += (1 << (type - SEARCH_TYPE_BINARY));
             switch (type) {
             case SEARCH_TYPE_BINARY + 16:
-                if (data.getChar(ptr + (1 << 15)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 15)) >> 1] != '\uFFFF') {
                     ptr += (1 << 15);
                 }
             case SEARCH_TYPE_BINARY + 15:
-                if (data.getChar(ptr + (1 << 14)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 14)) >> 1] != '\uFFFF') {
                     ptr += (1 << 14);
                 }
             case SEARCH_TYPE_BINARY + 14:
-                if (data.getChar(ptr + (1 << 13)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 13)) >> 1] != '\uFFFF') {
                     ptr += (1 << 13);
                 }
             case SEARCH_TYPE_BINARY + 13:
-                if (data.getChar(ptr + (1 << 12)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 12)) >> 1] != '\uFFFF') {
                     ptr += (1 << 12);
                 }
             case SEARCH_TYPE_BINARY + 12:
-                if (data.getChar(ptr + (1 << 11)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 11)) >> 1] != '\uFFFF') {
                     ptr += (1 << 11);
                 }
             case SEARCH_TYPE_BINARY + 11:
-                if (data.getChar(ptr + (1 << 10)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 10)) >> 1] != '\uFFFF') {
                     ptr += (1 << 10);
                 }
             case SEARCH_TYPE_BINARY + 10:
-                if (data.getChar(ptr + (1 << 9)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 9)) >> 1] != '\uFFFF') {
                     ptr += (1 << 9);
                 }
             case SEARCH_TYPE_BINARY + 9:
-                if (data.getChar(ptr + (1 << 8)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 8)) >> 1] != '\uFFFF') {
                     ptr += (1 << 8);
                 }
             case SEARCH_TYPE_BINARY + 8:
-                if (data.getChar(ptr + (1 << 7)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 7)) >> 1] != '\uFFFF') {
                     ptr += (1 << 7);
                 }
             case SEARCH_TYPE_BINARY + 7:
-                if (data.getChar(ptr + (1 << 6)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 6)) >> 1] != '\uFFFF') {
                     ptr += (1 << 6);
                 }
             case SEARCH_TYPE_BINARY + 6:
-                if (data.getChar(ptr + (1 << 5)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 5)) >> 1] != '\uFFFF') {
                     ptr += (1 << 5);
                 }
             case SEARCH_TYPE_BINARY + 5:
-                if (data.getChar(ptr + (1 << 4)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 4)) >> 1] != '\uFFFF') {
                     ptr += (1 << 4);
                 }
             case SEARCH_TYPE_BINARY + 4:
-                if (data.getChar(ptr + (1 << 3)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 3)) >> 1] != '\uFFFF') {
                     ptr += (1 << 3);
                 }
             case SEARCH_TYPE_BINARY + 3:
-                if (data.getChar(ptr + (1 << 2)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 2)) >> 1] != '\uFFFF') {
                     ptr += (1 << 2);
                 }
             case SEARCH_TYPE_BINARY + 2:
-                if (data.getChar(ptr + 2) == '\uFFFF') {
+                if (charData[(ptr + 2) >> 1] == '\uFFFF') {
                     ptr += 2;
                 } else {
                     ptr += 4;
@@ -825,7 +834,7 @@ public class Take5Dictionary {
             assert(SEARCH_TYPE_CHOICE == SEARCH_TYPE_LINEAR_END);
             return type - SEARCH_TYPE_CHOICE;
         } else if (type == SEARCH_TYPE_LINEAR_MANY) {
-            while (data.getChar(ptr += 2) != '\uFFFF') {
+            while (charData[(ptr += 2) >> 1] != '\uFFFF') {
                 ;
             }
         } else {
@@ -897,7 +906,7 @@ public class Take5Dictionary {
             match = new Take5Match(this, length,
                                    index + data.getInt(edge + 4),
                                    state + data.getInt(edge));
-            match.c = data.getChar(ptr);
+            match.c = charData[ptr >> 1];
             rv[i] = match;
         }
         return rv;
@@ -1083,76 +1092,76 @@ public class Take5Dictionary {
 
                 // Extended linear search:
             case SEARCH_TYPE_LINEAR_MANY:
-                while (c > data.getChar(ptr += 2)) {
+                while (c > charData[(ptr += 2) >> 1]) {
                     ;
                 }
                 break;
 
                 // Linear search:
             case SEARCH_TYPE_LINEAR + 16:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 15:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 14:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 13:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 12:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 11:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 10:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 9:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 8:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 7:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 6:
             case SEARCH_TYPE_CHOICE + 6:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 5:
             case SEARCH_TYPE_CHOICE + 5:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 4:
             case SEARCH_TYPE_CHOICE + 4:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 3:
             case SEARCH_TYPE_CHOICE + 3:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 2:
             case SEARCH_TYPE_CHOICE + 2:
             case SEARCH_TYPE_BINARY + 1:
-                if (c <= data.getChar(ptr += 2)) {
+                if (c <= charData[(ptr += 2) >> 1]) {
                     break;
                 }
             case SEARCH_TYPE_LINEAR + 1:
@@ -1163,51 +1172,51 @@ public class Take5Dictionary {
 
                 // Binary search:
             case SEARCH_TYPE_BINARY + 16:
-                if (c > data.getChar(ptr + (1 << 16))) {
+                if (c > charData[(ptr + (1 << 16)) >> 1]) {
                     ptr += 1 << 16;
                 }
             case SEARCH_TYPE_BINARY + 15:
-                if (c > data.getChar(ptr + (1 << 15))) {
+                if (c > charData[(ptr + (1 << 15)) >> 1]) {
                     ptr += 1 << 15;
                 }
             case SEARCH_TYPE_BINARY + 14:
-                if (c > data.getChar(ptr + (1 << 14))) {
+                if (c > charData[(ptr + (1 << 14)) >> 1]) {
                     ptr += 1 << 14;
                 }
             case SEARCH_TYPE_BINARY + 13:
-                if (c > data.getChar(ptr + (1 << 13))) {
+                if (c > charData[(ptr + (1 << 13)) >> 1]) {
                     ptr += 1 << 13;
                 }
             case SEARCH_TYPE_BINARY + 12:
-                if (c > data.getChar(ptr + (1 << 12))) {
+                if (c > charData[(ptr + (1 << 12)) >> 1]) {
                     ptr += 1 << 12;
                 }
             case SEARCH_TYPE_BINARY + 11:
-                if (c > data.getChar(ptr + (1 << 11))) {
+                if (c > charData[(ptr + (1 << 11)) >> 1]) {
                     ptr += 1 << 11;
                 }
             case SEARCH_TYPE_BINARY + 10:
-                if (c > data.getChar(ptr + (1 << 10))) {
+                if (c > charData[(ptr + (1 << 10)) >> 1]) {
                     ptr += 1 << 10;
                 }
             case SEARCH_TYPE_BINARY + 9:
-                if (c > data.getChar(ptr + (1 << 9))) {
+                if (c > charData[(ptr + (1 << 9)) >> 1]) {
                     ptr += 1 << 9;
                 }
             case SEARCH_TYPE_BINARY + 8:
-                if (c > data.getChar(ptr + (1 << 8))) {
+                if (c > charData[(ptr + (1 << 8)) >> 1]) {
                     ptr += 1 << 8;
                 }
             case SEARCH_TYPE_BINARY + 7:
-                if (c > data.getChar(ptr + (1 << 7))) {
+                if (c > charData[(ptr + (1 << 7)) >> 1]) {
                     ptr += 1 << 7;
                 }
             case SEARCH_TYPE_BINARY + 6:
-                if (c > data.getChar(ptr + (1 << 6))) {
+                if (c > charData[(ptr + (1 << 6)) >> 1]) {
                     ptr += 1 << 6;
                 }
             case SEARCH_TYPE_BINARY + 5:
-                if (c > data.getChar(ptr + (1 << 5))) {
+                if (c > charData[(ptr + (1 << 5)) >> 1]) {
                     ptr += 1 << 5;
                 }
             case SEARCH_TYPE_CHOICE + 9:
@@ -1219,26 +1228,26 @@ public class Take5Dictionary {
             case SEARCH_TYPE_CHOICE + 15:
             case SEARCH_TYPE_CHOICE + 16:
             case SEARCH_TYPE_BINARY + 4:
-                if (c > data.getChar(ptr + (1 << 4))) {
+                if (c > charData[(ptr + (1 << 4)) >> 1]) {
                     ptr += 1 << 4;
                 }
             case SEARCH_TYPE_CHOICE + 7:
             case SEARCH_TYPE_CHOICE + 8:
             case SEARCH_TYPE_BINARY + 3:
-                if (c > data.getChar(ptr + (1 << 3))) {
+                if (c > charData[(ptr + (1 << 3)) >> 1]) {
                     ptr += 1 << 3;
                 }
             case SEARCH_TYPE_BINARY + 2:
-                if (c > data.getChar(ptr + (1 << 2))) {
+                if (c > charData[(ptr + (1 << 2)) >> 1]) {
                     ptr += 1 << 2;
                 }
-                if (c > data.getChar(ptr += 2)) {
+                if (c > charData[(ptr += 2) >> 1]) {
                     ptr += 2;
                 }
                 break;
             }
 
-            if (c != data.getChar(ptr)) {
+            if (c != charData[ptr >> 1]) {
                 break loop;
             }
             int edge = state - 4 * (ptr - state);
@@ -1373,7 +1382,7 @@ public class Take5Dictionary {
                 break;
 
             case SEARCH_TYPE_BINARY + 16:
-                if (data.getChar(ptr + (1 << 16)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 16)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 16) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 16);
@@ -1381,7 +1390,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 15:
-                if (data.getChar(ptr + (1 << 15)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 15)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 15) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 15);
@@ -1389,7 +1398,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 14:
-                if (data.getChar(ptr + (1 << 14)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 14)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 14) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 14);
@@ -1397,7 +1406,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 13:
-                if (data.getChar(ptr + (1 << 13)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 13)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 13) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 13);
@@ -1405,7 +1414,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 12:
-                if (data.getChar(ptr + (1 << 12)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 12)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 12) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 12);
@@ -1413,7 +1422,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 11:
-                if (data.getChar(ptr + (1 << 11)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 11)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 11) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 11);
@@ -1421,7 +1430,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 10:
-                if (data.getChar(ptr + (1 << 10)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 10)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 10) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 10);
@@ -1429,7 +1438,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 9:
-                if (data.getChar(ptr + (1 << 9)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 9)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 9) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 9);
@@ -1437,7 +1446,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 8:
-                if (data.getChar(ptr + (1 << 8)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 8)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 8) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 8);
@@ -1445,7 +1454,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 7:
-                if (data.getChar(ptr + (1 << 7)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 7)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 7) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 7);
@@ -1453,7 +1462,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 6:
-                if (data.getChar(ptr + (1 << 6)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 6)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 6) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 6);
@@ -1461,7 +1470,7 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 5:
-                if (data.getChar(ptr + (1 << 5)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 5)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 5) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 5);
@@ -1477,7 +1486,7 @@ public class Take5Dictionary {
             case SEARCH_TYPE_CHOICE + 15:
             case SEARCH_TYPE_CHOICE + 16:
             case SEARCH_TYPE_BINARY + 4:
-                if (data.getChar(ptr + (1 << 4)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 4)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 4) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 4);
@@ -1487,7 +1496,7 @@ public class Take5Dictionary {
             case SEARCH_TYPE_CHOICE + 7:
             case SEARCH_TYPE_CHOICE + 8:
             case SEARCH_TYPE_BINARY + 3:
-                if (data.getChar(ptr + (1 << 3)) != '\uFFFF') {
+                if  (charData[(ptr + (1 << 3)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 3) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 3);
@@ -1495,14 +1504,14 @@ public class Take5Dictionary {
                     }
                 }
             case SEARCH_TYPE_BINARY + 2:
-                if (data.getChar(ptr + (1 << 2)) != '\uFFFF') {
+                if (charData[(ptr + (1 << 2)) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - (4 << 2) + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         ptr += (1 << 2);
                         edge -= (4 << 2);
                     }
                 }
-                if (data.getChar(ptr + 2) != '\uFFFF') {
+                if (charData[(ptr + 2) >> 1] != '\uFFFF') {
                     xdelta = data.getInt(edge - 8 + 4);
                     if (!unsignedLess(delta, xdelta) && xdelta != 0) {
                         edge -= 8;
@@ -1523,7 +1532,7 @@ public class Take5Dictionary {
                 indexDelta = data.getInt(edge + 4);
             }
             assert(edge < state);
-            buffer[i++] = data.getChar(state + (state - edge) / 4);
+            buffer[i++] = charData[(state + (state - edge) / 4) >> 1];
             state += stateDelta;
             delta -= indexDelta;
         }
@@ -1585,7 +1594,7 @@ public class Take5Dictionary {
             int nedges = edgeCount(state);
             for (int idx = 1; idx <= nedges; ++idx) {
                 int edge = state - 8 * idx;
-                buffer[i] = data.getChar(state + 2 * idx);
+                buffer[i] = charData[(state + 2 * idx) >> 1];
                 walkInternal(w, m, buffer, buflen,
                              state + data.getInt(edge),
                              index + data.getInt(edge + 4),
