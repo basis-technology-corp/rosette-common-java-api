@@ -23,8 +23,8 @@
         <spring.version>2.5.4</spring.version>
     </properties>
     <scm>
-        <connection>scm:svn:http://svn.basistech.net/engineering/common/trunk</connection>
-        <developerConnection>scm:svn:http://svn.basistech.net/engineering/common/trunk</developerConnection>
+        <connection>scm:git:http://git.basistech.net/textanalytics/rosette-common-java.git</connection>
+        <developerConnection>scm:git:http://git.basistech.net/textanalytics/rosette-common-java.git</developerConnection>
     </scm>
     <issueManagement>
         <system>jira</system>
@@ -159,6 +159,15 @@
       </resources>
       <pluginManagement>
         <plugins>
+           <plugin>
+               <groupId>com.atlassian.maven.plugins</groupId>
+               <artifactId>maven-jgitflow-plugin</artifactId>
+               <version>1.0-alpha21.1</version>
+               <configuration>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                    <pushReleases>true</pushReleases>
+               </configuration>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-pmd-plugin</artifactId>
