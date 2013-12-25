@@ -141,4 +141,27 @@ public class Take5Pair {
         }
     }
 
+    public char[] getKey() {
+        return key;
+    }
+
+    public int getKeyLength() {
+        return keyLength;
+    }
+
+    public byte[] getValue() {
+        return value;
+    }
+
+    public int getAlignment() {
+        return alignment;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public int getLength() {
+        return length;
+    }
 }

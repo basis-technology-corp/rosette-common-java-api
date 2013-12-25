@@ -302,7 +302,7 @@ public class Take5Builder {
     }
 
     void loadContent(Take5EntryPoint ep,
-                     Iterator<Take5Pair> pairs) {
+                     Iterator<? extends Take5Pair> pairs) {
         Take5Pair pair;
         beginKeys(ep);
         if (storeValues) {

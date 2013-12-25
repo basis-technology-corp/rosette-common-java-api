@@ -91,7 +91,7 @@ public class Take5EntryPoint {
      * @param pairs an iterator that generates Take5Pairs.
      * @throws Take5ParseError
      */
-    public void loadContent(Iterator<Take5Pair> pairs) {
+    public void loadContent(Iterator<? extends Take5Pair> pairs) {
         if (loaded) {
             throw new Take5BuilderException("Entry point already loaded");
         }
