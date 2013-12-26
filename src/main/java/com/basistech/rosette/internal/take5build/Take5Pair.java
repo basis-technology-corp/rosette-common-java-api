@@ -66,14 +66,14 @@ public interface Take5Pair {
     int getAlignment();
 
     /**
-     * Return the length of the value for this pair within the array returned by {@link #getValue}.
+     * Return the offset of the value for this pair within the array returned by {@link #getValue}.
      * <P>
      * Not called if the value is {@code null}.
      */
     int getOffset();
 
     /**
-     * Return the offset of the value for this pair within the array returned by {@link #getValue}.
+     * Return the length of the value for this pair within the array returned by {@link #getValue}.
      * <P>
      * Not called if the value is {@code null}.
      */
