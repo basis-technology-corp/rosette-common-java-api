@@ -302,19 +302,19 @@ public class Take5Builder {
     }
 
     void loadContent(Take5EntryPoint ep,
-                     Iterator<? extends Take5Pair> pairs) {
+                     Iterator<Take5Pair> pairs) {
         Take5Pair pair;
         beginKeys(ep);
         if (storeValues) {
             while (pairs.hasNext()) {
                 pair = pairs.next();
-                addKey(pair.key, pair.keyLength);
+                addKey(pair.getKey(), pair.getKeyLength());
                 valueTable.add(findValue(pair));
             }
         } else {
             while (pairs.hasNext()) {
                 pair = pairs.next();
-                addKey(pair.key, pair.keyLength);
+                addKey(pair.getKey(), pair.getKeyLength());
             }
         }
         endKeys(ep);
@@ -533,13 +533,13 @@ public class Take5Builder {
     }
 
     private Value findValue(Take5Pair pair) {
-        byte[] data = pair.value;
+        byte[] data = pair.getValue();
         if (data == null) {
             return null;
         }
-        int alignment = pair.alignment;
-        int offset = pair.offset;
-        int length = pair.length;
+        int alignment = pair.getAlignment();
+        int offset = pair.getOffset();
+        int length = pair.getLength();
         if (length > maxValueSize) { maxValueSize = length; }
         int hash = Utils.hashBytes(data, offset, length);
         int index = (hash & 0x7FFFFFFF) % valueRegistryLength;

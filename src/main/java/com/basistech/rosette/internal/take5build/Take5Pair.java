@@ -17,151 +17,65 @@ package com.basistech.rosette.internal.take5build;
 /**
  * A key-value pair for insertion into a {@link Take5EntryPoint}.
  * <P>
- * The key in a Take5Pair is an arrays of chars.  For convenience, there
- * are constructors that accept strings and convert them to arrays of
- * chars.
+ * The key in a Take5Pair is an arrays of chars.
  * <P>
- * The value in a Take5Pair is an array of bytes plus a required alignment
- * for those bytes in memory.  (The Java runtime doesn't care about
- * alignment issues, but the C runtime definitely does!)
+ * The value in a Take5Pair is an array of bytes plus a required alignment for those bytes in
+ * memory.  (The Java runtime doesn't care about alignment issues, but the C runtime definitely
+ * does!)
  * <P>
- * The value in a Take5Pair can be null.  For convenience, there are
- * constructors that build Take5Pairs with a null value.
+ * The value in a Take5Pair can also be null.
  * <P>
- * Because it is safe to re-use the same Take5Pair (and even the key)
- * repeatedly, we also provide methods to set the key and value.
+ * Note that {@link Take5EntryPoint#loadContent} does not save Take5Pairs between iterations.
+ * Instead it immediately calls the accessors defined by this interface, saves the returned values, and
+ * discards the Take5Pair.  Thus it is guaranteed to be safe to return the same
+ * Take5Pair every time -- see {@link ReusableTake5Pair}.
  */
-public class Take5Pair {
-    char[] key;
-    int keyLength;
-    byte[] value;
-    int alignment;
-    int offset;
-    int length;
+public interface Take5Pair {
 
     /**
-     * Create a Take5Pair with the given key and the null value.
+     * Return the key for this pair.  Note that the length of the key is determined by calling
+     * {@link #getKeyLength}, not by consulting the length of this array, so the actual key is
+     * a prefix of this array.
+     * <P>
+     * Unlike the value, the returned array of bytes will be immediately read and discarded.
+     * Thus it is guaranteed to be safe to return the same array every time.
      */
-    public Take5Pair(char[] key) {
-        this.key = key;
-        this.keyLength = key.length;
-        this.value = null;
-    }
+    char[] getKey();
 
     /**
-     * Create a Take5Pair with the given key and the given value.  The
-     * given array of bytes may not be modified after being passed to this
-     * constructor, as the contents of the value will not be read until the
-     * output is actually built!
+     * Return the length of the key for this pair.
      */
-    public Take5Pair(char[] key, byte[] value, int alignment) {
-        this.key = key;
-        this.keyLength = key.length;
-        setValue(value, alignment);
-    }
+    int getKeyLength();
 
     /**
-     * Create a Take5Pair with the given key and the null value.
+     * Return the value for this pair.  Note that the actual value is a subsequence of this
+     * array determined by calling {@link #getOffset} and {@link #getLength}.
+     * <P>
+     * The value can also be {@code null}.  
+     * <P>
+     * Unlike the key, the returned array of bytes must not be modified after being returned by
+     * this accessor, as it will not be read until the output is actually built!
      */
-    public Take5Pair(String key) {
-        this(key.toCharArray());
-    }
+    byte[] getValue();
 
     /**
-     * Create a Take5Pair with the given key and the given value.  The
-     * given array of bytes may not be modified after being passed to this
-     * constructor, as the contents of the value will not be read until the
-     * output is actually built!
+     * Return the alignment of the value for this pair.  Probably a small power of 2...
+     * <P>
+     * Not called if the value is {@code null}.
      */
-    public Take5Pair(String key, byte[] value, int alignment) {
-        this(key.toCharArray(), value, alignment);
-    }
+    int getAlignment();
 
     /**
-     * Set the key in a Take5Pair.
+     * Return the length of the value for this pair within the array returned by {@link #getValue}.
+     * <P>
+     * Not called if the value is {@code null}.
      */
-    public final void setKey(char[] newKey) {
-        key = newKey;
-        keyLength = key.length;
-    }
+    int getOffset();
 
     /**
-     * Set the key in a Take5Pair.
+     * Return the offset of the value for this pair within the array returned by {@link #getValue}.
+     * <P>
+     * Not called if the value is {@code null}.
      */
-    public final void setKey(String newKey) {
-        key = newKey.toCharArray();
-        keyLength = key.length;
-    }
-
-    /**
-     * Set the length of the key in a Take5Pair.
-     */
-    public final void setKeyLength(int newKeyLength) {
-        if (newKeyLength >= key.length) {
-            throw new Take5BuilderException("Bad key length");
-        }
-        keyLength = newKeyLength;
-    }
-
-    /**
-     * Set the value in a Take5Pair.  The given array of bytes may not be
-     * modified after being passed to this method, as the contents of the
-     * value will not be read until the output is actually built!
-     */
-    public final void setValue(byte[] newValue, int newAlignment) {
-        value = newValue;
-        if (newValue != null) {
-            if (newAlignment <= 0) {
-                throw new Take5BuilderException("Bad alignment");
-            }
-            alignment = newAlignment;
-            offset = 0;
-            length = newValue.length;
-        }
-    }
-
-    /**
-     * Set the value in a Take5Pair to the given subsequence.  The given
-     * array of bytes may not be modified after being passed to this
-     * method, as the contents of the value will not be read until the
-     * output is actually built!
-     */
-    public final void setValue(byte[] newValue, int newAlignment, int newOffset, int newLength) {
-        value = newValue;
-        if (newValue != null) {
-            if (newAlignment <= 0) {
-                throw new Take5BuilderException("Bad alignment");
-            }
-            if (!(0 <= newOffset && 0 <= newLength && newOffset + newLength <= newValue.length)) {
-                throw new Take5BuilderException("Bad offset or length");
-            }
-            alignment = newAlignment;
-            offset = newOffset;
-            length = newLength;
-        }
-    }
-
-    public char[] getKey() {
-        return key;
-    }
-
-    public int getKeyLength() {
-        return keyLength;
-    }
-
-    public byte[] getValue() {
-        return value;
-    }
-
-    public int getAlignment() {
-        return alignment;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public int getLength() {
-        return length;
-    }
+    int getLength();
 }
