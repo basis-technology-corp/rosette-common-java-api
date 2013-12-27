@@ -117,6 +117,51 @@ public class Take5BuilderTest {
         1, 2, 2, 4, 8, 16
     };
 
+    static class LocalPair extends ReusableTake5Pair {
+        LocalPair(String key) {
+            super(key);
+        }
+    }
+
+    @Test
+    public void testSubclassedPair() throws Exception {
+        Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
+        Take5EntryPoint ep = builder.newEntryPoint("main");
+        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        for (String s : dmwwExample) {
+            keys.add(new LocalPair(s));
+        }
+        ep.loadContent(keys.iterator());
+        assertEquals(39, builder.totalKeyCount);
+        assertEquals(23, builder.stateCount);
+        assertEquals(45, builder.edgeCount);
+        assertEquals(23, builder.acceptEdgeCount);
+        assertEquals(0, ep.indexOffset);
+        assertEquals(39, ep.keyCount);
+        assertEquals(23, ep.stateCount);
+        assertEquals(45, ep.edgeCount);
+        assertEquals(23, ep.acceptEdgeCount);
+        assertEquals(5, ep.maxMatches);
+        assertEquals(7, ep.maxKeyLength);
+        assertEquals('a', ep.minCharacter);
+        assertEquals(0xE9, ep.maxCharacter);
+        assertFalse(ep.acceptEmpty);
+        ByteBuffer t5 = builder.buildBuffer();
+        Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
+        assertEquals(7, dict.maximumWordLength());
+        int i = 0;
+        char[] sbuf = new char[dict.maximumWordLength()];
+        for (String s : dmwwExample) {
+            Take5Match m = dict.matchExact(s);
+            assertNotNull(m);
+            assertEquals(i, m.getIndex());
+            int len = dict.reverseLookup(i, sbuf);
+            assertEquals(s.length(), len);
+            assertEquals(s, new String(sbuf, 0, len));
+            i++;
+        }
+    }
+
     /**
      * Run the canonical example.
      */
@@ -126,7 +171,7 @@ public class Take5BuilderTest {
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
-            keys.add(new Take5Pair(s));
+            keys.add(new ReusableTake5Pair(s));
         }
         ep.loadContent(keys.iterator());
         assertEquals(39, builder.totalKeyCount);
@@ -171,9 +216,9 @@ public class Take5BuilderTest {
         Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
-        keys.add(new Take5Pair(""));
+        keys.add(new ReusableTake5Pair(""));
         for (String s : hexWords) {
-            keys.add(new Take5Pair(s));
+            keys.add(new ReusableTake5Pair(s));
         }
         ep.loadContent(keys.iterator());
         assertEquals(34, builder.stateCount);
@@ -189,10 +234,10 @@ public class Take5BuilderTest {
         Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
-        keys.add(new Take5Pair("abc"));
-        keys.add(new Take5Pair("abd"));
-        keys.add(new Take5Pair("abd"));
-        keys.add(new Take5Pair("abe"));
+        keys.add(new ReusableTake5Pair("abc"));
+        keys.add(new ReusableTake5Pair("abd"));
+        keys.add(new ReusableTake5Pair("abd"));
+        keys.add(new ReusableTake5Pair("abe"));
         try {
             ep.loadContent(keys.iterator());
         } catch (Take5ParseError e) {
@@ -211,10 +256,10 @@ public class Take5BuilderTest {
         Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
-        keys.add(new Take5Pair("abc"));
-        keys.add(new Take5Pair("abe"));
-        keys.add(new Take5Pair("abd"));
-        keys.add(new Take5Pair("abf"));
+        keys.add(new ReusableTake5Pair("abc"));
+        keys.add(new ReusableTake5Pair("abe"));
+        keys.add(new ReusableTake5Pair("abd"));
+        keys.add(new ReusableTake5Pair("abf"));
         try {
             ep.loadContent(keys.iterator());
         } catch (Take5ParseError e) {
@@ -262,7 +307,7 @@ public class Take5BuilderTest {
         int offset = offsets[i % offsets.length];
         int length = lengths[i % lengths.length];
         int alignment = alignments[i % alignments.length];
-        Take5Pair p = new Take5Pair(key);
+        ReusableTake5Pair p = new ReusableTake5Pair(key);
         if (length >= 0) {
             p.setValue(data, alignment, offset, length);
         }

@@ -27,7 +27,7 @@ public class Scanner implements Iterator<Take5Pair> {
     int keyNumber;
     BufferedReader in;
     char[] next;
-    Take5Pair pair;
+    ReusableTake5Pair pair;
     char[] keybuf;
     byte[] valbuf;
     int valposition;
@@ -47,7 +47,7 @@ public class Scanner implements Iterator<Take5Pair> {
         bytebuf = ByteBuffer.wrap(valbuf);
         bytebuf.order(ByteOrder.nativeOrder()); // XXX caller should control
         charbuf = bytebuf.asCharBuffer();
-        pair = new Take5Pair(keybuf);
+        pair = new ReusableTake5Pair(keybuf);
     }
 
     private void advance() {
@@ -81,7 +81,7 @@ public class Scanner implements Iterator<Take5Pair> {
         // payload parsing, we would be better off just parsing our own
         // lines out of a char[] buffer.  We'll make that change soon.
 
-        // XXX Note that the key in a Take5Pair can be reused as well as
+        // XXX Note that the key in a ReusableTake5Pair can be reused as well as
         // the pair itself!
         int len = next.length;
         pair.key = next;
