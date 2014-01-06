@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans>
+
+	<bean id="test-util-enum" class="com.basistech.util.UtilEnumPropertiesBean" >
+	  <property name="language" value="ar"/>
+	  <property name="script" value="Arab"/>
+	  <property name="scheme" value="IC"/>
+	</bean>
+
+</beans>

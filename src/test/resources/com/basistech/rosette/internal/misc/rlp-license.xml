@@ -1,0 +1,29 @@
+<?xml version='1.0' ?>
+<!-- Basis Technology License -->
+<BTLicense>
+  <generator>ken</generator>
+  <customer>Basis Internal Development</customer>
+  <expiration>Perpetual</expiration>
+  <license>
+    <product>RLP</product> 
+    <feature>RLI</feature> 
+    <license_key>56AD6A856A4FA972509FD34AD3AB53F18297266B8B248CEB046FC5021E0A624E4BAC7BB37B76F95BDA74F1A62B43742F2BD308EE7DE5A40AFFCA02D550CC2645BA69AFF9E667E92E</license_key> 
+  </license>
+  <license>
+    <product>RLP</product> 
+    <feature>RCLU</feature> 
+    <license_key>97E83834BCE9036E538EB289779C781C8297266B8B248CEB68859C857AE0D8807F5308686946959E984F3BE740CF9F1AD4E8BAE5FD0D6C39B121AE23E2F3FC636EAA343AE309D67DA46ACAD596618C1C</license_key> 
+  </license>
+  <license>
+    <product>PLR</product>
+    <language>Arabic</language>
+    <function>Normalization, Name Vocalizer, Variant Generator, Transliteration, Named Entity Extractor, Morphological Analyzer, Sentence Boundary Detection, Part of Speech, Base Noun Phrase Detector, Tokenizer</function>
+    <license_key>66F559FDCB106443E79B8B498728D2E463C1C1F7870BBFD6E08CCCA9F7C019F096326DA0E48096B84BAC7BB37B76F95BDA74F1A62B43742F2BD308EE7DE5A40AFFCA02D550CC2645FC8D6BE8A1B30438</license_key>
+  </license>
+    <license>
+    <product>RLP</product>
+    <language>English</language>
+    <function>Tokenizer, Base Noun Phrase Detector, Part of Speech, Sentence Boundary Detection, Morphological Analyzer, Named Entity Extractor, Normalization</function>
+    <license_key>258EBB120211EF41A4AA8A6E32A1FBC7D73D0BF7DAB5CD78037B8A9EEE095FFE5879FC7477A72E02E385C9F4EF616EFF31DEE438D7BE64206D388E6BF21813B9AAB8C897D8D47FA132E6A527F5005289</license_key>
+  </license>
+</BTLicense>

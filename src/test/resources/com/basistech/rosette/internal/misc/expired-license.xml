@@ -1,0 +1,14 @@
+<?xml version='1.0' ?>
+<!-- Basis Technology License -->
+<BTLicense>
+  <generator>ken</generator>
+  <customer>Basis Internal Development</customer>
+  <expiration>past</expiration>
+
+  <license>
+    <product>RLP</product>
+    <language>Arabic</language>
+    <function>Normalization, Name Vocalizer, Variant Generator, Transliteration, Named Entity Extractor, Morphological Analyzer, Sentence Boundary Detection, Part of Speech, Base Noun Phrase Detector, Tokenizer</function>
+    <license_key>2AEC76155BA9B3C47DD0B40BD9F75A476A2AD31D40DBBAC5A0B6F5087478D194E08CCCA9F7C019F0F10E964FE0ECB157E318CF51AD9CB5D5CC1E04A1779AC2ADCB15EA1E8EA1D8E811F3B455E1583D28</license_key>
+  </license>
+</BTLicense>
