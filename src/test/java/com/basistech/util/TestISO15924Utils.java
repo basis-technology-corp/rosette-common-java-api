@@ -29,4 +29,15 @@ public class TestISO15924Utils extends TestCase {
         assertEquals(ISO15924.Hani, ISO15924Utils.scriptForString(barackObamaInChinese));
     }
 
+    public void testJpananeseScripts() {
+        String mixedHaniAndHira = "\u4e09\u6761\u306e\u65b9"; //3 hani characters 1 hira
+        assertEquals(ISO15924.Hrkt, ISO15924Utils.scriptForString(mixedHaniAndHira));
+
+        String mixedHaniAndKana = "\u5442\u6bd4\u9808\u30ef"; //3 hani characters 1 kana
+        assertEquals(ISO15924.Hrkt, ISO15924Utils.scriptForString(mixedHaniAndKana));
+
+        String mixedHaniAndHiraAndKana = "\u5442\u6bd4\u9808\u30ef \u306e"; //3 hani characters 1 kana 1 hira
+        assertEquals(ISO15924.Jpan, ISO15924Utils.scriptForString(mixedHaniAndHiraAndKana));
+    }
+
 }

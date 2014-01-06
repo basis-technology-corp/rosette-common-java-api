@@ -170,6 +170,15 @@ public class ISO15924Utils {
         }
 
         if (bestNonLatinCount > 0) {
+            if (bestNonLatinCode == ISO15924.Hani) {
+                int hiraCount = histogram[ISO15924.Hira.numeric()];
+                int kanaCount = histogram[ISO15924.Kana.numeric()];
+                if (hiraCount > 0 && kanaCount > 0) {
+                    return ISO15924.Jpan;
+                } else if (hiraCount > 0 || kanaCount > 0) {
+                    return ISO15924.Hrkt;
+                }
+            }
             return bestNonLatinCode;
         } else if (latinCount > 0) {
             return ISO15924.Latn;
