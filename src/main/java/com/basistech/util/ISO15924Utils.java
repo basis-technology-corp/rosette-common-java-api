@@ -148,9 +148,12 @@ public class ISO15924Utils {
 
     private static ISO15924 extractFromStringInternal(String input, int[] histogram) {
         for (int x = 0; x < input.length(); x++) {
-            Character.UnicodeBlock block = Character.UnicodeBlock.of(input.charAt(x));
+            char c = input.charAt(x);
+            Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
             ISO15924 scr = blockToScript.get(block);
-            if (null != scr) {
+            if (c == '\u30fb' || c == '\u30a0') {
+                continue;
+            } else if (null != scr) {
                 histogram[scr.numeric()]++;
             }
         }
@@ -170,16 +173,15 @@ public class ISO15924Utils {
         }
 
         if (bestNonLatinCount > 0) {
-            if (bestNonLatinCode == ISO15924.Hani) {
-                int hiraCount = histogram[ISO15924.Hira.numeric()];
-                int kanaCount = histogram[ISO15924.Kana.numeric()];
-                if (hiraCount > 0 && kanaCount > 0) {
-                    return ISO15924.Jpan;
-                } else if (hiraCount > 0 || kanaCount > 0) {
-                    return ISO15924.Hrkt;
-                }
+            int hiraCount = histogram[ISO15924.Hira.numeric()];
+            int kanaCount = histogram[ISO15924.Kana.numeric()];
+            if ((hiraCount > 0 || kanaCount > 0) && bestNonLatinCode == ISO15924.Hani) {
+                return ISO15924.Jpan;
+            } else if (hiraCount > 0 && kanaCount > 0) {
+                return ISO15924.Hrkt;
+            } else {
+                return bestNonLatinCode;
             }
-            return bestNonLatinCode;
         } else if (latinCount > 0) {
             return ISO15924.Latn;
         } else {
