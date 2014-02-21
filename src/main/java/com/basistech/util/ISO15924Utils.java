@@ -15,6 +15,7 @@ package com.basistech.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Useful functions related to ISO15924 script codes.
@@ -22,6 +23,7 @@ import java.util.Map;
 public class ISO15924Utils {
 
     static Map<Character.UnicodeBlock, ISO15924> blockToScript;
+    static Map<Character.UnicodeBlock, Integer> blockToScriptNumeric;
     private int histogram[];
 
     static {
@@ -90,6 +92,13 @@ public class ISO15924Utils {
         blockToScript.put(Character.UnicodeBlock.UNIFIED_CANADIAN_ABORIGINAL_SYLLABICS, ISO15924.Cans);
         blockToScript.put(Character.UnicodeBlock.YI_RADICALS, ISO15924.Yiii);
         blockToScript.put(Character.UnicodeBlock.YI_SYLLABLES, ISO15924.Yiii);
+        
+        //Customer complained that an inordinate amount of time is spent calling numeric() in scriptForString
+        //This helps scriptForString run about twice as fast
+        blockToScriptNumeric = new HashMap<Character.UnicodeBlock, Integer>();
+        for (Entry<Character.UnicodeBlock, ISO15924> entry : blockToScript.entrySet()) {
+            blockToScriptNumeric.put(entry.getKey(), entry.getValue().numeric());
+        }
     }
 
     /**
@@ -149,38 +158,40 @@ public class ISO15924Utils {
     private static ISO15924 extractFromStringInternal(String input, int[] histogram) {
         for (int x = 0; x < input.length(); x++) {
             char c = input.charAt(x);
-            Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
-            ISO15924 scr = blockToScript.get(block);
             if (c == '\u30fb' || c == '\u30a0') {
                 continue;
-            } else if (null != scr) {
-                histogram[scr.numeric()]++;
+            }
+            Character.UnicodeBlock block = Character.UnicodeBlock.of(c);
+            Integer scr = blockToScriptNumeric.get(block);
+            if (null != scr) {
+                histogram[scr]++;
             }
         }
         // OK, what's the plan? Look for the biggest number and return based on that?
         // and what's the convention? One AR in 20 Latn? I think that Latn likes to lose,
         // and otherwise majority wins.
         int bestNonLatinCount = 0;
-        ISO15924 bestNonLatinCode = ISO15924.Zzzz;
+        int bestNonLatinCode = 998; //Zyyy
         int latinCount = 0;
         for (int x = 0; x < histogram.length; x++) {
             if (x == ISO15924.Latn.numeric()) {
                 latinCount = histogram[x];
             } else if (histogram[x] > bestNonLatinCount) {
                 bestNonLatinCount = histogram[x];
-                bestNonLatinCode = ISO15924.lookupByNumeric(x);
+                bestNonLatinCode = x;
             }
         }
 
         if (bestNonLatinCount > 0) {
+            ISO15924 bestScript = ISO15924.lookupByNumeric(bestNonLatinCode);
             int hiraCount = histogram[ISO15924.Hira.numeric()];
             int kanaCount = histogram[ISO15924.Kana.numeric()];
-            if ((hiraCount > 0 || kanaCount > 0) && bestNonLatinCode == ISO15924.Hani) {
+            if ((hiraCount > 0 || kanaCount > 0) && bestScript == ISO15924.Hani) {
                 return ISO15924.Jpan;
             } else if (hiraCount > 0 && kanaCount > 0) {
                 return ISO15924.Hrkt;
             } else {
-                return bestNonLatinCode;
+                return bestScript;
             }
         } else if (latinCount > 0) {
             return ISO15924.Latn;
