@@ -13,6 +13,9 @@
  ******************************************************************************/
 package com.basistech.rosette;
 
+/**
+ * Indicates that a license is corrupt, e.g. invalid xml or corrupt keys.
+ */
 public class RosetteCorruptLicenseException extends RosetteRuntimeException {
 
     private static final long serialVersionUID = 1L;
