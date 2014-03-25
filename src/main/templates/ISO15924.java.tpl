@@ -11,13 +11,16 @@
  ** with `restricted rights' as those terms are defined in DAR and ASPR
  ** 7-104.9(a).
  ******************************************************************************/
- //CHECKSTYLE:OFF
- package com.basistech.util;
+
+//CHECKSTYLE:OFF
+/*
+[= dne(" * ") =]
+ */
+package com.basistech.util;
 
 /**
  * Java enumeration for the ISO15924 system of script codes. There is one enumerated item for each defined code,
  * named after its CODE4 value. Accessors deliver the numeric and English-name properties of each script.
-[= dne(" * ") =]
  */
 public enum ISO15924 {      
 [% id = iter(xrange(len(iso15924definitions))) %][< for (iso15924definitions, ',') >]
