@@ -47,6 +47,7 @@ public class Take5ExceptionTest extends Assert {
         messages.add("Entry point not found.");
         messages.add("Impossible hash.");
         messages.add("Buffer too small.");
+        messages.add("Unsupported key check format.");
         messages.add("Unknown error type.");
 
         // create a Take5Exception of every flavor
@@ -65,21 +66,21 @@ public class Take5ExceptionTest extends Assert {
         exceptions.add(new Take5Exception(Take5Exception.ENTRY_POINT_NOT_FOUND));
         exceptions.add(new Take5Exception(Take5Exception.IMPOSSIBLE_HASH));
         exceptions.add(new Take5Exception(Take5Exception.BUFFER_TOO_SMALL));
-        exceptions.add(new Take5Exception(15));
-
+        exceptions.add(new Take5Exception(Take5Exception.UNSUPPORTED_KEYCHECK_FORMAT));
+        exceptions.add(new Take5Exception(259));
 
         // assert that the returned messages are correct
-        for (int i = 1; i < 16; i++) {
+        for (int i = 1; i < 17; i++) {
             Assert.assertEquals(messages.get(i - 1), exceptions.get(i - 1).getMessage());
         }
 
         // assert that the type returned by getType() is correct
-        for (int i = 1; i < 15; i++) {
+        for (int i = 1; i < 16; i++) {
             Assert.assertEquals(i, exceptions.get(i - 1).getType());
         }
 
-        // the getType for the last exception should be 15 (from above)
-        Assert.assertEquals(15, exceptions.get(14).getType()); 
+        // the getType for the last exception should be 259 (from above)
+        Assert.assertEquals(259, exceptions.get(15).getType()); 
     }
 
 }
