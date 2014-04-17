@@ -536,12 +536,8 @@ public class Take5Dictionary {
     private static final int ENGINE_PERFHASH = 0x00000003;
 
     private static final int KEYCHECK_FORMAT_NONE = 0x00000000;
-    @SuppressWarnings("unused")                       // X!X!X
     private static final int KEYCHECK_FORMAT_HASH32 = 0x00000001;
-    @SuppressWarnings("unused")                       // X!X!X
-    private static final int KEYCHECK_FORMAT_NULL_TERMINATED = 0x00000002;
-    @SuppressWarnings("unused")                       // X!X!X
-    private static final int KEYCHECK_FORMAT_BLOOM = 0x00000003;
+    private static final int KEYCHECK_FORMAT_STR = 0x00000002;
 
     static final int VALUE_FORMAT_NONE = 0x01000000;
     static final int VALUE_FORMAT_INDEX = 0x02000000;
@@ -1744,7 +1740,7 @@ public class Take5Dictionary {
         }
         switch (keyCheckFormat) {
 
-        case KEYCHECK_FORMAT_NULL_TERMINATED:
+        case KEYCHECK_FORMAT_STR:
             int ptr = data.getInt(keyCheckData + idx * 4);
             if (ptr == 0) {
                 return 0;
