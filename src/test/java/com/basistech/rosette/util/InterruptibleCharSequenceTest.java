@@ -148,7 +148,7 @@ public class InterruptibleCharSequenceTest extends Assert {
 
     @Test
     public void pathologicalRegexTest() throws Exception {
-        // a case when we may want to use this class: see TEJ-197
+        // a case when we may want to use this class: see TEJ-196
         Thread t = new Thread(new Runnable()
             {
                 public void run() {
