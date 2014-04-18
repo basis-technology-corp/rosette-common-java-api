@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.basistech</groupId>
     <artifactId>common</artifactId>
-    <version>27-SNAPSHOT</version>
+    <version>27</version>
     <name>Common Java Code</name>
     <packaging>jar</packaging>
     <parent>
@@ -20,7 +20,7 @@
     <scm>
         <connection>scm:git:http://git.basistech.net/textanalytics/rosette-common-java.git</connection>
         <developerConnection>scm:git:http://git.basistech.net/textanalytics/rosette-common-java.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>common-27</tag>
     </scm>
     <distributionManagement>
         <site>
