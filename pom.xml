@@ -11,13 +11,8 @@
         <artifactId>basis-parent</artifactId>
         <version>54</version>
     </parent>
-    <prerequisites>
-        <maven>2.2.0</maven>
-    </prerequisites>
     <inceptionYear>2010</inceptionYear>
     <properties>
-        <site.deploy.base>scp://souvenir.basistech.net:/basis/trees/maven-projects/common/${project.version}</site.deploy.base>
-        <url.base>http://maven-projects.basistech.net/common/${project.version}</url.base>
         <compiler.fork>false</compiler.fork>
         <jdk.level>1.5</jdk.level>
         <spring.version>2.5.4</spring.version>
@@ -37,17 +32,11 @@
         <system>jira</system>
         <url>http://jira.basistech.net/browse/COMN</url>
     </issueManagement>
-    <distributionManagement>
-        <site>
-            <id>common.website</id>
-            <url>${site.deploy.base}</url>
-        </site>
-    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -89,21 +78,6 @@
             <properties>
                 <pmd.skip>true</pmd.skip>
                 <checkstyle.skip>true</checkstyle.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>sonar</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <sonar.jdbc.url>
-                  jdbc:mysql://hudson.basistech.net:3306/sonar?useUnicode=true&amp;characterEncoding=utf8
-                </sonar.jdbc.url>
-                <sonar.jdbc.driver>com.mysql.jdbc.Driver</sonar.jdbc.driver>
-                <sonar.jdbc.username>sonar</sonar.jdbc.username>
-                <sonar.jdbc.password>sonar</sonar.jdbc.password>
-                <sonar.host.url>http://hudson.basistech.net:9000</sonar.host.url>
             </properties>
         </profile>
         <profile>
