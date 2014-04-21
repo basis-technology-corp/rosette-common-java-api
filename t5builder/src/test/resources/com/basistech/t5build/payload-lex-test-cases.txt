@@ -1,0 +1,6 @@
+[ ["MODE", "#4f"], ["MODE", "#1!i"], ["INTNUM", "4"], ["INTNUM", "0"], ["INTNUM", 2 ], ["INTNUM", "3"], ["INTNUM", "5"], ["INTNUM", "0"], ["INTNUM", "0"], ["INTNUM", "0"], ["FLONUM", "0.11"], ["FLONUM", "-0.22"], ["FLONUM", "0.33"], ["FLONUM", "-0.44"] ] 	#4f #1!i 4 0 2 3 5 0 0 0 0.11 -0.22 0.33 -0.44
+[["MODE", "#4f"], ["MODE", "#1!i"], ["INTNUM", "1"], ["INTNUM", "0"], ["INTNUM", "0"], ["INTNUM", "0"], ["FLONUM", "0.11"]]	#4f #1!i 1 0 0 0 0.11
+[["STRING", "some 2-byte string"]]	"some 2-byte string"
+[["MODE", "#1s"],["STRING", "a 1-byte string"]]	#1s "a 1-byte string"
+[["STRING", "x.y"]]	"x\u002Ey"
+[["STRING", "before"], ["HEXDUMPSTART", ""], ["HEXDUMPITEM", "23"], ["HEXDUMPITEM", "2322"], ["HEXDUMPITEM", "232214"],["HEXDUMPEND", ""],["STRING", "after"]]	"before" [ 23 2322 232214 ] "after"
