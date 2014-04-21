@@ -2,25 +2,57 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.basistech</groupId>
-    <artifactId>common</artifactId>
+    <artifactId>common-java</artifactId>
     <version>28-SNAPSHOT</version>
-    <name>Common Java Code</name>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
+    <description>Common Java Library and Tools</description>
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>basis-parent</artifactId>
         <version>54</version>
     </parent>
-    <inceptionYear>2010</inceptionYear>
+    <prerequisites>
+        <maven>3.0.4</maven>
+    </prerequisites>
+    <inceptionYear>2009</inceptionYear>
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <url.base>http://maven-projects.basistech.net/rbl-je/${project.version}</url.base>
+        <bt.compile.source>1.6</bt.compile.source>
+        <bt.compile.target>1.6</bt.compile.target>
         <compiler.fork>false</compiler.fork>
-        <jdk.level>1.5</jdk.level>
-        <spring.version>2.5.4</spring.version>
+        <slf4j.version>1.7.5</slf4j.version>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <exec-maven-plugin.version>1.2.1</exec-maven-plugin.version>
+        <maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
+        <maven-assembly-plugin.version>2.4</maven-assembly-plugin.version>
+        <maven-clean-plugin.version>2.5</maven-clean-plugin.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-dependency-plugin.version>2.4</maven-dependency-plugin.version>
+        <maven-enforcer-plugin.version>1.1.1</maven-enforcer-plugin.version>
+        <maven-failsafe-plugin.version>2.12</maven-failsafe-plugin.version>
+        <maven-jar-plugin.version>2.4</maven-jar-plugin.version>
+        <maven-javadoc-plugin.version>2.9.1</maven-javadoc-plugin.version>
+        <maven-project-info-reports-plugin.version>2.7</maven-project-info-reports-plugin.version>
+        <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
+        <maven-shade-plugin.version>2.2</maven-shade-plugin.version>
+        <maven-site-plugin.version>3.3</maven-site-plugin.version>
+        <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
+        <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
+        <jackson-version>2.3.0</jackson-version>
+        <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
+        <sonar.java.coveragePlugin>clover</sonar.java.coveragePlugin>
+        <sonar.jdbc.url>jdbc:postgresql://davenport.basistech.net/sonar</sonar.jdbc.url>
+        <sonar.jdbc.driver>org.postgresql.Driver</sonar.jdbc.driver>
+        <sonar.jdbc.username>sonar</sonar.jdbc.username>
+        <sonar.jdbc.password>mm74GzBM3e9X3u</sonar.jdbc.password>
+        <sonar.host.url>http://jenkinsvm.basistech.net:9000</sonar.host.url>
     </properties>
+    <url>${url.base}</url>
     <scm>
-        <connection>scm:git:http://git.basistech.net/textanalytics/rosette-common-java.git</connection>
-        <developerConnection>scm:git:http://git.basistech.net/textanalytics/rosette-common-java.git</developerConnection>
-        <tag>HEAD</tag>
+        <connection>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</connection>
+        <developerConnection>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</developerConnection>
     </scm>
     <distributionManagement>
         <site>
@@ -28,195 +60,153 @@
             <url>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</url>
         </site>
     </distributionManagement>
-    <issueManagement>
-        <system>jira</system>
-        <url>http://jira.basistech.net/browse/COMN</url>
-    </issueManagement>
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-    <profiles>
-        <profile>
-            <id>fastinstall</id>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-                <pmd.skip>true</pmd.skip>
-                <checkstyle.skip>true</checkstyle.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>nochecks</id>
-            <properties>
-                <pmd.skip>true</pmd.skip>
-                <checkstyle.skip>true</checkstyle.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>release</id>
-            <reporting>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                            <attach>true</attach>
-                            <quiet>true</quiet>
-                            <excludePackageNames>com.basistech.rosette.internal.*</excludePackageNames>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </reporting>
-        </profile>
-        <profile>
-            <id>java16</id>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-compiler-plugin</artifactId>
-                            <configuration>
-                                <source>1.5</source>
-                                <target>1.6</target>
-                                <maxmem>256M</maxmem>
-                                <fork>${compiler.fork}</fork>
-                            </configuration>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-        <profile>
-            <id>clover</id>
-            <build>
-                <defaultGoal>com.atlassian.maven.plugins:maven-clover2-plugin:2.6.0:clover</defaultGoal>
-                <plugins>
-                    <plugin>
-                        <groupId>com.atlassian.maven.plugins</groupId>
-                        <artifactId>maven-clover2-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+    <modules>
+      <module>lib</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>it.unimi.dsi</groupId>
+                <artifactId>fastutil</artifactId>
+                <version>6.5.6</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-cli</groupId>
+                <artifactId>commons-cli</artifactId>
+                <version>1.2</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>1.4</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>15.0</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.11</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>53.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.annotation</groupId>
+                <artifactId>jsr250-api</artifactId>
+                <version>1.0</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.17</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-log4j12</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
+                <version>${slf4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.basistech.bf</groupId>
+                <artifactId>bf-core</artifactId>
+                <version>0.8</version>
+            </dependency>
+            <dependency>
+              <groupId>args4j</groupId>
+              <artifactId>args4j</artifactId>
+              <version>2.0.26</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/data</directory>
-                <filtering>false</filtering>
-                <includes>
-                    <include>**/*.xml</include>
-                </includes>
-            </resource>
-        </resources>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>com.atlassian.maven.plugins</groupId>
-                    <artifactId>maven-jgitflow-plugin</artifactId>
-                    <version>1.0-alpha21.1</version>
-                    <configuration>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <pushReleases>true</pushReleases>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pmd-plugin</artifactId>
-                    <configuration>
-                        <excludeRoots>
-                            <excludeRoot>target/generated-sources</excludeRoot>
-                        </excludeRoots>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
-                <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer-plugin.version}</version>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <id>enforce-versions</id>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>enforce</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.basistech.maven.plugins</groupId>
-                <artifactId>autogen</artifactId>
-                <version>4</version>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
+                        <phase>validate</phase>
                         <configuration>
-                            <templates>
-                                <template>
-                                    <code>src/main/templates/LanguageCode.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/bt_language_names.xml</data>
-                                </template>
-                                <template>
-                                    <code>src/main/templates/NEConstants.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/bt_ne_types.xml</data>
-                                </template>
-                                <template>
-                                    <code>src/main/templates/TransliterationScheme.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/xlit_scheme-utf8.xml</data>
-                                </template>
-                                <template>
-                                    <code>src/main/templates/ISO15924.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/iso15924-utf8.xml</data>
-                                </template>
-                            </templates>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>3.0.4</version>
+                                </requireMavenVersion>
+                                <requireJavaVersion>
+                                    <version>[1.7.0,1.8)</version>
+                                </requireJavaVersion>
+                            </rules>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>2.9.1</version>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.11</version>
+                <executions>
+                  <execution>
+                    <id>animal-sniffer</id>
+                    <phase>test</phase>
+                    <goals>
+                      <goal>check</goal>
+                    </goals>
+                  </execution>
+                </executions>
                 <configuration>
-                    <excludes>**/bitvector/*</excludes>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java16</artifactId>
+                        <version>1.0</version>
+                    </signature>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-descriptor</id>
+                        <goals>
+                            <goal>attach-descriptor</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
@@ -225,6 +215,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>${maven-project-info-reports-plugin.version}</version>
                 <configuration>
                     <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
                     <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
@@ -233,6 +224,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
                 <reportSets>
                     <reportSet>
                         <id>default</id>
