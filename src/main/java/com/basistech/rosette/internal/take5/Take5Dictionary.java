@@ -109,7 +109,7 @@ public class Take5Dictionary {
     int maxCharacter;           // Maximum character value.
     int maxValueSize;           // Maximum value size, if storing values.
     int indexCount;             // Possible index values.
-    int tableCount;             // Number of hash function table entries.
+    int bucketCount;            // Number of hash function table entries.
 
     /**
      * Initialize a Take5Dictionary object to match against the dictionary
@@ -147,11 +147,8 @@ public class Take5Dictionary {
             // Do not insist that (keyCheckFormat == KEYCHECK_FORMAT_NONE) here.  By keeping
             // our options open for what that might mean, we allow for potential backwards
             // compatibility.
-
-            // AAARRRGGGHHH!!!  This is horrible!  It is a complete accident that both Take5
-            // compilers happen to put the value data segment <EM>after</EM> the state machine.
-            // I could easily have changed that and this code would start reading in to little
-            // data or too much data!  X!X!X
+            // AAARRRGGGHHH!!!  This is horrible!  This reads in more than just the state
+            // machine!  Maybe even a whole lot more!  X!X!X
             int charDataSize = (valueData <= 0 ? (int) dataSize : valueData);
             charData = new char[(charDataSize+1)/BYTES_PER_CHAR];
             data.rewind();
@@ -793,10 +790,10 @@ public class Take5Dictionary {
         }
         if (fileVersion >= VERSION_5_6) {
             indexCount = data.getInt();
-            tableCount = data.getInt();
+            bucketCount = data.getInt();
         } else {
             indexCount = wordCount;
-            tableCount = 0;
+            bucketCount = 0;
         }
 
         // Initialize per-entry-point engine data.
@@ -1734,7 +1731,7 @@ public class Take5Dictionary {
     private int perfectHashLookup(char[] key, int offset, int length, Take5Match match) {
         int end = offset + length;
         int hash = fnvHash(0, key, offset, end);
-        int idx = data.getInt(stateStart + (hash % tableCount) * 4);
+        int idx = data.getInt(stateStart + (hash % bucketCount) * 4);
         if (idx >= indexCount) {
             idx = fnvHash(idx, key, offset, end) % indexCount;
         }
@@ -1777,17 +1774,15 @@ public class Take5Dictionary {
     // See: <http://tools.ietf.org/html/draft-eastlake-fnv-07> for info on the FNV family of
     // hash functions.  (Replace the link above when/if it becomes an RFC.)
     private static final int FNV32_PRIME = 0x01000193;
-    private static final int FNV32_BASE = 0x7B1B7853;
+    private static final int FNV32_BASE = 0x811C9DC5;
     private static final int fnvHash(int fun, char[] key, int i, int end) {
-        int rv = ((fun + 1) * FNV32_BASE) & 0xFFFFFFFF;
+        int rv = (fun + 1) * FNV32_BASE;
         while (i < end) {
             rv ^= key[i++];
-            rv = (rv * FNV32_PRIME) & 0xFFFFFFFF;
+            rv *= FNV32_PRIME;
         }
-        if ((rv & 0x80000000) != 0) {
-            rv ^= 0x80000001;
-        }
-        return rv;
+        // Fold the high bit in to the low bit:
+        return (rv ^ (rv >> 31)) & 0x7FFFFFFF;
     }
 
     /**
