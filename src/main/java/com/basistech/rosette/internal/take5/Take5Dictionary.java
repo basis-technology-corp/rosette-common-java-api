@@ -73,6 +73,7 @@ public class Take5Dictionary {
 
     int fsaData; /* Beginning of entry point vector. */
     int fsaEngine; /* FSA engine type. */
+    int fsaLimit;  /* limit of state machine data in file. */
 
     int minVersion; /* Minimum engine supported. */
     int fileVersion; /* Maximum engine supported. */
@@ -147,9 +148,12 @@ public class Take5Dictionary {
             // Do not insist that (keyCheckFormat == KEYCHECK_FORMAT_NONE) here.  By keeping
             // our options open for what that might mean, we allow for potential backwards
             // compatibility.
-            // AAARRRGGGHHH!!!  This is horrible!  This reads in more than just the state
-            // machine!  Maybe even a whole lot more!  X!X!X
-            int charDataSize = (valueData <= 0 ? (int) dataSize : valueData);
+
+            // AAARRRGGGHHH!!!  This is horrible!  When valueData is used (for binaries before
+            // VERSION_5_6), this reads in <EM>way more</EM> than just the state machine!
+            int charDataSize = (fsaLimit > 0 ? fsaLimit :
+                                valueData > 0 ? valueData :
+                                (int)dataSize);
             charData = new char[(charDataSize+1)/BYTES_PER_CHAR];
             data.rewind();
             data.asCharBuffer().get(charData);
@@ -716,11 +720,13 @@ public class Take5Dictionary {
         if (fileVersion >= VERSION_5_6) {
             indexCount = data.getInt();
             keyCheckData = data.getInt();
-            keyCheckFormat =  data.getInt();
+            keyCheckFormat = data.getInt();
+            fsaLimit = data.getInt();
         } else {
             indexCount = wordCount;
             keyCheckData = 0;
             keyCheckFormat = KEYCHECK_FORMAT_NONE;
+            fsaLimit = -1;
         }
 
         // Initialize value reading.
