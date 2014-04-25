@@ -1741,6 +1741,7 @@ public class Take5Dictionary {
         if (idx >= indexCount) {
             idx = fnvHash(idx, key, offset, end) % indexCount;
         }
+        idx += indexOffset;
         switch (keyCheckFormat) {
 
         case KEYCHECK_FORMAT_STR:
