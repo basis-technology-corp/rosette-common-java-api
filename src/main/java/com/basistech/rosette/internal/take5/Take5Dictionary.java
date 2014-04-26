@@ -721,6 +721,8 @@ public class Take5Dictionary {
             indexCount = data.getInt();
             keyCheckData = data.getInt();
             keyCheckFormat = data.getInt();
+            data.getInt();                            // max_hash_fun
+            data.getInt();                            // millions_tested
             fsaLimit = data.getInt();
         } else {
             indexCount = wordCount;
@@ -797,6 +799,8 @@ public class Take5Dictionary {
         if (fileVersion >= VERSION_5_6) {
             indexCount = data.getInt();
             bucketCount = data.getInt();
+            data.getInt();                            // max_hash_fun
+            data.getInt();                            // millions_tested
         } else {
             indexCount = wordCount;
             bucketCount = 0;
