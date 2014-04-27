@@ -75,7 +75,7 @@ public final class Take5Build {
     //THERE IS NO -8
 
     @Argument(handler = FileOrDashOptionHandler.class, usage = "input file or - for standard input", metaVar = "INPUT")
-    File inputFile;
+    File commandInputFile;
 
     @Option(name = "--help", aliases = {"-h" })
     boolean help;
@@ -139,7 +139,7 @@ public final class Take5Build {
             usage = "content flags")
     int contentFlags;
 
-    @Option(name = "--no-output", aliases = {"-n "},
+    @Option(name = "--no-output", aliases = {"-n" },
             usage = "No output at all.")
     boolean noOutput;
 
@@ -212,7 +212,7 @@ public final class Take5Build {
             spec.maxVersion = version;
             spec.defaultMode = defaultPayloadFormat;
             spec.entrypointName = entrypointName;
-            spec.inputFile = inputFile;
+            spec.inputFile = commandInputFile;
             spec.simpleKeys = simpleKeys;
             spec.noPayloads = noPayloads;
             spec.ignorePayloads = ignorePayloads;
@@ -280,7 +280,7 @@ public final class Take5Build {
             throw new Failure("IO error reading " + (spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath()));
         } catch (InputFileException e) {
             throw new Failure(String.format("Format error reading %s: %s",
-                    (spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath()),
+                    spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath(),
                     e.getCause().getMessage()));
         }
         entrypoint.loadContent(inputFile.getPairs().iterator());

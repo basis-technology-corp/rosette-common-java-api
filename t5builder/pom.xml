@@ -28,6 +28,34 @@
             </execution>
         </executions>
         </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>appassembler-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>t5build</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>assemble</goal>
+                        </goals>
+                        <configuration>
+                            <repositoryName>lib</repositoryName>
+                            <repositoryLayout>flat</repositoryLayout>
+                            <useWildcardClassPath>true</useWildcardClassPath>
+                            <licenseHeaderFile>etc/basisLicenseHeader.txt</licenseHeaderFile>
+                            <programs>
+                                <program>
+                                    <mainClass>com.basistech.t5build.Take5Build</mainClass>
+                                    <id>t5build</id>
+                                    <!-- To allow for gigantic -Xmx,  we don't specify at all.  appassembler is not as flexible as we might like here,
+                                            we'd like a default and an override. -->
+                                </program>
+                            </programs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
       </plugins>
     </build>
     <dependencies>

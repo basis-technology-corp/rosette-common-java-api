@@ -22,8 +22,8 @@ import java.io.File;
 class InputSpecification {
     // derived from ESCAPES
     boolean simpleKeys = true;
-    boolean ignorePayloads = false;
-    boolean noPayloads = false;
+    boolean ignorePayloads;
+    boolean noPayloads;
     int contentFlags;
     int minVersion = -1;
     int maxVersion = -1;
