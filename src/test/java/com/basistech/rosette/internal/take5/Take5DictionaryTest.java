@@ -438,6 +438,9 @@ public class Take5DictionaryTest extends Assert {
         testReverseLookupAll(daysDictionary, days);
     }
 
+    // XXX: Unfortunately, the way this works wont really work as a test of
+    // reverse lookup in the perfect hash table case.  When you get hash
+    // table reverse lookup working, you'll have to test it some other way.
     private static void testReverseLookupAll(Take5Dictionary dict,
                                              String[] keys)
         throws Take5Exception {
@@ -554,7 +557,7 @@ public class Take5DictionaryTest extends Assert {
     public void testEntryPoints() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/unified", "next_letters", null);
         
-        // The last values in the entry point block are the kin and max
+        // The last values in the entry point block are the min and max
         // character values, so checking them makes fairly sure that the
         // whole block was read correctly.
         assertEquals(0x61, dict.minimumCharacter());
@@ -573,6 +576,9 @@ public class Take5DictionaryTest extends Assert {
         assertEquals(3, match.getLength());
         assertEquals(7, match.getIndex());
 
+        match = dict.matchExact("gad");
+        assertNull(match);
+
         testReverseLookupAll(dict, nextLetters);
 
         dict.setEntryPoint("main"); // this is the "days" dictionary
@@ -584,7 +590,51 @@ public class Take5DictionaryTest extends Assert {
         assertEquals(6, match.getLength());
         assertEquals(4, match.getIndex());
 
+        match = dict.matchExact("Foobar");
+        assertNull(match);
+
         testReverseLookupAll(dict, days);
+    }
+
+    /**
+     * Test entry points in the perfect hash format.
+     */
+    @Test
+    public void testEntryPointsFromHash() throws IOException, Take5Exception {
+        Take5Dictionary dict = openDictionary("src/test/dicts/unified-hash", "next_letters", null);
+
+        Take5Match match = dict.matchExact("gab");
+        assertNotNull(match);
+        assertEquals(3, match.getLength());
+
+        match = dict.matchExact("gad");
+        assertNull(match);
+
+        // Not yet: testReverseLookupAll(dict, nextLetters);
+
+        dict.setEntryPoint("main"); // this is the "days" dictionary
+        assertEquals(0x20, dict.minimumCharacter());
+        assertEquals(0x79, dict.maximumCharacter());
+
+        match = dict.matchExact("Sundae");
+        assertNotNull(match);
+        assertEquals(6, match.getLength());
+        assertEquals("vanilla", match.getStringValue());
+
+        match = dict.matchExact("Sundaes");
+        assertNotNull(match);
+        assertEquals(7, match.getLength());
+        assertEquals("chocolate/strawberry", match.getStringValue());
+
+        match = dict.matchExact("Sun");
+        assertNotNull(match);
+        assertEquals(3, match.getLength());
+        assertEquals("yellow", match.getStringValue());
+
+        match = dict.matchExact("Foobar");
+        assertNull(match);
+
+        // Not yet: testReverseLookupAll(dict, days);
     }
 
     /**
@@ -617,6 +667,18 @@ public class Take5DictionaryTest extends Assert {
     public void testGetComplexData() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
         Take5Match match = dict.matchExact("key0");
+        assertNotNull(match);
+        ByteBuffer data = match.getComplexData(8 + 16);
+        data.position(8);
+        FloatBuffer floats = data.asFloatBuffer();
+        checkKey0Values(data, floats);
+    }
+
+    @Test
+    public void testGetComplexDataFromHash() throws IOException, Take5Exception {
+        Take5Dictionary dict = openDictionary("src/test/dicts/mixed-hash", null);
+        Take5Match match = dict.matchExact("key0");
+        assertNotNull(match);
         ByteBuffer data = match.getComplexData(8 + 16);
         data.position(8);
         FloatBuffer floats = data.asFloatBuffer();
@@ -642,6 +704,7 @@ public class Take5DictionaryTest extends Assert {
     public void testGetOffsetValue() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
         Take5Match match = dict.matchExact("key0");
+        assertNotNull(match);
         int offset = match.getOffsetValue();
         ByteBuffer data = dict.getData();
         data.position(offset);

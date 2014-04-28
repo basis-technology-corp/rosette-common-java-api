@@ -111,6 +111,8 @@ public class Take5Dictionary {
     int maxValueSize;           // Maximum value size, if storing values.
     int indexCount;             // Possible index values.
     int bucketCount;            // Number of hash function table entries.
+    int maxHashFun;             // Largest hash function used.
+    int millionsTested;         // How many million has functions were tested.
 
     /**
      * Initialize a Take5Dictionary object to match against the dictionary
@@ -273,6 +275,21 @@ public class Take5Dictionary {
      */
     public int fsaAcceptEdgeCount() {
         return acceptEdgeCount;
+    }
+
+    /**
+     * Largest hash function used by a perfect hash table.
+     */
+    public int perfectHashMaxHashFun() {
+        return maxHashFun;
+    }
+
+    /**
+     * How many million hash functions were tested in order to generate
+     * this perfect hash table.
+     */
+    public int perfectHashMillionsTested() {
+        return millionsTested;
     }
 
     /**
@@ -721,13 +738,15 @@ public class Take5Dictionary {
             indexCount = data.getInt();
             keyCheckData = data.getInt();
             keyCheckFormat = data.getInt();
-            data.getInt();                            // max_hash_fun
-            data.getInt();                            // millions_tested
+            maxHashFun = data.getInt();
+            millionsTested = data.getInt();
             fsaLimit = data.getInt();
         } else {
             indexCount = wordCount;
             keyCheckData = 0;
             keyCheckFormat = KEYCHECK_FORMAT_NONE;
+            maxHashFun = 0;
+            millionsTested = 0;
             fsaLimit = -1;
         }
 
@@ -799,11 +818,13 @@ public class Take5Dictionary {
         if (fileVersion >= VERSION_5_6) {
             indexCount = data.getInt();
             bucketCount = data.getInt();
-            data.getInt();                            // max_hash_fun
-            data.getInt();                            // millions_tested
+            maxHashFun = data.getInt();
+            millionsTested = data.getInt();
         } else {
             indexCount = wordCount;
             bucketCount = 0;
+            maxHashFun = 0;
+            millionsTested = 0;
         }
 
         // Initialize per-entry-point engine data.
@@ -1385,7 +1406,7 @@ public class Take5Dictionary {
      * @throws UnsupportedOperationException if the dictionary is not reversable.
      */
     public int reverseLookup(int index, char[] buffer) throws Take5Exception {
-        if (fsaEngine != ENGINE_SEARCH) {             // X!X!X but this <EM>could</EM> work.
+        if (fsaEngine != ENGINE_SEARCH) {             // XXX: but this <EM>could</EM> work!
             throw new UnsupportedOperationException("This Take5Dictionary is not reversable.");
         }
         if (index < 0 || index >= indexCount) {
@@ -1793,7 +1814,7 @@ public class Take5Dictionary {
             rv *= FNV32_PRIME;
         }
         // Fold the high bit in to the low bit:
-        return (rv ^ (rv >> 31)) & 0x7FFFFFFF;
+        return (rv ^ (rv >>> 31)) & 0x7FFFFFFF;
     }
 
     /**
