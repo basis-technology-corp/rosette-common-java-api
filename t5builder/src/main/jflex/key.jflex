@@ -42,16 +42,16 @@ notbmp = \\U([0-9a-fA-F]){8}
 %%
 
 <YYINITIAL> {
-  "\\t"                        { string.append('\t'); }
-  "\\n"                        { string.append('\n'); }
-  "\\z"                        { string.append("\u0000"); }
-  {bmp}                        { string.append(PayloadLexerBase.decodeBmpEscape(yytext())); }
-  {notbmp}                     { string.appendCodePoint(PayloadLexerBase.decodeCodepointEscape(yytext())); }
-  "\\r"                        { string.append('\r'); }
-  "\\"                         { string.append('\\'); }
-  .                            { string.append(yytext()); } /* this does it one-at-a-time... */
-  <<EOF>>                      { String r = string.toString(); string.setLength(0); return r; }
+  \\t                        { string.append('\t'); }
+  \\n                        { string.append('\n'); }
+  \\z                        { string.append("\u0000"); }
+  {bmp}                      { string.append(PayloadLexerBase.decodeBmpEscape(yytext())); }
+  {notbmp}                   { string.appendCodePoint(PayloadLexerBase.decodeCodepointEscape(yytext())); }
+  \\r                        { string.append('\r'); }
+  \\                         { string.append('\\'); }
+  .                          { string.append(yytext()); } /* this does it one-at-a-time... */
+  <<EOF>>                    { String r = string.toString(); string.setLength(0); return r; }
 }
 
  /* error fallback */
-.                              { throw new PayloadLexerException("Invalid character <" + yytext() + ">", yycolumn); }
+.                            { throw new PayloadLexerException("Invalid character <" + yytext() + ">", yycolumn); }

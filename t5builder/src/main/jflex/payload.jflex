@@ -46,8 +46,7 @@ private PayloadToken token(PayloadTokenType type) {
   }
 %}
 
-LineTerminator = \r|\n|\r\n
-WhiteSpace     = {LineTerminator} | [ \t\f]
+WhiteSpace = [ \t\f]
 
 mode = "#" [0-9]*[*!]?[:ifs]
 
@@ -64,34 +63,34 @@ hexitem = [0-9a-fA-F]+
 
 <YYINITIAL> {
 /* whitespace */
-{WhiteSpace}                   { /* ignore */ }
-"\""                           { string.setLength(0); yybegin(STRING); }
-{mode}                         { return token(PayloadTokenType.MODE); }
-{intnum}                       { return token(PayloadTokenType.INTNUM); }
-{flonum}                       { return token(PayloadTokenType.FLONUM); }
-"\["                           { yybegin(HEXDUMP); return token(PayloadTokenType.HEXDUMPSTART, ""); }
-.                              { throw new PayloadLexerException("Invalid character <" + yytext() + "> at toplevel", yycolumn); }
-}
+  {WhiteSpace}               { /* ignore */ }
+  \"                         { string.setLength(0); yybegin(STRING); }
+  {mode}                     { return token(PayloadTokenType.MODE); }
+  {intnum}                   { return token(PayloadTokenType.INTNUM); }
+  {flonum}                   { return token(PayloadTokenType.FLONUM); }
+  \[                         { yybegin(HEXDUMP); return token(PayloadTokenType.HEXDUMPSTART, ""); }
+  .                          { throw new PayloadLexerException("Invalid character <" + yytext() + "> at toplevel", yycolumn); }
+  }
 
 <STRING> {
-  "\""                         { yybegin(YYINITIAL); return token(PayloadTokenType.STRING, string.toString()); }
-  "\\t"                        { string.append('\t'); }
-  "\\n"                        { string.append('\n'); }
-  "\\z"                        { string.append("\u0000"); }
-  {bmp}                        { string.append(decodeBmpEscape(yytext())); }
-  {notbmp}                     { string.appendCodePoint(decodeCodepointEscape(yytext())); }
-
-  "\\r"                        { string.append('\r'); }
-  "\\\""                       { string.append('\"'); }
-  "\\"                         { string.append('\\'); }
-  .                            { string.append(yytext()); } /* this does it one-at-a-time... */
+  \"                         { yybegin(YYINITIAL); return token(PayloadTokenType.STRING, string.toString()); }
+  \\t                        { string.append('\t'); }
+  \\n                        { string.append('\n'); }
+  \\z                        { string.append("\u0000"); }
+  {bmp}                      { string.append(decodeBmpEscape(yytext())); }
+  {notbmp}                   { string.appendCodePoint(decodeCodepointEscape(yytext())); }
+  \\r                        { string.append('\r'); }
+  \\\"                       { string.append('\"'); }
+  \\                         { string.append('\\'); }
+  .                          { string.append(yytext()); } /* this does it one-at-a-time... */
+  <<EOF>>                    { throw new PayloadLexerException("End of input in the midst of a quoted string", yycolumn); }
 }
 
 <HEXDUMP> {
-  {WhiteSpace}                 { /* ignore */ }
-  {hexitem}                    { return token(PayloadTokenType.HEXDUMPITEM); }
-  "]"                          { yybegin(YYINITIAL); return token(PayloadTokenType.HEXDUMPEND, ""); }
-  .                            { throw new PayloadLexerException("Invalid character <" + yytext() + "> in hexdump.", yycolumn); }
+  {WhiteSpace}               { /* ignore */ }
+  {hexitem}                  { return token(PayloadTokenType.HEXDUMPITEM); }
+  \]                         { yybegin(YYINITIAL); return token(PayloadTokenType.HEXDUMPEND, ""); }
+  .                          { throw new PayloadLexerException("Invalid character <" + yytext() + "> in hexdump.", yycolumn); }
 }
 
  /* error fallback */
