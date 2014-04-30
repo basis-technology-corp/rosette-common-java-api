@@ -14,7 +14,7 @@
 package com.basistech.rosette;
 
 /**
- * Attempt to use an RLP feature for which the license has expired.
+ * Attempt to use a Rosette feature for which the license has expired.
  */
 public class RosetteExpiredLicenseException extends RosetteRuntimeException {
 

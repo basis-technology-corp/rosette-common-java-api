@@ -15,7 +15,7 @@
 package com.basistech.rosette;
 
 /**
- * 
+ * Base class for unchecked Rosette exceptions.
  */
 public class RosetteRuntimeException extends RuntimeException {
 

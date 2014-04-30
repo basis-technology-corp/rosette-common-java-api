@@ -14,7 +14,7 @@
 package com.basistech.rosette;
 
 /**
- * Base exception class for checked errors in RLP.
+ * Base exception class for checked errors in Rosette.
  */
 public class RosetteException extends Exception {
 

@@ -19,7 +19,7 @@
 package com.basistech.rosette.util;
 
 /**
- * This is a list of encodings names in mime name alphabetical order. 
+ * This is a list of many encoding names in mime name alphabetical order.
  */
 public enum EncodingCode {
 

@@ -14,7 +14,7 @@
 package com.basistech.rosette;
 
 /**
- * Attempt to use an RLP feature for which there is no license.
+ * Attempt to use a Rosette feature for which there is no license.
  */
 public class RosetteNoLicenseException extends RosetteRuntimeException {
 
