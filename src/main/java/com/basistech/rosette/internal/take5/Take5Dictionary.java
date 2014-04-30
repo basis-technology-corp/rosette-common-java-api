@@ -1759,6 +1759,15 @@ public class Take5Dictionary {
         }
     }
 
+    /* The null lookup method, used for benchmarking.
+    private int nullLookup(char[] key, int offset, int length, Take5Match match) {
+        match.dict = this;
+        match.length = length;
+        match.index = 0;                              // this probably exists...
+        return 1;
+    }
+    */
+
     private int perfectHashLookup(char[] key, int offset, int length, Take5Match match) {
         int end = offset + length;
         int hash = fnvHash(0, key, offset, end);
