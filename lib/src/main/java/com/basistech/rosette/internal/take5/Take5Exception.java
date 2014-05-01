@@ -33,6 +33,7 @@ public class Take5Exception extends Exception {
     public static final int ENTRY_POINT_NOT_FOUND = 12;
     public static final int IMPOSSIBLE_HASH = 13;
     public static final int BUFFER_TOO_SMALL = 14;
+    public static final int UNSUPPORTED_KEYCHECK_FORMAT = 15;
 
     private int type;
 
@@ -90,6 +91,9 @@ public class Take5Exception extends Exception {
             break;
         case BUFFER_TOO_SMALL:
             message = "Buffer too small.";
+            break;
+        case UNSUPPORTED_KEYCHECK_FORMAT:
+            message = "Unsupported key check format.";
             break;
         default:
             message = "Unknown error type.";
