@@ -4,7 +4,7 @@
  ** and may only be used as permitted under the license agreement under which
  ** it has been distributed, and in no other way.
  **
- ** Copyright (c) 2000-2008 Basis Technology Corporation All rights reserved.
+ ** Copyright (c) 2014 Basis Technology Corporation All rights reserved.
  **
  ** The technical data and information provided herein are provided with
  ** `limited rights', and the computer software provided herein is provided
@@ -12,27 +12,33 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
+
 package com.basistech.rosette.internal.take5build;
 
+import com.google.common.collect.Lists;
+
+import java.util.LinkedList;
+
 /**
- * A runtime exception for things that can go wrong while building a Take5
- * binary.
+ * Hash bucket (build.h)
  */
-public class Take5BuilderException extends RuntimeException {
+class Bucket implements Comparable<Bucket> {
+    final int index;
+    int fun;
+    int count;
+    LinkedList<PerfhashKeyValuePair> pairs;
 
-    public Take5BuilderException() {
-        super();
+    Bucket(int index) {
+        this.index = index;
+        this.pairs = Lists.newLinkedList();
     }
 
-    public Take5BuilderException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public Take5BuilderException(String message) {
-        super(message);
-    }
-
-    public Take5BuilderException(Throwable cause) {
-        super(cause);
+    @Override
+    public int compareTo(Bucket o) {
+        int rv = count - o.count;
+        if (rv != 0) {
+            return rv;
+        }
+        return index - o.index;
     }
 }

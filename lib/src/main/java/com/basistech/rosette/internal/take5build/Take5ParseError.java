@@ -18,7 +18,7 @@ package com.basistech.rosette.internal.take5build;
  * A runtime exception for things that can go wrong while parsing Take5
  * input files.
  */
-public class Take5ParseError extends Take5BuilderException {
+public class Take5ParseError extends Take5BuildException {
     String message;             // message without location
     String inputName;           // file name <EM>or</EM> entry point name.
     int keyNumber;

@@ -4,7 +4,7 @@
  ** and may only be used as permitted under the license agreement under which
  ** it has been distributed, and in no other way.
  **
- ** Copyright (c) 2000-2008 Basis Technology Corporation All rights reserved.
+ ** Copyright (c) 2014 Basis Technology Corporation All rights reserved.
  **
  ** The technical data and information provided herein are provided with
  ** `limited rights', and the computer software provided herein is provided
@@ -14,25 +14,24 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import com.basistech.rosette.RosetteException;
+
 /**
- * A runtime exception for things that can go wrong while building a Take5
- * binary.
+ * Error building a Take5.
  */
-public class Take5BuilderException extends RuntimeException {
-
-    public Take5BuilderException() {
-        super();
-    }
-
-    public Take5BuilderException(String message, Throwable cause) {
+public class Take5BuildException extends RosetteException {
+    public Take5BuildException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public Take5BuilderException(String message) {
+    public Take5BuildException(String message) {
         super(message);
     }
 
-    public Take5BuilderException(Throwable cause) {
+    public Take5BuildException(Throwable cause) {
         super(cause);
+    }
+
+    public Take5BuildException() {
     }
 }

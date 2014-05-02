@@ -15,6 +15,7 @@
 package com.basistech.rosette.internal.take5build;
 
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * One entry point from a {@link Take5Builder}.
@@ -33,7 +34,7 @@ public class Take5EntryPoint {
     State startState;
     int indexOffset;
     int keyCount;
-    int maxMatches;
+
     int maxKeyLength;
     int maxValueSize;
     char minCharacter;
@@ -41,6 +42,15 @@ public class Take5EntryPoint {
     int stateCount;             // set by countStuff
     int edgeCount;              // set by countStuff
     int acceptEdgeCount;        // set by countStuff
+    // PERFHASH start here
+
+    int wordCount;
+    int indexCount;
+    int bucketCount;
+    Bucket[] bucketTable;
+    int maxHashFun;          /* For the curious... */
+    int millionsTested;        /* For the curious... */
+    int maxMatches; // Unsigned. Use slower Guava unsigned object?
 
     Take5EntryPoint(String name, Take5Builder builder) {
         this.builder = builder;
@@ -62,7 +72,7 @@ public class Take5EntryPoint {
      * same value.
      * @param version the minimum and maximum content version.
      */
-    public void setContentVersion(int version) {
+    public void setContentVersion(int version) throws Take5BuildException {
         setContentVersion(version, version);
     }
 
@@ -71,9 +81,9 @@ public class Take5EntryPoint {
      * @param minVersion the minimum content version.
      * @param maxVersion the maximum content version.
      */
-    public void setContentVersion(int minVersion, int maxVersion) {
+    public void setContentVersion(int minVersion, int maxVersion) throws Take5BuildException {
         if (!(0 <= minVersion && minVersion <= maxVersion)) {
-            throw new Take5BuilderException("Bad content version");
+            throw new Take5BuildException("Bad content version");
         }
         this.contentMinVersion = minVersion;
         this.contentMaxVersion = maxVersion;
@@ -89,9 +99,9 @@ public class Take5EntryPoint {
      * point must be loaded before the Take5Builder can build a binary.
      *
      * @param pairs an iterator that generates Take5Pairs.
-     * @throws Take5ParseError
+     * @throws Take5BuildException
      */
-    public void loadContent(Iterator<Take5Pair> pairs) {
+    public void loadContent(Iterator<Take5Pair> pairs) throws Take5BuildException {
         if (loaded) {
             throw new Take5BuilderException("Entry point already loaded");
         }

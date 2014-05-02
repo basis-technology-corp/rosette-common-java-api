@@ -4,7 +4,7 @@
  ** and may only be used as permitted under the license agreement under which
  ** it has been distributed, and in no other way.
  **
- ** Copyright (c) 2010 Basis Technology Corporation All rights reserved.
+ ** Copyright (c) 2010-2014 Basis Technology Corporation All rights reserved.
  **
  ** The technical data and information provided herein are provided with
  ** `limited rights', and the computer software provided herein is provided
@@ -14,14 +14,43 @@
 
 package com.basistech.rosette.internal.take5build;
 
+/**
+ * Value blob.
+ */
 class Value {
-    byte[] data;
-    int alignment;
-    int offset;                 // offset into data
-    int length;
-    int hash;                   // for valueRegistry
-    Value next;                 // for valueRegistry
+    final static short VALUE = 2;
+    final static short KEY = 1;
 
-    // For code generation:
-    int address;                // relative to the start of the segment
+    final byte[] data;
+    int alignment; // NOT FINAL. The registry will lcm this as it merges in.
+    final int offset;                 // offset into data
+    final int length;
+    final int hash;                   // for valueRegistry
+    final Value next;                 // for valueRegistry
+    final short flags;
+    int address;
+
+    Value(byte[] data, int offset, int length, int alignment, short flags, int hash, Value next) {
+        this.data = data;
+        this.alignment = alignment;
+        this.offset = offset;
+        this.length = length;
+        this.hash = hash;
+        this.next = next;
+        this.flags = flags;
+    }
+
+    boolean isValue() {
+        return 0 != (flags & 2);
+    }
+
+    boolean isKey() {
+        return 0 != (flags & 1);
+    }
+
+    int getKeyHash(int hashFun) {
+        assert isKey();
+        assert (length & 1) == 0;
+        return FnvHash.fnvhash(hashFun, data, 0, (length >> 1) - 1);
+    }
 }

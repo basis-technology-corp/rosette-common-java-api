@@ -4,7 +4,7 @@
  ** and may only be used as permitted under the license agreement under which
  ** it has been distributed, and in no other way.
  **
- ** Copyright (c) 2010 Basis Technology Corporation All rights reserved.
+ ** Copyright (c) 2014 Basis Technology Corporation All rights reserved.
  **
  ** The technical data and information provided herein are provided with
  ** `limited rights', and the computer software provided herein is provided
@@ -37,6 +37,8 @@ public final class Take5Format {
     public static final int VERSION_5_3 = 0x503;
     public static final int VERSION_5_4 = 0x504;
     public static final int VERSION_5_5 = 0x505;
+    public static final int VERSION_5_6 = 0x506;
+    public static final int VERSION_MIN = VERSION_5_0;
 
     /*
      * The magic word.
@@ -96,6 +98,14 @@ public final class Take5Format {
     public static final int HDR_ENTRY_POINT_HEADER_SIZE = 30;
     public static final int HDRLEN_VERSION_5_4 = 31;
     public static final int HDRLEN_VERSION_5_5 = 31;
+    // New in 5.6:
+    public static final int HDR_INDEX_COUNT = 31;
+    public static final int HDR_KEYCHECK_DATA = 32;
+    public static final int HDR_KEYCHECK_FORMAT = 33;
+    public static final int HDR_MAX_HASH_FUN = 34;
+    public static final int HDR_MILLIONS_TESTED = 35;
+    public static final int HDR_FSA_LIMIT = 36;
+    public static final int HDRLEN_VERSION_5_6 = 37;
 
     /*
      * Entry point header.
@@ -123,8 +133,19 @@ public final class Take5Format {
     public static final int EPT_MAX_VALUE_SIZE = 14;
     public static final int EPT_MIN_CHARACTER = 15;
     public static final int EPT_MAX_CHARACTER = 16;
+
+
     public static final int EPTLEN_VERSION_5_4 = 17;
     public static final int EPTLEN_VERSION_5_5 = 17;
+    // New in 5.6:
+
+    public static final int EPT_INDEX_COUNT = 17;
+    public static final int EPT_BUCKET_COUNT = 18;
+    public static final int EPT_MAX_HASH_FUN = 19;
+    public static final int EPT_MILLIONS_TESTED = 20;
+  /* TKB_VERSION_5_6 header ends here */
+
+    public static final int EPTLEN_VERSION_5_6 = 21;
 
     /*
      * Value format codes.
@@ -138,7 +159,8 @@ public final class Take5Format {
      * Runtime engines.
      */
     public static final int ENGINE_TAKE3 = 1;
-    public static final int ENGINE_SEARCH = 2; // currently the only one...
+    public static final int ENGINE_SEARCH = 2;
+    public static final int ENGINE_PERFHASH = 3;
 
     /*
      * Search type opcodes.
@@ -149,6 +171,10 @@ public final class Take5Format {
     public static final int SEARCH_TYPE_CHOICE_0 = 34;  // 34 - 50
     // 51 - 67 is the deprecated SEARCH_TYPE_DISPATCH range
     public static final int SEARCH_TYPE_LINEAR_MANY = 68;
+
+    public static final int KEYCHECK_FORMAT_NONE = 0;
+    public static final int KEYCHECK_FORMAT_HASH32 = 1;
+    public static final int KEYCHECK_FORMAT_STR = 2;
 
     private Take5Format() {
     }

@@ -4,7 +4,7 @@
  ** and may only be used as permitted under the license agreement under which
  ** it has been distributed, and in no other way.
  **
- ** Copyright (c) 2010 Basis Technology Corporation All rights reserved.
+ ** Copyright (c) 2010-2014 Basis Technology Corporation All rights reserved.
  **
  ** The technical data and information provided herein are provided with
  ** `limited rights', and the computer software provided herein is provided
@@ -15,6 +15,9 @@
 package com.basistech.rosette.internal.take5build;
 
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,15 +27,18 @@ import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static com.basistech.rosette.internal.take5build.Take5Format.ENGINE_PERFHASH;
 import static com.basistech.rosette.internal.take5build.Take5Format.ENGINE_SEARCH;
-import static com.basistech.rosette.internal.take5build.Take5Format.EPTLEN_VERSION_5_5;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPTLEN_VERSION_5_6;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_ACCEPT_EDGE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_ACCEPT_STATE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_CONTENT_FLAGS;
@@ -52,7 +58,7 @@ import static com.basistech.rosette.internal.take5build.Take5Format.EPT_STATE_ST
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_WORD_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.FLAG_LITTLE_ENDIAN;
 import static com.basistech.rosette.internal.take5build.Take5Format.FLAG_LOOKUP_AUTOMATON;
-import static com.basistech.rosette.internal.take5build.Take5Format.HDRLEN_VERSION_5_5;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDRLEN_VERSION_5_6;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_ACCEPT_EDGE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_ACCEPT_STATE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_BUILD_DAY;
@@ -68,6 +74,8 @@ import static com.basistech.rosette.internal.take5build.Take5Format.HDR_ENTRY_PO
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FLAGS;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_DATA;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_ENGINE;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDR_KEYCHECK_DATA;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDR_KEYCHECK_FORMAT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAGIC;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_CHARACTER;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_MATCHES;
@@ -85,12 +93,10 @@ import static com.basistech.rosette.internal.take5build.Take5Format.HDR_VALUE_DA
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_VALUE_FORMAT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_WORD_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.MAGIC_T4K3;
-import static com.basistech.rosette.internal.take5build.Take5Format.VALUE_FORMAT_INDEX;
 import static com.basistech.rosette.internal.take5build.Take5Format.VALUE_FORMAT_INDIRECT;
-import static com.basistech.rosette.internal.take5build.Take5Format.VALUE_FORMAT_NONE;
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_0;
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_4;
-import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_5;
+import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_6;
 
 /**
  * Build a new Take5 binary.
@@ -103,23 +109,32 @@ import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_5;
  * create the Take5 binary in memory or in the file system.
  */
 public class Take5Builder {
-    // Currently this builder is up to version 5.5:
+    // Currently this builder is up to version 5.6:
     static final int VERSION_MIN = VERSION_5_0;
-    static final int VERSION_MAX = VERSION_5_5;
-    static final int HDRLEN = HDRLEN_VERSION_5_5;
-    static final int EPTLEN = EPTLEN_VERSION_5_5;
+    static final int VERSION_MAX = VERSION_5_6;
+    static final int HDRLEN = HDRLEN_VERSION_5_6;
+    static final int EPTLEN = EPTLEN_VERSION_5_6;
 
+/*
+ * 1e7 is about 1 second for 100k keys on my desktop:
+ */
+    static final double TIME_BUDGET_SEC = 1e7;
+    static final double TIME_BUDGET = 15 * TIME_BUDGET_SEC;       /* -t hash -r */
+
+    Engine engine;
     Mode outputMode;
     int valueSize;
+    KeyFormat keyFormat;
+    ValueFormat valueFormat;
     boolean storeValues;
     boolean generateBinary;
     boolean varyNothing;
     ByteOrder byteOrder = ByteOrder.nativeOrder();
     byte[] copyright;
     Map<String, String> metadata;
-    List<Take5EntryPoint> entryPoints = new ArrayList<Take5EntryPoint>();
-    Value[] valueRegistry; // No, you can't use HashMap<byte[], Value> here.
-    List<Value> valueTable = new ArrayList<Value>(1000);
+    List<Take5EntryPoint> entryPoints = Lists.newArrayList();
+    ValueRegistry valueRegistry;
+    List<Value> valueTable = Lists.newArrayListWithCapacity(1000);
     State[] stateRegistry;
     State terminalState;        // the state with no edges
     State lastState;            // (initially null) most recent state
@@ -127,11 +142,28 @@ public class Take5Builder {
     int edgeCount;              // (initially 0) number of edges
     int acceptEdgeCount;        // (initially 0) number of accept edges
     int totalKeyCount;          // (initially 0) sum of all entry points
+    int globalMaxHashFun;
+    int globalMillionsTested;
     int globalMaxMatches;       // (initially 0) max of all entry points
+    int globalIndexCount;
+    int globalBucketCount;
+
     int globalMaxKeyLength;     // (initially 0) max of all entry points
     int globalMaxValueSize;     // (initially 0) max of all entry points
     char globalMinCharacter = 0xFFFF; //         min of all entry points
     char globalMaxCharacter;    // (initially 0) max of all entry points
+    double bestExpectedTime;
+    /*
+     * Allow as much as 0.1% chance of failure:
+     */
+    double finishProbability = 0.999;               /* -t hash -a */
+    double bestFinishProbability;
+    /*
+     * If you're storing both keys and values, and using the default
+     * time_budget, then 0.15% more indexes than keys is close to optimal as
+     * dictionaries get large enough for you to care:
+     */
+    double indexExpansion = 1.001500;
 
     // Used during the construction of a single entry point:
     String inputName;
@@ -143,13 +175,14 @@ public class Take5Builder {
     boolean[] edgeIsAccept = new boolean[100];
     State[] edgeState = new State[100];
     int maxKeyLength;
-    int maxValueSize;
     char minCharacter;
     char maxCharacter;
 
     // For code generation:
     List<Segment> segments;     // all segments
     List<Segment> outputList;   // in output order
+    LinkedList<PerfhashKeyValuePair> allPerfhashPairs;
+    Primes primes = new Primes();
 
     /**
      * What kind of output should a {@link Take5Builder} generate?
@@ -179,6 +212,34 @@ public class Take5Builder {
         VALUE,                  // -p
     }
 
+    public enum ValueFormat {
+        IGNORE,                        /* -i */
+        INDEX,                         /* -x */
+        STRING,
+        PTR
+    }
+
+    public enum KeyFormat {
+        FSA,                             /* -t fsa or -5 */
+        HASH_NONE,                       /* -t hash/none */
+        HASH_HASH32,                     /* -t hash/hash32 */
+        HASH_STRING                         /* -t hash/str */
+    }
+
+    /**
+     * Which lookup engine.
+     */
+    public enum Engine {
+        /**
+         * Finite State engine.
+         */
+        FSA,
+        /**
+         * Perfect Hash Engine.
+         */
+        PERFHASH;
+    }
+
     // XXX Should be a way to vary these:
     int valueRegistryLength = 99991;
     int stateRegistryLength = 99991;
@@ -189,50 +250,72 @@ public class Take5Builder {
      * alignments required by all payload values.  If the output mode is
      * something else, then the value size must be 0.
      */
-    public Take5Builder(Mode outputMode, int valueSize) {
-        this.outputMode = outputMode;
-        this.valueSize = valueSize;
+    Take5Builder(Builder builder) throws Take5BuildException {
+        this.engine = builder.engine;
+        this.outputMode = builder.mode;
+        this.valueSize = builder.valueSize;
+        this.keyFormat = builder.keyFormat;
+        //TODO: rationalize C and Java w/r/t ValueFormat versus outputMode.
+        switch (outputMode) {
+        case TEXT:
+            valueFormat = ValueFormat.STRING;
+            break;
+        case BOOLEAN:
+            valueFormat = ValueFormat.IGNORE;
+            break;
+        case INDEX:
+            valueFormat = ValueFormat.INDEX;
+            break;
+        case VALUE:
+            valueFormat = ValueFormat.PTR;
+            break;
+        case NONE:
+            // TODO: sort this out.
+            valueFormat = null;
+            break;
+        default:
+            throw new RuntimeException("stupidity");
+        }
+
         // I'd parenthesize this to make it more readable, but checkstyle
         // won't let me:
         storeValues = outputMode == Mode.VALUE;
         generateBinary = !(outputMode == Mode.NONE || outputMode == Mode.TEXT);
+
         if (storeValues) {
             if (valueSize <= 0) {
-                throw new Take5BuilderException("Inconsistent valueSize and outputMode");
+                throw new Take5BuildException("Inconsistent valueSize and outputMode");
             }
-            valueRegistry = new Value[valueRegistryLength];
+            valueRegistry = new ValueRegistry(valueRegistryLength);
         } else {
             if (valueSize != 0) {
-                throw new Take5BuilderException("Inconsistent valueSize and outputMode");
+                throw new Take5BuildException("Inconsistent valueSize and outputMode");
             }
         }
+
+        if (keyFormat == KeyFormat.FSA) {
+            initializeFsaBuilder();
+        } else {
+            initializePerfhashBuilder();
+        }
+    }
+
+    private void initializeFsaBuilder() {
         stateRegistry = new State[stateRegistryLength];
         terminalState = findState(0, 0);
     }
 
-    /**
-     * This is the same as invoking Take5Builder with an output mode of
-     * VALUE.
-     */
-    public Take5Builder(int valueSize) {
-        this(Mode.VALUE, valueSize);
+    private void initializePerfhashBuilder() {
+        // nothing required
     }
 
     /**
-     * Create a Take5Builder with any output mode other than VALUE.
-     */
-    public Take5Builder(Mode outputMode) {
-        this(outputMode, 0);
-    }
-
-    /**
-     * Set the copyright string to be stored in the Take5 binary.  The
-     * copyright string must consist of only ASCII characters.
+     * Set the copyright string to be stored in the Take5 binary.
      *
      * @param copyright the copyright notice.
      */
     public void setCopyright(String copyright) {
-        this.copyright = Utils.toAscii(copyright);
+        this.copyright = copyright.getBytes(Charsets.UTF_8);
     }
 
     /**
@@ -242,10 +325,10 @@ public class Take5Builder {
      *
      * @param metadata the metadate map.
      */
-    public void setMetadata(Map<String, String> metadata) {
+    public void setMetadata(Map<String, String> metadata) throws Take5BuildException {
         for (String key : metadata.keySet()) {
             if (0 <= key.indexOf(0) || 0 <= metadata.get(key).indexOf(0)) {
-                throw new Take5BuilderException("Metadata contains a null");
+                throw new Take5BuildException("Metadata contains a null");
             }
         }
         this.metadata = metadata;
@@ -254,7 +337,7 @@ public class Take5Builder {
     /**
      * Create a new entry point.  Every entry point you create must be
      * loaded with content before you can build a Take5 binary.  The name
-     * must consist of only ASCII characters.
+     * must consist of only ASCII characters. (why?)
      * <P>
      * Note that creating a single entry point Take5 binary whose entry
      * point is named <CODE>"main"</CODE> will result in a binary that can
@@ -263,11 +346,11 @@ public class Take5Builder {
      * @param name the name for the new entry point.
      * @return a new, unloaded, entry point.
      */
-    public Take5EntryPoint newEntryPoint(String name) {
+    public Take5EntryPoint newEntryPoint(String name) throws Take5BuildException {
         assert name != null;
         for (Take5EntryPoint ep : entryPoints) {
             if (ep.name.equals(name)) {
-                throw new Take5BuilderException("Duplicate entry point name");
+                throw new Take5BuildException("Duplicate entry point name " + name + ".");
             }
         }
         Take5EntryPoint ep = new Take5EntryPoint(name, this);
@@ -301,20 +384,19 @@ public class Take5Builder {
         this.varyNothing = varyNothing;
     }
 
-    void loadContent(Take5EntryPoint ep,
-                     Iterator<Take5Pair> pairs) {
+    void loadContent(Take5EntryPoint ep,  Iterator<Take5Pair> pairs) throws Take5ParseError {
         Take5Pair pair;
         beginKeys(ep);
         if (storeValues) {
             while (pairs.hasNext()) {
                 pair = pairs.next();
-                addKey(pair.getKey(), pair.getKeyLength());
-                valueTable.add(findValue(pair));
+                final Value value = findValue(pair);
+                addKey(pair.getKey(), pair.getKeyLength(), value);
             }
         } else {
             while (pairs.hasNext()) {
                 pair = pairs.next();
-                addKey(pair.getKey(), pair.getKeyLength());
+                addKey(pair.getKey(), pair.getKeyLength(), null);
             }
         }
         endKeys(ep);
@@ -327,7 +409,15 @@ public class Take5Builder {
         inputName = ep.inputName;
         keyCount = 0;
         maxKeyLength = 0;
-        maxValueSize = 0;
+        valueRegistry.maxValueSize = 0;
+        if (keyFormat == KeyFormat.FSA) {
+            fsaBeginKeys();
+        } else {
+            perfhashBeginKeys();
+        }
+    }
+
+    private void fsaBeginKeys() {
         minCharacter = 0xFFFF;
         maxCharacter = 0;
         frameCount = 0;
@@ -336,11 +426,37 @@ public class Take5Builder {
         edgeState[0] = terminalState;
     }
 
+    private void perfhashBeginKeys() {
+        allPerfhashPairs = Lists.newLinkedList();
+    }
+
     /**
      * This is the main entry into the FSA builder.  Each key is presented
      * in turn.
      */
-    private void addKey(char[] key, final int kl) {
+    private void addKey(char[] key, int keyLength, Value value) throws Take5ParseError {
+        keyCount++;
+        if (keyLength > maxKeyLength) {
+            maxKeyLength = keyLength;
+        }
+
+        if (keyFormat == KeyFormat.FSA) {
+            fsaAddKey(key, keyLength, value);
+        } else {
+            perfhashAddKey(key, keyLength, value);
+        }
+    }
+
+    private void perfhashAddKey(char[] key, int keyLength, Value value) {
+        byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16BE);
+        Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyLength, 2, Value.KEY);
+
+        int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length);
+        PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
+        allPerfhashPairs.addFirst(pair);
+    }
+
+    private void fsaAddKey(final char[] key, final int kl, final Value value) throws Take5ParseError {
         int fc = frameCount;
         int top = frameIndex[fc];
         char c;
@@ -384,7 +500,6 @@ public class Take5Builder {
                 throw new Take5ParseError("Keys out of order", inputName, keyCount);
             }
             edgeIsAccept[0] = true;
-            keyCount++;
             return;
         }
 
@@ -432,14 +547,31 @@ public class Take5Builder {
         top++;
         frameIndex[fc] = top;
         frameCount = fc;
-        keyCount++;
-        if (kl > maxKeyLength) { maxKeyLength = kl; }
+        valueTable.add(value);
     }
 
     /**
      * No more keys, close the entry point.
      */
     private void endKeys(Take5EntryPoint ep) {
+
+        ep.maxKeyLength = maxKeyLength;
+        globalMaxKeyLength = Math.max(globalMaxKeyLength, maxKeyLength);
+        ep.maxValueSize = valueRegistry.maxValueSize;
+        ep.indexOffset = totalKeyCount;
+        ep.keyCount = keyCount;
+        totalKeyCount += keyCount;
+        assert !storeValues || totalKeyCount == valueTable.size();
+        globalMaxValueSize = Math.max(globalMaxValueSize, valueRegistry.maxValueSize);
+
+        if (keyFormat == KeyFormat.FSA) {
+            fsaEndKeys(ep);
+        } else {
+            perfhashEndKeys(ep);
+        }
+    }
+
+    private void fsaEndKeys(Take5EntryPoint ep) {
         int fc = frameCount;
         int top = frameIndex[fc];
         // Pack up the old suffix:
@@ -452,20 +584,185 @@ public class Take5Builder {
         ep.acceptEmpty = edgeIsAccept[0];
         ep.startState = edgeState[0];
         assert keyCount == ep.startState.keyCount + (ep.acceptEmpty ? 1 : 0);
-        ep.indexOffset = totalKeyCount;
-        ep.keyCount = keyCount;
-        totalKeyCount += keyCount;
-        assert !storeValues || totalKeyCount == valueTable.size();
+
         ep.maxMatches = ep.startState.maxMatches + (ep.acceptEmpty ? 1 : 0);
         globalMaxMatches = Math.max(globalMaxMatches, ep.maxMatches);
-        ep.maxKeyLength = maxKeyLength;
-        globalMaxKeyLength = Math.max(globalMaxKeyLength, maxKeyLength);
-        ep.maxValueSize = maxValueSize;
-        globalMaxValueSize = Math.max(globalMaxValueSize, maxValueSize);
+
         ep.minCharacter = minCharacter;
         if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
         ep.maxCharacter = maxCharacter;
         if (maxCharacter > globalMaxCharacter) { globalMaxCharacter = maxCharacter; }
+    }
+
+    private void perfhashEndKeys(Take5EntryPoint ep) {
+        int indexCount = (int)Math.ceil(keyCount * indexExpansion);
+        indexCount = primes.nextPrime(indexCount);
+        int bucketCount = bestBucketCount(indexCount);
+
+        Bucket[] bucketTable = new Bucket[bucketCount];
+
+        for (int x = 0; x < ep.bucketCount; x++) {
+            bucketTable[x] = new Bucket(x);
+        }
+
+        int wordCount = 0;
+        for (PerfhashKeyValuePair pair : allPerfhashPairs) {
+            wordCount++;
+            int x = pair.keyHash % ep.bucketCount;
+            bucketTable[x].pairs.addFirst(pair);
+            bucketTable[x].count++;
+        }
+
+        Arrays.sort(bucketTable);
+
+        boolean[] indexUsed = new boolean[ep.indexCount];
+        int maxHashFun = 0;
+        int millionsTested = 0;
+        int funCnt = 0;
+        int fun;
+
+        for (int x = 0; x < bucketCount; x++) {
+            if (bucketTable[x].count > 1) {
+                fun = indexCount;
+                while (!tryFit(fun, indexCount, indexUsed, bucketTable[x].pairs)) {
+                    if (fun > 0x7FFFFFFF) {
+                        throw new Take5BuilderException("Failure! hash space exhausted!");
+                    }
+                }
+                bucketTable[x].fun = fun;
+                if (fun > maxHashFun) {
+                    maxHashFun = fun;
+                }
+                funCnt += 1 + (funCnt / 1000000);
+                funCnt %= 1000000;
+            }
+
+        }
+
+        ep.wordCount = wordCount;
+        ep.indexCount = indexCount;
+        ep.bucketCount = bucketCount;
+        ep.bucketTable = bucketTable;
+        ep.maxHashFun = maxHashFun;
+        ep.millionsTested = millionsTested + (funCnt + 500000) / 1000000;
+
+
+    }
+
+    private boolean tryFit(int fun, int indexCount, boolean[] indexUsed, LinkedList<PerfhashKeyValuePair> pairs) {
+        for (PerfhashKeyValuePair pair : pairs) {
+            int idx = pair.key.getKeyHash(fun) % indexCount;
+            if (!indexUsed[idx]) {
+                pair.index = idx;
+                indexUsed[idx] = true;
+            } else {
+                for (PerfhashKeyValuePair undoPair : pairs) {
+                    indexUsed[undoPair.index] = false;
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Given a candidate bucket count, the target index count, and the list of
+     * key hash values, check whether the expected value of the number of hash
+     * functions that we will have to test is less than our time budget.  Also
+     * check whether the risk that we will might exhaust our hash function
+     * space is accepably low.
+     *
+     * We could compute almost as good estimates knowing _just_ the number of
+     * keys, but this is plenty fast, and slighly more accurate.
+     *
+     * "More accurate" does mean that this function is _not_ monotonic: if
+     * bucket_count_ok(i, ...) is false, it does _not_ follow that
+     * bucket_count_ok(j, ...) is false for all j < i.  So the binary search
+     * that best_bucket_count() does is not actually deterministic.  But as
+     * long as you're not pushing the limits, that doesn't really matter.
+     */
+    private boolean bucketCountOk(int bucketCount, int indexCount) {
+        int i;
+        int holes;
+        int[] counts;
+        double e;
+        double expected;
+        double willFinish;
+        double funs;
+
+        counts = new int[bucketCount]; // Java fills us with zeros.
+
+        for (PerfhashKeyValuePair pair : allPerfhashPairs) {
+            counts[pair.keyHash % bucketCount]++;
+        }
+
+        Arrays.sort(counts);
+
+        funs = 0x80000000 - indexCount;
+        holes = indexCount;
+        expected = 0.0;
+        willFinish = 1.0;
+        for (i = 0; i < bucketCount; i++) {
+            if (counts[i] > 1) {
+                e = 1.0;
+                while (counts[i]-- > 0) {
+                    e *= (double)indexCount / (double)holes;
+                    holes--;
+                }
+                expected += e;
+                willFinish *= 1 - Math.pow(1 - (1 / e), funs);
+            }
+        }
+
+        if (expected <= TIME_BUDGET && willFinish >= finishProbability) {
+            bestExpectedTime = expected;
+            bestFinishProbability = willFinish;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Given the target index count, and the list of key hash values, find the
+     * smallest prime number (>= 5) where we expect to test no more than
+     * time_budget hash functions, and where the probability of success is at
+     * least finish_probability.  No magic here, just binary search.
+     */
+    private int bestBucketCount(int indexCount) {
+        int low;
+        int med;
+        int high;
+
+        low = 5;
+        if (bucketCountOk(low, indexCount)) {
+            return low;
+        }
+
+        assert primes.isPrime(indexCount);
+
+        high = indexCount;
+
+        if (!bucketCountOk(high, indexCount)) {
+            throw new Take5BuilderException("Desired compile time is unachievable.");
+        }
+
+        for (;;) {
+            med = primes.nextPrime((low + high) / 2);
+    /* The following makes sure we really try _all_ the prime numbers... */
+            if (med >= high) {
+                med = primes.nextPrime(low + 1);
+            }
+            assert low < med;
+            if (med >= high) {
+                return high;
+            }
+            if (bucketCountOk(med, indexCount)) {
+                high = med;
+            } else {
+                low = med;
+            }
+        }
     }
 
     private State findState(int beg, int end) {
@@ -537,39 +834,17 @@ public class Take5Builder {
         if (data == null) {
             return null;
         }
-        int alignment = pair.getAlignment();
         int offset = pair.getOffset();
-        int length = pair.getLength();
-        if (length > maxValueSize) { maxValueSize = length; }
-        int hash = Utils.hashBytes(data, offset, length);
-        int index = (hash & 0x7FFFFFFF) % valueRegistryLength;
-        Value firstValue = valueRegistry[index];
-        Value v;
-        for (v = firstValue; v != null; v = v.next) {
-            if (v.hash == hash && v.length == length
-                && Utils.equalBytes(v.data, v.offset, data, offset, length)) {
-                v.alignment = Utils.lcm(alignment, v.alignment);
-                return v;
-            }
-        }
-        v = new Value();
-        v.data = data;
-        v.alignment = alignment;
-        v.offset = offset;
-        v.length = length;
-        v.hash = hash;
-        v.next = firstValue;
-        valueRegistry[index] = v;
-        return v;
+        return valueRegistry.intern(data, offset, offset + pair.getLength(), pair.getAlignment(), Value.VALUE);
     }
 
     /**
      * Create a byte array that contains a Take5 binary.
      * @return a byte array containing a Take5 binary.
      */
-    public byte[] buildArray() {
+    public byte[] buildArray() throws Take5BuildException {
         if (!generateBinary) {
-            throw new Take5BuilderException("Output mode is not binary");
+            throw new Take5BuildException("Output mode is not binary");
         }
         int size = prepareSegments();
         byte[] buf = new byte[size];
@@ -582,9 +857,9 @@ public class Take5Builder {
      * Create a ByteBuffer that contains a Take5 binary.
      * @return a ByteBuffer containing a Take5 binary.
      */
-    public ByteBuffer buildBuffer() {
+    public ByteBuffer buildBuffer() throws Take5BuildException {
         if (!generateBinary) {
-            throw new Take5BuilderException("Output mode is not binary");
+            throw new Take5BuildException("Output mode is not binary");
         }
         int size = prepareSegments();
         ByteBuffer buffer = ByteBuffer.allocate(size); // or allocateDirect...
@@ -681,7 +956,7 @@ public class Take5Builder {
         doMetaData(header);
         doCopyright(header);
         doBuildTime(header);
-        doStates(header);
+        doIndex(header);
         doValues(header);
 
         if (entryPoints.size() == 1 && entryPoints.get(0).name.equals("main")) {
@@ -718,24 +993,42 @@ public class Take5Builder {
         return totalSize;
     }
 
-    void doStates(IntBuffer header) {
-        // State Segment
-        StateSegment stateSeg = new StateSegment(this, "States");
-        int stateAddr = stateSeg.getAddress();
-
+    void doIndex(IntBuffer header) {
         // Entry Point Segment
         int nentries = entryPoints.size();
         header.put(HDR_ENTRY_POINT_COUNT, nentries);
         header.put(HDR_ENTRY_POINT_HEADER_SIZE, 4 * EPTLEN);
-        SimpleSegment entrySeg = new SimpleSegment(this, "Entry Points",
-                                                   nentries * (4 * EPTLEN), 4);
+        SimpleSegment entrySeg = new SimpleSegment(this, "Entry Points",  nentries * (4 * EPTLEN), 4);
+
+
+        if (keyFormat == KeyFormat.FSA) {
+            doFstStates(header, entrySeg);
+        } else {
+            doHashBuckets(header, entrySeg);
+        }
+    }
+
+    void doHashBuckets(IntBuffer header, SimpleSegment entrySeg) {
+        assert globalIndexCount >= totalKeyCount;
+
+        header.put(HDR_FSA_ENGINE, ENGINE_PERFHASH);
+        new BucketSegment(this, "Hash Buckets", entrySeg); // construction does all the work.
+    }
+
+    void doFstStates(IntBuffer header, SimpleSegment entrySeg) {
         IntBuffer entry = entrySeg.getIntBuffer();
+
+        header.put(HDR_FSA_ENGINE, ENGINE_SEARCH);
+
+        // State Segment
+        StateSegment stateSeg = new StateSegment(this, "States");
+        int stateAddr = stateSeg.getAddress();
 
         int index = -1;
         int i = 0;
         for (Take5EntryPoint ep : entryPoints) {
             if (!ep.loaded) {
-                throw new Take5BuilderException("Entry point not loaded");
+                throw new Take5BuilderException(String.format("Entrypoint %s not loaded.", ep.name));
             }
             int state = stateAddr + ep.startState.address;
             if (ep.acceptEmpty) {
@@ -844,36 +1137,108 @@ public class Take5Builder {
         }
     }
 
+    private int alignUp(int addr, int align) {
+        assert align > 0;
+        addr += align - 1;
+        addr -= addr % align;
+        return addr;
+    }
+
     void doValues(IntBuffer header) {
-        if (storeValues) {
-            ValueSegment valueSeg = new ValueSegment(this, "Values");
-            TableSegment tableSeg = new TableSegment(this, "Table", valueSeg);
-            header.put(HDR_VALUE_DATA, tableSeg.getAddress());
-            // And here is the same crazy check that the C builder does.
-            // It is not clear that this has ever protected anybody from
-            // anything.  Really there should be separate alignment and
-            // size checks of some kind.  But it's not clear how to do that
-            // and remain compatible with old runtimes and Take5 users.
-            // (This was a real mistake in the original Take5 design...)
-            if (valueSize % valueSeg.alignment != 0) {
-                throw new Take5BuilderException(String.format("Element size %d is not divisible"
-                                                              + " by the required alignment %d",
-                                                              valueSize,
-                                                              valueSeg.alignment));
-            }
-        } else {
-            header.put(HDR_VALUE_DATA, 0);
+        short flags = 0;
+        if (keyFormat == KeyFormat.HASH_STRING) {
+            flags |= Value.KEY;
         }
-        switch (outputMode) {
-        case INDEX:
-            header.put(HDR_VALUE_FORMAT, VALUE_FORMAT_INDEX);
+
+        ValueSegment dataSeg = null;
+
+        if (flags != 0) {
+            dataSeg = new ValueSegment(this, "Data", flags);
+        }
+
+
+        SimpleSegment keySegment = null;
+
+        switch (keyFormat) {
+        case HASH_NONE:
+            header.put(HDR_KEYCHECK_FORMAT, Take5Format.KEYCHECK_FORMAT_NONE);
             break;
-        case VALUE:
-            header.put(HDR_VALUE_FORMAT, VALUE_FORMAT_INDIRECT + valueSize);
+        case HASH_HASH32:
+            assert valueTable.size() == 0;
+            //Take5Builder builder, String description,         int bufferSize, int bufferAlignment
+            keySegment = new SimpleSegment(this, "Key Hash32 Table", globalIndexCount * 4, 4);
+            Arrays.fill(keySegment.rawbuf, (byte)-1);
+            header.put(HDR_KEYCHECK_FORMAT, Take5Format.KEYCHECK_FORMAT_HASH32);
+            header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
+            break;
+        case HASH_STRING:
+            assert valueTable.size() == 0;
+            keySegment = new SimpleSegment(this, "Key Table", globalIndexCount * 4, 4);
+            header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
+            header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
             break;
         default:
-            header.put(HDR_VALUE_FORMAT, VALUE_FORMAT_NONE);
+            throw new RuntimeException("stupidity;");
+        }
+
+        SimpleSegment valueTableSegment = null;
+
+        switch (valueFormat) {
+        case INDEX:
+            header.put(HDR_VALUE_FORMAT, Take5Format.VALUE_FORMAT_INDEX);
             break;
+        case PTR:
+            if (valueSize % valueRegistry.commonAlign != 0) {
+                throw new Take5BuilderException(String.format("Element size %d is not divisible"
+                                + " by the required alignment %d",
+                        valueSize,
+                        valueRegistry.commonAlign));
+            }
+            // yes, fall through.
+        case STRING:
+            header.put(HDR_VALUE_FORMAT, VALUE_FORMAT_INDIRECT + valueSize);
+            valueTableSegment = new SimpleSegment(this, "Value Table", globalIndexCount, globalIndexCount * 4);
+            header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
+            break;
+        default:
+            header.put(HDR_VALUE_FORMAT, Take5Format.VALUE_FORMAT_NONE);
+            break;
+
+        }
+
+        if (valueRegistryLength != 0) {
+            assert valueTableSegment != null && keySegment == null;
+            assert dataSeg != null;
+            assert valueTable.size() == globalIndexCount;
+            IntBuffer valueTableBuffer = valueTableSegment.getIntBuffer();
+            for (Value value : valueTable) {
+                valueTableBuffer.put(value.address);
+            }
+        } else if (valueTableSegment != null || keySegment != null) {
+            assert dataSeg != null;
+            int ix = 0;
+            for (Take5EntryPoint ep : entryPoints) {
+                int bucketCount = ep.bucketCount;
+                Bucket[] bucketTable = ep.bucketTable;
+                assert bucketTable != null;
+                for (int bx = 0; bx < bucketCount; bx++) {
+                    for (PerfhashKeyValuePair pair : bucketTable[bx].pairs) {
+                        if (valueTableSegment != null) {
+                            valueTableSegment.getIntBuffer().put(ix + pair.index, pair.keyHash);
+                        }
+                        if (keySegment != null) {
+                            if (keyFormat == KeyFormat.HASH_HASH32) {
+                                keySegment.getIntBuffer().put(ix + pair.index, pair.keyHash);
+                            } else {
+                                assert keyFormat == KeyFormat.HASH_STRING;
+                                keySegment.getIntBuffer().put(ix + pair.index, dataSeg.getAddress() + pair.index);
+                            }
+                        }
+                    }
+                    ix += ep.indexCount;
+                }
+                assert ix == globalIndexCount;
+            }
         }
     }
 
@@ -934,6 +1299,54 @@ public class Take5Builder {
                 index += nst.keyCount;
             }
             out.format("%n");
+        }
+    }
+
+    /**
+     * Builder class; use this to construct new instances.
+     */
+    public static final class Builder {
+        Engine engine;
+        Mode mode;
+        KeyFormat keyFormat;
+        int valueSize;
+
+        public static Builder engine(Engine engine) {
+            Builder builder = new Builder();
+            builder.engine(engine);
+            return builder;
+        }
+
+        public Builder mode(Mode mode) {
+            this.mode = mode;
+            return this;
+        }
+
+        public Builder keyFormat(KeyFormat keyFormat) {
+            this.keyFormat = keyFormat;
+            return this;
+        }
+
+        public Builder valueSize(int valueSize) {
+            this.valueSize = valueSize;
+            return this;
+        }
+
+        public Take5Builder build() throws Take5BuildException {
+            if (engine == null) {
+                throw new Take5BuildException("Engine must be specified.");
+            }
+            if (mode != null) {
+                throw new Take5BuildException("Mode must be specified.");
+            }
+            if (keyFormat == null && engine == Engine.FSA) {
+                keyFormat = KeyFormat.FSA;
+            } else if (keyFormat == null) {
+                throw new Take5BuildException("Key format must not be null.");
+            } else if (keyFormat == KeyFormat.FSA && engine != Engine.FSA) {
+                throw new Take5BuildException("Key format must not be FSA for non-FSA engine.");
+            }
+            return new Take5Builder(this);
         }
     }
 }

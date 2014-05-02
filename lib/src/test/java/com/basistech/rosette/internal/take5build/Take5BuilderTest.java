@@ -19,6 +19,7 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -125,7 +126,7 @@ public class Take5BuilderTest {
 
     @Test
     public void testSubclassedPair() throws Exception {
-        Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
+        Take5Builder builder =  Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
@@ -166,8 +167,8 @@ public class Take5BuilderTest {
      * Run the canonical example.
      */
     @Test
-    public void testCanonicalExample() {
-        Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
+    public void testCanonicalExample() throws Exception {
+        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
@@ -212,10 +213,10 @@ public class Take5BuilderTest {
      * Test that the empty key works.
      */
     @Test
-    public void testEmptySting() {
-        Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
+    public void testEmptyString() throws Exception {
+        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair(""));
         for (String s : hexWords) {
             keys.add(new ReusableTake5Pair(s));
@@ -230,10 +231,10 @@ public class Take5BuilderTest {
      * Test for duplicates in the input.
      */
     @Test
-    public void testDuplicateKey() {
-        Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
+    public void testDuplicateKey() throws Exception {
+        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
         keys.add(new ReusableTake5Pair("abd"));
         keys.add(new ReusableTake5Pair("abd"));
@@ -252,10 +253,10 @@ public class Take5BuilderTest {
      * Test for unsorted input.
      */
     @Test
-    public void testUnsortedInput() {
-        Take5Builder builder = new Take5Builder(Take5Builder.Mode.INDEX);
+    public void testUnsortedInput() throws Exception {
+        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
         keys.add(new ReusableTake5Pair("abe"));
         keys.add(new ReusableTake5Pair("abd"));
@@ -274,8 +275,9 @@ public class Take5BuilderTest {
      * Test storing a bunch of random payloads.
      */
     @Test
-    public void testPayloads() {
-        Take5Builder builder = new Take5Builder(Take5Builder.Mode.VALUE, 16);
+    public void testPayloads() throws Exception {
+        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.VALUE).valueSize(16).build();
+
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         int i = 0;

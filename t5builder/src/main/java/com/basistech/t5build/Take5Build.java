@@ -16,6 +16,7 @@
 package com.basistech.t5build;
 
 import au.com.bytecode.opencsv.CSVParser;
+import com.basistech.rosette.internal.take5build.Take5BuildException;
 import com.basistech.rosette.internal.take5build.Take5Builder;
 import com.basistech.rosette.internal.take5build.Take5EntryPoint;
 import com.google.common.base.Charsets;
@@ -238,7 +239,11 @@ public final class Take5Build {
             throw new Failure("Inconsistent options; can't determine builder type.");
         }
 
-        builder = new Take5Builder(builderMode, alignment);
+        try {
+            builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(builderMode).valueSize(alignment).build();
+        } catch (Take5BuildException e) {
+            throw new Failure(e);
+        }
         copyright();
 
         metadata();
@@ -248,7 +253,12 @@ public final class Take5Build {
             if (name == null) {
                 name = "main";
             }
-            Take5EntryPoint entrypoint = builder.newEntryPoint(name);
+            Take5EntryPoint entrypoint = null;
+            try {
+                entrypoint = builder.newEntryPoint(name);
+            } catch (Take5BuildException e) {
+                throw new Failure(e);
+            }
             oneEntrypoint(spec, entrypoint);
         }
 
@@ -283,7 +293,11 @@ public final class Take5Build {
                     spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath(),
                     e.getCause().getMessage()));
         }
-        entrypoint.loadContent(inputFile.getPairs().iterator());
+        try {
+            entrypoint.loadContent(inputFile.getPairs().iterator());
+        } catch (Take5BuildException e) {
+            throw new Failure(e);
+        }
     }
 
     private void metadata() throws Failure {
@@ -308,6 +322,8 @@ public final class Take5Build {
                 }));
             } catch (IOException e) {
                 throw new Failure("Failed to read metadata" + metadataFile.getAbsolutePath(), e);
+            } catch (Take5BuildException e) {
+                throw new Failure("Error in metadata " + metadataFile.getAbsolutePath(), e);
             }
         }
     }

@@ -54,16 +54,18 @@ public final class BuildCmd {
             System.err.print("    " + e + "\n");
             System.exit(66);    // EX_NOINPUT
         }
-        
-        Take5Builder builder = new Take5Builder(Take5Builder.Mode.VALUE, 16);
-        Take5EntryPoint ep = builder.newEntryPoint("main");
-        ep.inputName = input; // a secret known only to the command line tool
+
+        Take5Builder builder;
         try {
+            builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.VALUE).valueSize(16).build();
+            Take5EntryPoint ep = builder.newEntryPoint("main");
+            ep.inputName = input; // a secret known only to the command line tool
             ep.loadContent(new Scanner(new BufferedReader(instream), input));
-        } catch (Take5ParseError e) {
-            System.err.print("Error while parsing input:\n");
+        } catch (Take5BuildException e) {
+            System.err.print("Error building:\n");
             System.err.print("    " + e.getMessage() + "\n");
             System.exit(65);    // EX_DATAERR
+            return; // fool checkstyle.
         }
 
         builder.formatDescription(System.out);

@@ -20,18 +20,20 @@ class ValueSegment extends BufferedSegment {
 
     // Note that the constructor has the side effect of initializing the
     // address slot in all of the values.
-    ValueSegment(Take5Builder builder, String description) {
+    ValueSegment(Take5Builder builder, String description, short flags) {
         super(builder, description);
-        for (Value v : builder.valueRegistry) {
+        for (Value v : builder.valueRegistry.values) {
             while (v != null) {
-                v.address = reserveChunk(v.length, v.alignment);
+                if (0 != (v.flags & flags)) {
+                    v.address = reserveChunk(v.length, v.alignment);
+                }
                 v = v.next;
             }
         }
     }
 
     void writeData() throws IOException {
-        for (Value v : builder.valueRegistry) {
+        for (Value v : builder.valueRegistry.values) {
             while (v != null) {
                 allocateChunk(v.length, v.alignment);
                 assert address == v.address;
