@@ -56,6 +56,7 @@ import static com.basistech.rosette.internal.take5build.Take5Format.EPT_NAME;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_STATE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_STATE_START;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_WORD_COUNT;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.FLAG_LITTLE_ENDIAN;
 import static com.basistech.rosette.internal.take5build.Take5Format.FLAG_LOOKUP_AUTOMATON;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDRLEN_VERSION_5_6;
@@ -74,16 +75,19 @@ import static com.basistech.rosette.internal.take5build.Take5Format.HDR_ENTRY_PO
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FLAGS;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_DATA;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_ENGINE;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDR_INDEX_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_KEYCHECK_DATA;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_KEYCHECK_FORMAT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAGIC;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_CHARACTER;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_HASH_FUN;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_MATCHES;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_VALUE_SIZE;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_VERSION;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MAX_WORD_LENGTH;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_METADATA_SIZE;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_METADATA_STRING;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MILLIONS_TESTED;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MIN_CHARACTER;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_MIN_VERSION;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_REQUIRED_ALIGNMENT;
@@ -97,6 +101,7 @@ import static com.basistech.rosette.internal.take5build.Take5Format.VALUE_FORMAT
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_0;
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_4;
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_6;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_LIMIT;
 
 /**
  * Builder for Take5 binaries. Use {@link com.basistech.rosette.internal.take5build.Take5Builder.Factory}
@@ -950,6 +955,10 @@ public class Take5Builder {
             header.put(HDR_CONTENT_MAX_VERSION, 0);
         }
 
+        header.put(HDR_INDEX_COUNT, globalIndexCount);
+        header.put(HDR_MAX_HASH_FUN, globalMaxHashFun);
+        header.put(HDR_MILLIONS_TESTED, globalMillionsTested);
+
         // Now force all segments closed.  Compute the total size of the
         // output, and the required alignment.  This will make sure that
         // all segments to be written have now been added to outputList.
@@ -990,6 +999,7 @@ public class Take5Builder {
         assert globalIndexCount >= totalKeyCount;
 
         header.put(HDR_FSA_ENGINE, ENGINE_PERFHASH);
+        header.put(HDR_FSA_LIMIT, -1);
         new BucketSegment(this, "Hash Buckets", entrySeg); // construction does all the work.
     }
 
@@ -1001,6 +1011,7 @@ public class Take5Builder {
         // State Segment
         StateSegment stateSeg = new StateSegment(this, "States");
         int stateAddr = stateSeg.getAddress();
+        header.put(HDR_FSA_LIMIT, stateAddr + stateSeg.size);
 
         int index = -1;
         int i = 0;
@@ -1032,6 +1043,7 @@ public class Take5Builder {
             entry.put(i + EPT_MAX_VALUE_SIZE, ep.maxValueSize);
             entry.put(i + EPT_MIN_CHARACTER, ep.minCharacter);
             entry.put(i + EPT_MAX_CHARACTER, ep.maxCharacter);
+            entry.put(i + EPT_INDEX_COUNT, ep.indexCount);
 
             index += ep.startState.keyCount;
             i += EPTLEN;

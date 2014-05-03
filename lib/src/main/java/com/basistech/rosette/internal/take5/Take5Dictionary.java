@@ -153,6 +153,7 @@ public class Take5Dictionary {
 
             // AAARRRGGGHHH!!!  This is horrible!  When valueData is used (for binaries before
             // VERSION_5_6), this reads in <EM>way more</EM> than just the state machine!
+
             int charDataSize = (fsaLimit > 0 ? fsaLimit :
                                 valueData > 0 ? valueData :
                                 (int)dataSize);

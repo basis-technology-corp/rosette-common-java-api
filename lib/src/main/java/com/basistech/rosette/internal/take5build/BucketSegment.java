@@ -18,10 +18,12 @@ import java.nio.IntBuffer;
 
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_ACCEPT_EDGE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_ACCEPT_STATE_COUNT;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPT_BUCKET_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_CONTENT_FLAGS;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_CONTENT_MAX_VERSION;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_CONTENT_MIN_VERSION;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_EDGE_COUNT;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_OFFSET;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_START;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_CHARACTER;
@@ -82,6 +84,8 @@ class BucketSegment extends SimpleSegment {
             entry.put(entryIndex + EPT_MAX_VALUE_SIZE, ep.maxValueSize);
             entry.put(entryIndex + EPT_MIN_CHARACTER, ep.minCharacter);
             entry.put(entryIndex + EPT_MAX_CHARACTER, ep.maxCharacter);
+            entry.put(entryIndex + EPT_INDEX_COUNT, ep.indexCount);
+            entry.put(entryIndex + EPT_BUCKET_COUNT, ep.bucketCount);
             entry.put(entryIndex + EPT_MAX_HASH_FUN, ep.maxHashFun);
             entry.put(entryIndex + EPT_MILLIONS_TESTED, ep.millionsTested);
 
