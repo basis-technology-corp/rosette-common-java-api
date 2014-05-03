@@ -239,8 +239,8 @@ public final class Take5Build {
         } else if (alignment != 0) {
             factory.valueFormat(Take5Builder.ValueFormat.PTR);
         } else {
-            // if you don't specify an aligment with -p or -i to say no payloads at all.
-            factory.valueFormat(Take5Builder.ValueFormat.STRING);
+            // if you don't specify an alignment with -p or -i to say no payloads at all.
+            factory.valueFormat(Take5Builder.ValueFormat.IGNORE);
         }
 
         try {

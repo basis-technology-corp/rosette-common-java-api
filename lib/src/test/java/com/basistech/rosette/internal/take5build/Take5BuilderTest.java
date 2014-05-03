@@ -304,6 +304,61 @@ public class Take5BuilderTest {
         }
     }
 
+    @Test
+    public void testIgnoredPayloads() throws Exception {
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.IGNORE).valueSize(16).build();
+
+        Take5EntryPoint ep = builder.newEntryPoint("main");
+        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        int i = 0;
+        for (String s : hexWords) {
+            keys.add(generatePayload(s, i++));
+        }
+        ep.loadContent(keys.iterator());
+
+        ByteBuffer t5 = builder.buildBuffer();
+        Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
+        int j = 0;
+        for (String s : hexWords) {
+            Take5Match m = dict.matchExact(s);
+            assertNotNull(m);
+            try {
+                checkPayload(t5, m.getOffsetValue(), j++);
+                fail("Failed to throw lack of payloads");
+            } catch (Take5Exception e) {
+                assertEquals(Take5Exception.NO_POINTERS_HERE, e.getType());
+            }
+        }
+    }
+
+    @Test
+    public void testIndices() throws Exception {
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).valueSize(16).build();
+
+        Take5EntryPoint ep = builder.newEntryPoint("main");
+        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        int i = 0;
+        for (String s : hexWords) {
+            keys.add(generatePayload(s, i++));
+        }
+        ep.loadContent(keys.iterator());
+
+        ByteBuffer t5 = builder.buildBuffer();
+        Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
+        int j = 0;
+        for (String s : hexWords) {
+            Take5Match m = dict.matchExact(s);
+            assertNotNull(m);
+            try {
+                checkPayload(t5, m.getOffsetValue(), j++);
+                fail("Failed to throw lack of payloads");
+            } catch (Take5Exception e) {
+                assertEquals(Take5Exception.NO_POINTERS_HERE, e.getType());
+            }
+            //TODO: How do we know the right answer?
+        }
+    }
+
     private Take5Pair generatePayload(String key, int i) {
         int offset = offsets[i % offsets.length];
         int length = lengths[i % lengths.length];

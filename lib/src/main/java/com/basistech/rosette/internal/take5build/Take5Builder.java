@@ -187,7 +187,6 @@ public class Take5Builder {
     public enum ValueFormat {
         IGNORE,                        /* -i */
         INDEX,                         /* -x */
-        STRING,                        /* -s */
         PTR                            /* -p */
     }
 
@@ -1140,7 +1139,7 @@ public class Take5Builder {
         if (keyFormat == KeyFormat.HASH_STRING) {
             flags |= Value.KEY;
         }
-        if (valueFormat == ValueFormat.PTR || valueFormat == ValueFormat.STRING) {
+        if (valueFormat == ValueFormat.PTR) {
             flags |= Value.VALUE;
         }
 
@@ -1189,8 +1188,6 @@ public class Take5Builder {
                         valueSize,
                         valueRegistry.commonAlign));
             }
-            // yes, fall through.
-        case STRING:
             header.put(HDR_VALUE_FORMAT, VALUE_FORMAT_INDIRECT + valueSize);
             break;
         default:
@@ -1305,7 +1302,7 @@ public class Take5Builder {
      */
     public static final class Factory {
         Engine engine = Engine.FSA;
-        ValueFormat valueFormat = ValueFormat.STRING;
+        ValueFormat valueFormat = ValueFormat.PTR;
         KeyFormat keyFormat = KeyFormat.FSA;
         OutputFormat outputFormat = OutputFormat.TAKE5; // default is to write Take5.
         int valueSize = 2; // correct for STRING but not for IGNORE or INDEX, but main builder will cope.
