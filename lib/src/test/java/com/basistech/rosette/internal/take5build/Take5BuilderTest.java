@@ -126,7 +126,7 @@ public class Take5BuilderTest {
 
     @Test
     public void testSubclassedPair() throws Exception {
-        Take5Builder builder =  Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
+        Take5Builder builder =  new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
@@ -168,7 +168,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testCanonicalExample() throws Exception {
-        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
@@ -214,7 +214,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testEmptyString() throws Exception {
-        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
+        Take5Builder builder = new Take5Builder.Factory().build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair(""));
@@ -232,7 +232,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testDuplicateKey() throws Exception {
-        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
+        Take5Builder builder = new Take5Builder.Factory().build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
@@ -254,7 +254,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testUnsortedInput() throws Exception {
-        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.INDEX).build();
+        Take5Builder builder = new Take5Builder.Factory().build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
@@ -276,7 +276,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testPayloads() throws Exception {
-        Take5Builder builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(Take5Builder.Mode.VALUE).valueSize(16).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.PTR).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();

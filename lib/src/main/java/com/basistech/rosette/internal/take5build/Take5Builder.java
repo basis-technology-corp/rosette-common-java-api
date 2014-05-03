@@ -17,11 +17,12 @@ package com.basistech.rosette.internal.take5build;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSink;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
@@ -99,14 +100,8 @@ import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_4;
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_6;
 
 /**
- * Build a new Take5 binary.
- * <P>
- *  The usual pattern of usage is to create a {@link Take5Builder} and then
- * call {@link #newEntryPoint newEntryPoint} to obtain a {@link
- * Take5EntryPoint} for each entry point.  After loading each entry point
- * using {@link Take5EntryPoint#loadContent Take5EntryPoint.loadContent},
- * call {@link #buildBuffer buildBuffer} or {@link #buildFile buildFile} to
- * create the Take5 binary in memory or in the file system.
+ * Builder for Take5 binaries. Use {@link com.basistech.rosette.internal.take5build.Take5Builder.Factory}
+ * as a factory to obtain these classes.
  */
 public class Take5Builder {
     // Currently this builder is up to version 5.6:
@@ -122,10 +117,11 @@ public class Take5Builder {
     static final double TIME_BUDGET = 15 * TIME_BUDGET_SEC;       /* -t hash -r */
 
     Engine engine;
-    Mode outputMode;
     int valueSize;
     KeyFormat keyFormat;
     ValueFormat valueFormat;
+    OutputFormat outputFormat;
+
     boolean storeValues;
     boolean generateBinary;
     boolean varyNothing;
@@ -184,46 +180,45 @@ public class Take5Builder {
     LinkedList<PerfhashKeyValuePair> allPerfhashPairs;
     Primes primes = new Primes();
 
-    /**
-     * What kind of output should a {@link Take5Builder} generate?
-     */
-    public enum Mode {
-        /**
-         * Don't generate any output.  This mode is probably only useful to
-         * the command line interface.
-         */
-        NONE,                   // -n
-        /**
-         * Generate a textual description of the state machine.  This mode
-         * is probably only useful to the command line interface.
-         */
-        TEXT,                   // -s
-        /**
-         * Generate a Take5 recognizer.
-         */
-        BOOLEAN,                // -i
-        /**
-         * Generate a Take5 minimal perfect hash generator.
-         */
-        INDEX,                  // -x
-        /**
-         * Generate a Take5 containing stored values.
-         */
-        VALUE,                  // -p
-    }
-
     public enum ValueFormat {
         IGNORE,                        /* -i */
         INDEX,                         /* -x */
-        STRING,
-        PTR
+        STRING,                        /* -s */
+        PTR                            /* -p */
     }
 
+    /**
+     * With {@link Engine#PERFHASH}, what sort of keys to write.
+     */
     public enum KeyFormat {
+        /**
+         * For the FSA search engine.
+         */
         FSA,                             /* -t fsa or -5 */
+        /**
+         * Just accept hash collisions.
+         */
         HASH_NONE,                       /* -t hash/none */
+        /**
+         * Store a hash value to get very few hash collisions.
+         */
         HASH_HASH32,                     /* -t hash/hash32 */
-        HASH_STRING                         /* -t hash/str */
+        /**
+         * Store the key to get no collections.
+         */
+        HASH_STRING                      /* -t hash/str */
+    }
+
+    /**
+     * What gets written.
+     */
+    public enum OutputFormat {
+        // Take5 binary file
+        TAKE5,
+        // Textual dump of FSA
+        FSA,
+        // Nothing at all.
+        NONE
     }
 
     /**
@@ -245,42 +240,22 @@ public class Take5Builder {
     int stateRegistryLength = 99991;
 
     /**
-     * Create a Take5Builder.  If the given output mode is {@link
-     * Mode#VALUE VALUE}, then the value size must be divisible by all the
+     * Create a Take5Builder.  If the valueFormat is {@link ValueFormat#PTR},
+     * then the value size must be divisible by all the
      * alignments required by all payload values.  If the output mode is
      * something else, then the value size must be 0.
      */
-    Take5Builder(Builder builder) throws Take5BuildException {
-        this.engine = builder.engine;
-        this.outputMode = builder.mode;
-        this.valueSize = builder.valueSize;
-        this.keyFormat = builder.keyFormat;
-        //TODO: rationalize C and Java w/r/t ValueFormat versus outputMode.
-        switch (outputMode) {
-        case TEXT:
-            valueFormat = ValueFormat.STRING;
-            break;
-        case BOOLEAN:
-            valueFormat = ValueFormat.IGNORE;
-            break;
-        case INDEX:
-            valueFormat = ValueFormat.INDEX;
-            break;
-        case VALUE:
-            valueFormat = ValueFormat.PTR;
-            break;
-        case NONE:
-            // TODO: sort this out.
-            valueFormat = null;
-            break;
-        default:
-            throw new RuntimeException("stupidity");
-        }
+    Take5Builder(Factory factory) throws Take5BuildException {
+        this.engine = factory.engine;
+        this.valueSize = factory.valueSize;
+        this.keyFormat = factory.keyFormat;
+        this.valueFormat = factory.valueFormat;
+        this.outputFormat = factory.outputFormat;
 
         // I'd parenthesize this to make it more readable, but checkstyle
         // won't let me:
-        storeValues = outputMode == Mode.VALUE;
-        generateBinary = !(outputMode == Mode.NONE || outputMode == Mode.TEXT);
+        storeValues = valueFormat != ValueFormat.IGNORE;
+        generateBinary = !(outputFormat == OutputFormat.NONE || outputFormat == OutputFormat.FSA);
 
         if (storeValues) {
             if (valueSize <= 0) {
@@ -871,29 +846,20 @@ public class Take5Builder {
     }
 
     /**
-     * Write a Take5 binary into a file.  The format of the output is
-     * determined by the {@link Mode output mode} that was supplied.
-     * <P>
-     * If the output mode is {@link Mode#TEXT TEXT}, a path of
-     * <CODE>"-"</CODE> will cause the output to be written to standard
-     * output.
+     * Write a Take5 binary into a {@link ByteSink}.
      *
-     * @param path where to put the file.
+     * @param sink the sinl.
      */
-    public void buildFile(String path) throws IOException {
-        if (outputMode == Mode.NONE) {
+    public void buildToSink(ByteSink sink) throws IOException {
+        if (outputFormat == OutputFormat.NONE) {
             throw new Take5BuilderException("Output mode is NONE");
-        } else if (outputMode == Mode.TEXT) {
-            if ("-".equals(path)) {
-                formatDescription(System.out);
-            } else {
-                PrintStream out = new PrintStream(path);
-                formatDescription(out);
-                out.close();
-            }
+        } else if (outputFormat == OutputFormat.FSA) {
+            final Writer writer = sink.asCharSink(Charsets.UTF_8).openBufferedStream();
+            formatDescription(writer);
+            writer.close();
         } else {
             prepareSegments();
-            OutputStream out = new FileOutputStream(path);
+            OutputStream out = sink.openBufferedStream();
             writeSegments(out);
             out.close();
             releaseSegments();
@@ -942,7 +908,7 @@ public class Take5Builder {
         if (byteOrder.equals(ByteOrder.LITTLE_ENDIAN)) {
             flags |= FLAG_LITTLE_ENDIAN;
         }
-        if (outputMode != Mode.BOOLEAN) {
+        if (valueFormat != ValueFormat.IGNORE) {
             flags |= FLAG_LOOKUP_AUTOMATON;
         }
 
@@ -1177,6 +1143,8 @@ public class Take5Builder {
             header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
             header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
             break;
+        case FSA:
+            break;
         default:
             throw new RuntimeException("stupidity;");
         }
@@ -1206,7 +1174,7 @@ public class Take5Builder {
 
         }
 
-        if (valueRegistryLength != 0) {
+        if (valueTable.size() != 0) {
             assert valueTableSegment != null && keySegment == null;
             assert dataSeg != null;
             assert valueTable.size() == globalIndexCount;
@@ -1243,13 +1211,12 @@ public class Take5Builder {
     }
 
     /**
-     * Write a textual description of the automaton to a stream.  This can
-     * be called no matter what {@link Mode output mode} was chosen to
-     * create the Take5Builder.
+     * Write a textual description of the automaton to a stream.
      *
-     * @param out where to write the description.
+     * @param writer where to write the description.
      */
-    public void formatDescription(PrintStream out) {
+    public void formatDescription(Writer writer) {
+        PrintWriter out = new PrintWriter(writer);
         out.format("Entry points: (%d)%n", entryPoints.size());
         for (Take5EntryPoint ep : entryPoints) {
             out.format("  %s:%n", ep.name);
@@ -1300,45 +1267,57 @@ public class Take5Builder {
             }
             out.format("%n");
         }
+        out.flush();
     }
 
     /**
      * Builder class; use this to construct new instances.
      */
-    public static final class Builder {
-        Engine engine;
-        Mode mode;
-        KeyFormat keyFormat;
-        int valueSize;
+    public static final class Factory {
+        Engine engine = Engine.FSA;
+        ValueFormat valueFormat = ValueFormat.STRING;
+        KeyFormat keyFormat = KeyFormat.FSA;
+        OutputFormat outputFormat = OutputFormat.TAKE5; // default is to write Take5.
+        int valueSize = 2;
 
-        public static Builder engine(Engine engine) {
-            Builder builder = new Builder();
-            builder.engine(engine);
-            return builder;
+        public Factory() {
+            //
         }
 
-        public Builder mode(Mode mode) {
-            this.mode = mode;
+        public Factory engine(Engine engine) {
+            this.engine = engine;
             return this;
         }
 
-        public Builder keyFormat(KeyFormat keyFormat) {
+        public Factory valueFormat(ValueFormat valueFormat) {
+            this.valueFormat = valueFormat;
+            return this;
+        }
+
+        public Factory keyFormat(KeyFormat keyFormat) {
             this.keyFormat = keyFormat;
             return this;
         }
 
-        public Builder valueSize(int valueSize) {
+        public Factory valueSize(int valueSize) {
             this.valueSize = valueSize;
             return this;
         }
 
+        public Factory outputFormat(OutputFormat outputFormat) {
+            this.outputFormat = outputFormat;
+            return this;
+        }
+
         public Take5Builder build() throws Take5BuildException {
+
             if (engine == null) {
                 throw new Take5BuildException("Engine must be specified.");
             }
-            if (mode != null) {
+            if (valueFormat == null) {
                 throw new Take5BuildException("Mode must be specified.");
             }
+
             if (keyFormat == null && engine == Engine.FSA) {
                 keyFormat = KeyFormat.FSA;
             } else if (keyFormat == null) {

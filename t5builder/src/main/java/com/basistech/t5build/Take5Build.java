@@ -36,6 +36,7 @@ import org.kohsuke.args4j.spi.Setter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -226,21 +227,24 @@ public final class Take5Build {
     }
 
     private void build() throws Failure {
-        Take5Builder.Mode builderMode;
+        Take5Builder.Factory factory = new Take5Builder.Factory();
+        // our default is to write something.
+        factory.outputFormat(Take5Builder.OutputFormat.TAKE5);
         if (noOutput) {
-            builderMode = Take5Builder.Mode.NONE;
+            factory.outputFormat(Take5Builder.OutputFormat.NONE);
         } else if (dumpLookup) {
-            builderMode = Take5Builder.Mode.TEXT;
+            factory.outputFormat(Take5Builder.OutputFormat.FSA);
         } else if (noPayloads || ignorePayloads) {
-            builderMode = Take5Builder.Mode.BOOLEAN;
-        } else if (indexLookup) {
-            builderMode = Take5Builder.Mode.INDEX;
+            factory.valueFormat(Take5Builder.ValueFormat.INDEX);
+        } else if (alignment != 0) {
+            factory.valueFormat(Take5Builder.ValueFormat.PTR);
         } else {
-            throw new Failure("Inconsistent options; can't determine builder type.");
+            // if you don't specify an aligment with -p or -i to say no payloads at all.
+            factory.valueFormat(Take5Builder.ValueFormat.STRING);
         }
 
         try {
-            builder = Take5Builder.Builder.engine(Take5Builder.Engine.FSA).mode(builderMode).valueSize(alignment).build();
+            builder = factory.valueSize(alignment).build();
         } catch (Take5BuildException e) {
             throw new Failure(e);
         }
@@ -264,9 +268,9 @@ public final class Take5Build {
 
         try {
             if (dumpLookup) {
-                builder.buildFile("-");
+                builder.formatDescription(new OutputStreamWriter(System.out, Charsets.UTF_8));
             } else {
-                builder.buildFile(outputFile.getAbsolutePath());
+                builder.buildToSink(Files.asByteSink(outputFile));
             }
         } catch (IOException e) {
             throw new Failure("Failed to write output " + outputFile.getAbsolutePath());
