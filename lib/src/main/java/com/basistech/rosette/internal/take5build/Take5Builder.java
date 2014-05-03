@@ -254,7 +254,7 @@ public class Take5Builder {
 
         // I'd parenthesize this to make it more readable, but checkstyle
         // won't let me:
-        storeValues = valueFormat != ValueFormat.IGNORE;
+        storeValues = valueFormat != ValueFormat.IGNORE && valueFormat != ValueFormat.INDEX;
         generateBinary = !(outputFormat == OutputFormat.NONE || outputFormat == OutputFormat.FSA);
 
         if (storeValues) {
@@ -263,9 +263,7 @@ public class Take5Builder {
             }
             valueRegistry = new ValueRegistry(valueRegistryLength);
         } else {
-            if (valueSize != 0) {
-                throw new Take5BuildException("Inconsistent valueSize and outputMode");
-            }
+           valueSize = 0; // Don't get distracted by the default in the factory.
         }
 
         if (keyFormat == KeyFormat.FSA) {
@@ -384,7 +382,9 @@ public class Take5Builder {
         inputName = ep.inputName;
         keyCount = 0;
         maxKeyLength = 0;
-        valueRegistry.maxValueSize = 0;
+        if (valueRegistry != null) {
+            valueRegistry.maxValueSize = 0;
+        }
         if (keyFormat == KeyFormat.FSA) {
             fsaBeginKeys();
         } else {
@@ -522,7 +522,9 @@ public class Take5Builder {
         top++;
         frameIndex[fc] = top;
         frameCount = fc;
-        valueTable.add(value);
+        if (storeValues) {
+            valueTable.add(value);
+        }
     }
 
     /**
@@ -532,12 +534,14 @@ public class Take5Builder {
 
         ep.maxKeyLength = maxKeyLength;
         globalMaxKeyLength = Math.max(globalMaxKeyLength, maxKeyLength);
-        ep.maxValueSize = valueRegistry.maxValueSize;
         ep.indexOffset = totalKeyCount;
         ep.keyCount = keyCount;
         totalKeyCount += keyCount;
         assert !storeValues || totalKeyCount == valueTable.size();
-        globalMaxValueSize = Math.max(globalMaxValueSize, valueRegistry.maxValueSize);
+        if (valueRegistry != null) {
+            ep.maxValueSize = valueRegistry.maxValueSize;
+            globalMaxValueSize = Math.max(globalMaxValueSize, valueRegistry.maxValueSize);
+        }
 
         if (keyFormat == KeyFormat.FSA) {
             fsaEndKeys(ep);
@@ -1112,8 +1116,12 @@ public class Take5Builder {
 
     void doValues(IntBuffer header) {
         short flags = 0;
+
         if (keyFormat == KeyFormat.HASH_STRING) {
             flags |= Value.KEY;
+        }
+        if (valueFormat == ValueFormat.PTR || valueFormat == ValueFormat.STRING) {
+            flags |= Value.VALUE;
         }
 
         ValueSegment dataSeg = null;
@@ -1278,7 +1286,7 @@ public class Take5Builder {
         ValueFormat valueFormat = ValueFormat.STRING;
         KeyFormat keyFormat = KeyFormat.FSA;
         OutputFormat outputFormat = OutputFormat.TAKE5; // default is to write Take5.
-        int valueSize = 2;
+        int valueSize = 2; // correct for STRING but not for IGNORE or INDEX, but main builder will cope.
 
         public Factory() {
             //
