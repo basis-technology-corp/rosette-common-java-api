@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -28,11 +29,17 @@ import static org.junit.Assert.*;
 import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.basistech.rosette.internal.take5.Take5Exception;
 import com.basistech.rosette.internal.take5.Take5Match;
+import org.junit.rules.ExpectedException;
 
 /**
  * Unit tests for Take5Builder.
  */
 public class Take5BuilderTest {
+
+    //CHECKSTYLE:OFF
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+    //CHECKSTYLE:ON
 
     // All the words in /usr/share/dict/words that match "^[a-f]+$"
     private static String[] hexWords = {
@@ -252,7 +259,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testUnsortedInput() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
@@ -288,18 +295,12 @@ public class Take5BuilderTest {
         assertEquals(60, builder.edgeCount);
         assertEquals(25, builder.acceptEdgeCount);
         ByteBuffer t5 = builder.buildBuffer();
-        try {
-            Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
-            int j = 0;
-            @SuppressWarnings("unused")
-            char[] sbuf = new char[dict.maximumWordLength()];
-            for (String s : hexWords) {
-                Take5Match m = dict.matchExact(s);
-                assertNotNull(m);
-                checkPayload(t5, m.getOffsetValue(), j++);
-            }
-        } catch (Take5Exception e) {
-            fail("Take5Exception...");
+        Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
+        int j = 0;
+        for (String s : hexWords) {
+            Take5Match m = dict.matchExact(s);
+            assertNotNull(m);
+            checkPayload(t5, m.getOffsetValue(), j++);
         }
     }
 

@@ -38,7 +38,10 @@ class ValueRegistry {
     Value intern(byte[] data, int start, int end, int alignment, short flags) {
 
         if (data == null) {
-            return null; // really?
+            data = new byte[0];
+            start = 0;
+            end = 0;
+            alignment = 1;
         }
 
         commonAlign = Utils.lcm(commonAlign, alignment);

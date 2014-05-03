@@ -1407,7 +1407,7 @@ public class Take5Dictionary {
      */
     public int reverseLookup(int index, char[] buffer) throws Take5Exception {
         if (fsaEngine != ENGINE_SEARCH) {             // XXX: but this <EM>could</EM> work!
-            throw new UnsupportedOperationException("This Take5Dictionary is not reversable.");
+            throw new UnsupportedOperationException("This Take5Dictionary is not reversible.");
         }
         if (index < 0 || index >= indexCount) {
             throw new Take5Exception(Take5Exception.IMPOSSIBLE_HASH);

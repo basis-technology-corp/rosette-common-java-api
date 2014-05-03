@@ -14,7 +14,6 @@
 
 package com.basistech.rosette.internal.take5build;
 
-
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSink;
@@ -254,7 +253,7 @@ public class Take5Builder {
 
         // I'd parenthesize this to make it more readable, but checkstyle
         // won't let me:
-        storeValues = valueFormat != ValueFormat.IGNORE && valueFormat != ValueFormat.INDEX;
+        storeValues = valueFormat == ValueFormat.PTR; //
         generateBinary = !(outputFormat == OutputFormat.NONE || outputFormat == OutputFormat.FSA);
 
         if (storeValues) {
@@ -410,7 +409,6 @@ public class Take5Builder {
      * in turn.
      */
     private void addKey(char[] key, int keyLength, Value value) throws Take5ParseError {
-        keyCount++;
         if (keyLength > maxKeyLength) {
             maxKeyLength = keyLength;
         }
@@ -420,6 +418,8 @@ public class Take5Builder {
         } else {
             perfhashAddKey(key, keyLength, value);
         }
+        keyCount++;
+
     }
 
     private void perfhashAddKey(char[] key, int keyLength, Value value) {
@@ -548,6 +548,10 @@ public class Take5Builder {
         } else {
             perfhashEndKeys(ep);
         }
+
+        globalIndexCount += ep.indexCount;
+        globalMillionsTested += ep.millionsTested;
+        globalBucketCount += ep.bucketCount;
     }
 
     private void fsaEndKeys(Take5EntryPoint ep) {
@@ -566,6 +570,10 @@ public class Take5Builder {
 
         ep.maxMatches = ep.startState.maxMatches + (ep.acceptEmpty ? 1 : 0);
         globalMaxMatches = Math.max(globalMaxMatches, ep.maxMatches);
+        ep.indexCount = ep.startState.keyCount;
+        if (ep.acceptEmpty) {
+            ep.indexCount++;
+        }
 
         ep.minCharacter = minCharacter;
         if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
@@ -811,7 +819,7 @@ public class Take5Builder {
     private Value findValue(Take5Pair pair) {
         byte[] data = pair.getValue();
         if (data == null) {
-            return null;
+          return null;
         }
         int offset = pair.getOffset();
         return valueRegistry.intern(data, offset, offset + pair.getLength(), pair.getAlignment(), Value.VALUE);
@@ -1124,10 +1132,10 @@ public class Take5Builder {
             flags |= Value.VALUE;
         }
 
-        ValueSegment dataSeg = null;
+        ValueSegment valueSegment = null;
 
         if (flags != 0) {
-            dataSeg = new ValueSegment(this, "Data", flags);
+            valueSegment = new ValueSegment(this, "Data", flags);
         }
 
 
@@ -1157,7 +1165,6 @@ public class Take5Builder {
             throw new RuntimeException("stupidity;");
         }
 
-        SimpleSegment valueTableSegment = null;
 
         switch (valueFormat) {
         case INDEX:
@@ -1173,8 +1180,6 @@ public class Take5Builder {
             // yes, fall through.
         case STRING:
             header.put(HDR_VALUE_FORMAT, VALUE_FORMAT_INDIRECT + valueSize);
-            valueTableSegment = new SimpleSegment(this, "Value Table", globalIndexCount, globalIndexCount * 4);
-            header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
             break;
         default:
             header.put(HDR_VALUE_FORMAT, Take5Format.VALUE_FORMAT_NONE);
@@ -1183,31 +1188,36 @@ public class Take5Builder {
         }
 
         if (valueTable.size() != 0) {
-            assert valueTableSegment != null && keySegment == null;
-            assert dataSeg != null;
-            assert valueTable.size() == globalIndexCount;
-            IntBuffer valueTableBuffer = valueTableSegment.getIntBuffer();
-            for (Value value : valueTable) {
-                valueTableBuffer.put(value.address);
-            }
-        } else if (valueTableSegment != null || keySegment != null) {
-            assert dataSeg != null;
+            assert keySegment == null;
+            assert valueSegment != null;
+            assert  valueTable.size() == globalIndexCount : "Stored value count inconsistent";
+            TableSegment valueTableSegment = new TableSegment(this, "Value Table", valueSegment);
+            header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
+        } else if (storeValues || keySegment != null) {
+            assert valueSegment != null;
             int ix = 0;
+            SimpleSegment valueTableSegment = null;
+            if (storeValues) {
+                // we can't use the TableSegment class since we want to interleave this with key management.
+                valueTableSegment = new SimpleSegment(this, "Value Table", allPerfhashPairs.size(), 4);
+                header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
+            }
             for (Take5EntryPoint ep : entryPoints) {
                 int bucketCount = ep.bucketCount;
                 Bucket[] bucketTable = ep.bucketTable;
                 assert bucketTable != null;
+
                 for (int bx = 0; bx < bucketCount; bx++) {
                     for (PerfhashKeyValuePair pair : bucketTable[bx].pairs) {
                         if (valueTableSegment != null) {
-                            valueTableSegment.getIntBuffer().put(ix + pair.index, pair.keyHash);
+                            valueTableSegment.getIntBuffer().put(ix + pair.index, valueSegment.getAddress() + pair.value.address);
                         }
                         if (keySegment != null) {
                             if (keyFormat == KeyFormat.HASH_HASH32) {
                                 keySegment.getIntBuffer().put(ix + pair.index, pair.keyHash);
                             } else {
                                 assert keyFormat == KeyFormat.HASH_STRING;
-                                keySegment.getIntBuffer().put(ix + pair.index, dataSeg.getAddress() + pair.index);
+                                keySegment.getIntBuffer().put(ix + pair.index, valueSegment.getAddress() + pair.key.address);
                             }
                         }
                     }
