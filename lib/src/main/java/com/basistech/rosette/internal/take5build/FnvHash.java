@@ -41,7 +41,7 @@ final class FnvHash {
 
         int rv = (fun + 1) * FNV32_BASE;
         for (int idx = start; idx < end; idx += 2) {
-            char v = (char)((data[idx] << 8) | data[idx + 1]);
+            char v = (char)((data[idx + 1] << 8) | data[idx]);
             rv ^= v;
             rv *= FNV32_PRIME;
         }

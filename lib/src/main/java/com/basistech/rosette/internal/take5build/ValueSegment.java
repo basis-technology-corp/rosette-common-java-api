@@ -25,7 +25,14 @@ class ValueSegment extends BufferedSegment {
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
                 if (0 != (v.flags & flags)) {
-                    v.address = reserveChunk(v.length, v.alignment);
+                    /* Keys require null termination. If we reserve the space here
+                     * it will contain zero without further fuss.
+                     */
+                    int length = v.length;
+                    if (v.isKey()) {
+                        length += 2;
+                    }
+                    v.address = reserveChunk(length, v.alignment);
                 }
                 v = v.next;
             }
@@ -35,7 +42,12 @@ class ValueSegment extends BufferedSegment {
     void writeData() throws IOException {
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
-                allocateChunk(v.length, v.alignment);
+                // see above.
+                int length = v.length;
+                if (v.isKey()) {
+                    length += 2;
+                };
+                allocateChunk(length, v.alignment);
                 assert address == v.address;
                 byteBuffer.position(offset);
                 byteBuffer.put(v.data, v.offset, v.length);

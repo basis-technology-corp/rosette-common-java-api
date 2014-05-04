@@ -431,7 +431,7 @@ public class Take5Builder {
 
     private void perfhashAddKey(char[] key, int keyLength, Value value) {
         // there's probably a quicker way to do this, and is the byte order right?
-        byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16BE);
+        byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16LE);
         Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyBytes.length, 2, Value.KEY);
 
         int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length);
@@ -1191,7 +1191,6 @@ public class Take5Builder {
             valueSegment = new ValueSegment(this, "Data", flags);
         }
 
-
         SimpleSegment keySegment = null;
 
         switch (keyFormat) {
@@ -1209,7 +1208,7 @@ public class Take5Builder {
         case HASH_STRING:
             assert valueTable.size() == 0;
             keySegment = new SimpleSegment(this, "Key Table", globalIndexCount * 4, 4);
-            header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
+            header.put(HDR_KEYCHECK_FORMAT, Take5Format.KEYCHECK_FORMAT_STR);
             header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
             break;
         case FSA:

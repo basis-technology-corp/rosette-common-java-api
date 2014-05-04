@@ -324,9 +324,9 @@ public class Take5BuilderTest {
         Take5EntryPoint[] ep = new Take5EntryPoint[1];
         Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Take5Builder.Engine.PERFHASH).keyFormat(Take5Builder.KeyFormat.HASH_STRING).valueFormat(Take5Builder.ValueFormat.PTR).valueSize(16).build(), ep);
         int j = 0;
+        Take5Match m = new Take5Match();
         for (String s : hexWords) {
-            Take5Match m = dict.matchExact(s);
-            assertNotNull(m);
+            assertTrue(String.format("Failed to find '%s'", s), dict.matchExact(s.toCharArray(), 0, s.length(), m));
             checkPayload(dict.getData(), m.getOffsetValue(), j++);
         }
     }
@@ -410,7 +410,7 @@ public class Take5BuilderTest {
             byte[] val = new byte[length];
             t5.position(valOffset);
             t5.get(val);
-            assertTrue(Utils.equalBytes(val, 0, data, offset, length));
+            assertTrue(String.format("Wrong value at idx %d", i), Utils.equalBytes(val, 0, data, offset, length));
         }
     }
 }
