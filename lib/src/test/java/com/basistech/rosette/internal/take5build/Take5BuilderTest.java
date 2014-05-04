@@ -18,6 +18,7 @@ package com.basistech.rosette.internal.take5build;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -311,6 +312,10 @@ public class Take5BuilderTest {
         for (String s : hexWords) {
             keys.add(generatePayload(s, i++));
         }
+
+        for (Take5Pair key : keys) {
+            System.out.println(new String (key.getKey(), 0, key.getKeyLength()));
+        }
         ep.loadContent(keys.iterator());
         returnEntrypoint[0] = ep;
         ByteBuffer t5 = builder.buildBuffer();
@@ -320,7 +325,7 @@ public class Take5BuilderTest {
     @Test
     public void testPerfhash() throws Exception {
         Take5EntryPoint[] ep = new Take5EntryPoint[1];
-        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Take5Builder.Engine.PERFHASH).keyFormat(Take5Builder.KeyFormat.HASH_STRING).valueFormat(Take5Builder.ValueFormat.PTR).build(), ep);
+        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Take5Builder.Engine.PERFHASH).keyFormat(Take5Builder.KeyFormat.HASH_STRING).valueFormat(Take5Builder.ValueFormat.PTR).valueSize(16).build(), ep);
         int j = 0;
         for (String s : hexWords) {
             Take5Match m = dict.matchExact(s);

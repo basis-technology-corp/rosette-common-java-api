@@ -51,6 +51,6 @@ class Value {
 
     int getKeyHash(int hashFun) {
         assert isKey();
-        return FnvHash.fnvhash(hashFun, data, 0, (length >> 1) - 1);
+        return FnvHash.fnvhash(hashFun, data, 0, length);
     }
 }

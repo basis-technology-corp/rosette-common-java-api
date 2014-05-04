@@ -107,26 +107,5 @@ public class Take5EntryPoint {
         }
         loaded = true;
         builder.loadContent(this, pairs);
-        stateCount = 0;
-        edgeCount = 0;
-        acceptEdgeCount = 0;
-        countStuff(startState);
-    }
-
-    void countStuff(State s) {
-        if (s.mark != this) {
-            s.mark = this;
-            boolean[] ea = s.edgeIsAccept;
-            State[] es = s.edgeState;
-            int nedges = ea.length;
-            stateCount++;
-            edgeCount += nedges;
-            for (int i = 0; i < nedges; i++) {
-                if (ea[i]) {
-                    acceptEdgeCount++;
-                }
-                countStuff(es[i]);
-            }
-        }
     }
 }

@@ -18,6 +18,7 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSink;
 import com.google.common.primitives.UnsignedInts;
+import org.apache.commons.lang.ArrayUtils;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -30,6 +31,7 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -586,6 +588,33 @@ public class Take5Builder {
         if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
         ep.maxCharacter = maxCharacter;
         if (maxCharacter > globalMaxCharacter) { globalMaxCharacter = maxCharacter; }
+
+        ep.stateCount = 0;
+        ep.edgeCount = 0;
+        ep.acceptEdgeCount = 0;
+        countEntrypointStuff(ep, ep.startState);
+    }
+
+    /**
+     * Recursive function to total up state-related counts from the entrypoint.
+     * @param ep
+     * @param s
+     */
+    private static void countEntrypointStuff(Take5EntryPoint ep, State s) {
+        if (s.mark != ep) {
+            s.mark = ep;
+            boolean[] ea = s.edgeIsAccept;
+            State[] es = s.edgeState;
+            int nedges = ea.length;
+            ep.stateCount++;
+            ep.edgeCount += nedges;
+            for (int i = 0; i < nedges; i++) {
+                if (ea[i]) {
+                    ep.acceptEdgeCount++;
+                }
+                countEntrypointStuff(ep, es[i]);
+            }
+        }
     }
 
     private void perfhashEndKeys(Take5EntryPoint ep) {
@@ -607,7 +636,7 @@ public class Take5Builder {
             bucketTable[x].count++;
         }
 
-        Arrays.sort(bucketTable);
+        Arrays.sort(bucketTable, Collections.reverseOrder());
 
         boolean[] indexUsed = new boolean[indexCount];
         int maxHashFun = 0;
@@ -622,6 +651,7 @@ public class Take5Builder {
                     if (UnsignedInts.compare(fun, 0x7FFFFFFF) > 0) {
                         throw new Take5BuilderException("Failure! hash space exhausted!");
                     }
+                    fun++;
                 }
                 bucketTable[x].fun = fun;
                 if (fun > maxHashFun) {
@@ -630,7 +660,6 @@ public class Take5Builder {
                 funCnt += 1 + (funCnt / 1000000);
                 funCnt %= 1000000;
             }
-
         }
 
         ep.wordCount = wordCount;
@@ -691,6 +720,7 @@ public class Take5Builder {
         }
 
         Arrays.sort(counts);
+        ArrayUtils.reverse(counts);
 
         funs = 0x80000000 - indexCount;
         holes = indexCount;
