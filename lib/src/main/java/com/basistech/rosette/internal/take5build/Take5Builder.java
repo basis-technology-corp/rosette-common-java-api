@@ -440,6 +440,11 @@ public class Take5Builder {
     }
 
     private void fsaAddKey(final char[] key, final int kl, final Value value) throws Take5ParseError {
+        // FSA uses valueTable, hash stores them in the pairs. So this code is responsible.
+        if (storeValues) {
+            valueTable.add(value);
+        }
+
         int fc = frameCount;
         int top = frameIndex[fc];
         char c;
@@ -530,9 +535,7 @@ public class Take5Builder {
         top++;
         frameIndex[fc] = top;
         frameCount = fc;
-        if (storeValues) {
-            valueTable.add(value);
-        }
+
     }
 
     /**
@@ -1018,13 +1021,36 @@ public class Take5Builder {
         header.put(HDR_ENTRY_POINT_COUNT, nentries);
         header.put(HDR_ENTRY_POINT_HEADER_SIZE, 4 * EPTLEN);
         SimpleSegment entrySeg = new SimpleSegment(this, "Entry Points",  nentries * (4 * EPTLEN), 4);
+        IntBuffer entry = entrySeg.getIntBuffer();
 
+        header.put(HDR_FSA_DATA, entrySeg.getAddress());
 
+        // Fill in some ep header fields that are independent of the engine.
+        int epx = 0;
+        for (Take5EntryPoint ep : entryPoints) {
+            if (!ep.loaded) {
+                throw new Take5BuilderException(String.format("Entrypoint %s not loaded.", ep.name));
+            }
+            entry.put(epx + EPT_NAME, ascizString(ep.asciiName));
+            entry.put(epx + EPT_MAX_WORD_LENGTH, ep.maxKeyLength);
+            entry.put(epx + EPT_CONTENT_FLAGS, ep.contentFlags);
+            entry.put(epx + EPT_CONTENT_MIN_VERSION, ep.contentMinVersion);
+            entry.put(epx + EPT_CONTENT_MAX_VERSION, ep.contentMaxVersion);
+            entry.put(epx + EPT_INDEX_COUNT, ep.indexCount);
+            epx = EPTLEN;
+        }
+
+        // do the per-engine data.
         if (keyFormat == KeyFormat.FSA) {
             doFstStates(header, entrySeg);
         } else {
             doHashBuckets(header, entrySeg);
         }
+
+        // fill in some trailing engine-independent header fields.
+        header.put(HDR_WORD_COUNT, totalKeyCount);
+        header.put(HDR_MAX_WORD_LENGTH, globalMaxKeyLength);
+        header.put(HDR_MAX_VALUE_SIZE, globalMaxValueSize);
     }
 
     void doHashBuckets(IntBuffer header, SimpleSegment entrySeg) {
@@ -1048,9 +1074,6 @@ public class Take5Builder {
         int index = -1;
         int i = 0;
         for (Take5EntryPoint ep : entryPoints) {
-            if (!ep.loaded) {
-                throw new Take5BuilderException(String.format("Entrypoint %s not loaded.", ep.name));
-            }
             int state = stateAddr + ep.startState.address;
             if (ep.acceptEmpty) {
                 state |= 1;
@@ -1059,10 +1082,6 @@ public class Take5Builder {
             entry.put(i + EPT_STATE_START, state);
             entry.put(i + EPT_INDEX_START, index);
             entry.put(i + EPT_INDEX_OFFSET, ep.indexOffset);
-            entry.put(i + EPT_NAME, ascizString(ep.asciiName));
-            entry.put(i + EPT_CONTENT_FLAGS, ep.contentFlags);
-            entry.put(i + EPT_CONTENT_MIN_VERSION, ep.contentMinVersion);
-            entry.put(i + EPT_CONTENT_MAX_VERSION, ep.contentMaxVersion);
 
             // Common header:
             entry.put(i + EPT_WORD_COUNT, ep.keyCount);
@@ -1071,29 +1090,19 @@ public class Take5Builder {
             entry.put(i + EPT_EDGE_COUNT, ep.edgeCount);
             entry.put(i + EPT_ACCEPT_EDGE_COUNT, ep.acceptEdgeCount);
             entry.put(i + EPT_MAX_MATCHES, ep.maxMatches);
-            entry.put(i + EPT_MAX_WORD_LENGTH, ep.maxKeyLength);
             entry.put(i + EPT_MAX_VALUE_SIZE, ep.maxValueSize);
             entry.put(i + EPT_MIN_CHARACTER, ep.minCharacter);
             entry.put(i + EPT_MAX_CHARACTER, ep.maxCharacter);
-            entry.put(i + EPT_INDEX_COUNT, ep.indexCount);
-
             index += ep.startState.keyCount;
             i += EPTLEN;
         }
         assert index + 1 == totalKeyCount;
 
-        header.put(HDR_FSA_DATA, entrySeg.getAddress());
-        header.put(HDR_FSA_ENGINE, ENGINE_SEARCH);
-
-        // Common header:
-        header.put(HDR_WORD_COUNT, totalKeyCount);
         header.put(HDR_STATE_COUNT, stateCount);
         header.put(HDR_ACCEPT_STATE_COUNT, 0); // It's a Mealy machine...
         header.put(HDR_EDGE_COUNT, edgeCount);
         header.put(HDR_ACCEPT_EDGE_COUNT, acceptEdgeCount);
         header.put(HDR_MAX_MATCHES, globalMaxMatches);
-        header.put(HDR_MAX_WORD_LENGTH, globalMaxKeyLength);
-        header.put(HDR_MAX_VALUE_SIZE, globalMaxValueSize);
         header.put(HDR_MIN_CHARACTER, globalMinCharacter);
         header.put(HDR_MAX_CHARACTER, globalMaxCharacter);
     }
@@ -1240,19 +1249,22 @@ public class Take5Builder {
             int ix = 0;
             SimpleSegment valueTableSegment = null;
             if (storeValues) {
-                // we can't use the TableSegment class since we want to interleave this with key management.
-                valueTableSegment = new SimpleSegment(this, "Value Table", allPerfhashPairs.size(), 4);
+                // We can't use the TableSegment class since we want to interleave this with key management.
+                // So we use a SimpleSegment and fill in through the buffer.
+                valueTableSegment = new SimpleSegment(this, "Value Table", globalIndexCount * 4, 4);
                 header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
             }
             for (Take5EntryPoint ep : entryPoints) {
                 int bucketCount = ep.bucketCount;
                 Bucket[] bucketTable = ep.bucketTable;
                 assert bucketTable != null;
-
                 for (int bx = 0; bx < bucketCount; bx++) {
                     for (PerfhashKeyValuePair pair : bucketTable[bx].pairs) {
                         if (valueTableSegment != null) {
-                            valueTableSegment.getIntBuffer().put(ix + pair.index, valueSegment.getAddress() + pair.value.address);
+                            if (pair.value != null) {
+                                // leave a zero in there if there is no value at all.
+                                valueTableSegment.getIntBuffer().put(ix + pair.index, valueSegment.getAddress() + pair.value.address);
+                            }
                         }
                         if (keySegment != null) {
                             if (keyFormat == KeyFormat.HASH_HASH32) {
@@ -1263,10 +1275,10 @@ public class Take5Builder {
                             }
                         }
                     }
-                    ix += ep.indexCount;
                 }
-                assert ix == globalIndexCount;
+                ix += ep.indexCount;
             }
+            assert ix == globalIndexCount;
         }
     }
 

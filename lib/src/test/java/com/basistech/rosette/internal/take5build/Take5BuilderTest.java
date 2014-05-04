@@ -313,9 +313,6 @@ public class Take5BuilderTest {
             keys.add(generatePayload(s, i++));
         }
 
-        for (Take5Pair key : keys) {
-            System.out.println(new String (key.getKey(), 0, key.getKeyLength()));
-        }
         ep.loadContent(keys.iterator());
         returnEntrypoint[0] = ep;
         ByteBuffer t5 = builder.buildBuffer();
