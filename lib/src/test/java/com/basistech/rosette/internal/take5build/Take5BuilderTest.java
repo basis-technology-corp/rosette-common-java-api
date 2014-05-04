@@ -304,6 +304,31 @@ public class Take5BuilderTest {
         }
     }
 
+    private Take5Dictionary loadGenerated(Take5Builder builder, Take5EntryPoint[] returnEntrypoint) throws Take5BuildException, Take5Exception {
+        Take5EntryPoint ep = builder.newEntryPoint("main");
+        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        int i = 0;
+        for (String s : hexWords) {
+            keys.add(generatePayload(s, i++));
+        }
+        ep.loadContent(keys.iterator());
+        returnEntrypoint[0] = ep;
+        ByteBuffer t5 = builder.buildBuffer();
+        return new Take5Dictionary(t5, t5.limit());
+    }
+
+    @Test
+    public void testPerfhash() throws Exception {
+        Take5EntryPoint[] ep = new Take5EntryPoint[1];
+        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Take5Builder.Engine.PERFHASH).keyFormat(Take5Builder.KeyFormat.HASH_STRING).valueFormat(Take5Builder.ValueFormat.PTR).build(), ep);
+        int j = 0;
+        for (String s : hexWords) {
+            Take5Match m = dict.matchExact(s);
+            assertNotNull(m);
+            checkPayload(dict.getData(), m.getOffsetValue(), j++);
+        }
+    }
+
     @Test
     public void testIgnoredPayloads() throws Exception {
         Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.IGNORE).valueSize(16).build();

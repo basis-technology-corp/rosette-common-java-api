@@ -28,6 +28,10 @@ class Bucket implements Comparable<Bucket> {
     int count;
     LinkedList<PerfhashKeyValuePair> pairs;
 
+    private Bucket() {
+        index = -1;
+    }
+
     Bucket(int index) {
         this.index = index;
         this.pairs = Lists.newLinkedList();

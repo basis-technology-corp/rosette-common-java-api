@@ -31,6 +31,7 @@ class Value {
     int address;
 
     Value(byte[] data, int offset, int length, int alignment, short flags, int hash, Value next) {
+        assert !(flags == KEY && ((length & 1) != 0)) : "Odd byte length of key";
         this.data = data;
         this.alignment = alignment;
         this.offset = offset;
@@ -50,7 +51,6 @@ class Value {
 
     int getKeyHash(int hashFun) {
         assert isKey();
-        assert (length & 1) == 0;
         return FnvHash.fnvhash(hashFun, data, 0, (length >> 1) - 1);
     }
 }

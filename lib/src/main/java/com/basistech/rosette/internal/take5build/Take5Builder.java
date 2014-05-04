@@ -17,6 +17,7 @@ package com.basistech.rosette.internal.take5build;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSink;
+import com.google.common.primitives.UnsignedInts;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -427,8 +428,9 @@ public class Take5Builder {
     }
 
     private void perfhashAddKey(char[] key, int keyLength, Value value) {
+        // there's probably a quicker way to do this, and is the byte order right?
         byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16BE);
-        Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyLength, 2, Value.KEY);
+        Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyBytes.length, 2, Value.KEY);
 
         int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length);
         PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
@@ -541,7 +543,7 @@ public class Take5Builder {
         ep.indexOffset = totalKeyCount;
         ep.keyCount = keyCount;
         totalKeyCount += keyCount;
-        assert !storeValues || totalKeyCount == valueTable.size();
+
         if (valueRegistry != null) {
             ep.maxValueSize = valueRegistry.maxValueSize;
             globalMaxValueSize = Math.max(globalMaxValueSize, valueRegistry.maxValueSize);
@@ -559,6 +561,7 @@ public class Take5Builder {
     }
 
     private void fsaEndKeys(Take5EntryPoint ep) {
+        assert !storeValues || totalKeyCount == valueTable.size();
         int fc = frameCount;
         int top = frameIndex[fc];
         // Pack up the old suffix:
@@ -592,21 +595,21 @@ public class Take5Builder {
 
         Bucket[] bucketTable = new Bucket[bucketCount];
 
-        for (int x = 0; x < ep.bucketCount; x++) {
+        for (int x = 0; x < bucketCount; x++) {
             bucketTable[x] = new Bucket(x);
         }
 
         int wordCount = 0;
         for (PerfhashKeyValuePair pair : allPerfhashPairs) {
             wordCount++;
-            int x = pair.keyHash % ep.bucketCount;
+            int x = pair.keyHash % bucketCount;
             bucketTable[x].pairs.addFirst(pair);
             bucketTable[x].count++;
         }
 
         Arrays.sort(bucketTable);
 
-        boolean[] indexUsed = new boolean[ep.indexCount];
+        boolean[] indexUsed = new boolean[indexCount];
         int maxHashFun = 0;
         int millionsTested = 0;
         int funCnt = 0;
@@ -616,7 +619,7 @@ public class Take5Builder {
             if (bucketTable[x].count > 1) {
                 fun = indexCount;
                 while (!tryFit(fun, indexCount, indexUsed, bucketTable[x].pairs)) {
-                    if (fun > 0x7FFFFFFF) {
+                    if (UnsignedInts.compare(fun, 0x7FFFFFFF) > 0) {
                         throw new Take5BuilderException("Failure! hash space exhausted!");
                     }
                 }

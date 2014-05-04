@@ -94,7 +94,7 @@ final class Primes {
         9, 8, 7, 6, 5, 4, 3, 2, 1, 0
     };
 
-    private int[] primes;
+    private int[] primes = new int[0];
     private int top;
     private int next = 2;
 
