@@ -41,6 +41,7 @@ import org.kohsuke.args4j.spi.Setter;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Map;
 
@@ -100,7 +101,7 @@ public final class Take5Build {
     @Option(name = "-join", metaVar = "CONTROL_FILE", usage = "Combine multiple Take5's into one output.")
     File controlFile;
 
-    @Option(name = "-binaryPayloads", metaVar = "SIZE",
+    @Option(name = "-binaryPayloads", metaVar = "ALIGNMENT",
             usage = "payload size/alignment")
     Integer alignment;
 
@@ -139,6 +140,9 @@ public final class Take5Build {
     @Option(name = "-no-output", usage = "No output at all.")
     boolean noOutput;
 
+    @Option(name = "-byteOrder", usage = "byte order", metaVar = "ORDER")
+    ByteOrder byteOrder = ByteOrder.nativeOrder();
+
     private List<InputSpecification> inputSpecifications;
     private Take5Builder builder;
 
@@ -159,7 +163,7 @@ public final class Take5Build {
         }
     }
 
-    private Take5Build() {
+    Take5Build() {
         //
     }
 
@@ -190,7 +194,7 @@ public final class Take5Build {
 
     }
 
-    private void checkOptionConsistency() throws Failure {
+    void checkOptionConsistency() throws Failure {
         if (controlFile != null) {
             try {
                 inputSpecifications = new ControlFile().read(Files.asCharSource(controlFile, Charsets.UTF_8));
@@ -235,7 +239,7 @@ public final class Take5Build {
         }
     }
 
-    private void build() throws Failure {
+    void build() throws Failure {
         Take5Builder.Factory factory = new Take5Builder.Factory();
         // our default is to write something.
         factory.outputFormat(OutputFormat.TAKE5);
@@ -253,9 +257,9 @@ public final class Take5Build {
             factory.outputFormat(OutputFormat.FSA);
         } else if (indexLookup) {
             factory.valueFormat(ValueFormat.INDEX);
-        } else if (alignment != 0) {
+        } else if (alignment != null) {
             factory.valueFormat(ValueFormat.PTR);
-            if (alignment == null) {
+            if (alignment < 2) {
                 alignment = 2;
             }
             factory.valueSize(alignment);
@@ -269,6 +273,10 @@ public final class Take5Build {
             builder = factory.engine(engine).keyFormat(keyFormat).build();
         } catch (Take5BuildException e) {
             throw new Failure(e);
+        }
+
+        if (byteOrder != ByteOrder.nativeOrder()) {
+            builder.setByteOrder(byteOrder);
         }
 
         copyright();
@@ -357,7 +365,7 @@ public final class Take5Build {
     private void copyright() throws Failure {
         if (copyrightFile != null) {
             try {
-                builder.setCopyright(FileUtils.readFileToString(copyrightFile, "ASCII"));
+                builder.setCopyright(FileUtils.readFileToString(copyrightFile, "UTF-8"));
             } catch (IOException e) {
                 throw new Failure("Failed to read copyright file " + copyrightFile.getAbsolutePath());
             }

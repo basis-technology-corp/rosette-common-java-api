@@ -337,12 +337,25 @@ public class Take5BuilderTest {
     private void testPerfhash(KeyFormat keyFormat) throws Exception {
         Take5EntryPoint[] ep = new Take5EntryPoint[1];
         Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Engine.PERFHASH).keyFormat(keyFormat).valueFormat(ValueFormat.PTR).valueSize(16).build(), ep);
+        perfhashVerify(dict, true);
+    }
+
+    private void perfhashVerify(Take5Dictionary dict, boolean checkPayloads) throws Take5Exception {
         int j = 0;
         Take5Match m = new Take5Match();
         for (String s : hexWords) {
             assertTrue(String.format("Failed to find '%s'", s), dict.matchExact(s.toCharArray(), 0, s.length(), m));
-            checkPayload(dict.getData(), m.getOffsetValue(), j++);
+            if (checkPayloads) {
+                checkPayload(dict.getData(), m.getOffsetValue(), j++);
+            }
         }
+    }
+
+    @Test
+    public void testPerfhashNoPayloads() throws Exception {
+        Take5EntryPoint[] ep = new Take5EntryPoint[1];
+        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Engine.PERFHASH).keyFormat(KeyFormat.HASH_STRING).valueFormat(ValueFormat.IGNORE).build(), ep);
+        perfhashVerify(dict, false);
     }
 
     @Test

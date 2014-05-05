@@ -210,10 +210,8 @@ public class Take5Builder {
         storeValues = valueFormat == ValueFormat.PTR; //
         generateBinary = !(outputFormat == OutputFormat.NONE || outputFormat == OutputFormat.FSA);
 
-        if (storeValues) {
-            if (valueSize <= 0) {
-                throw new Take5BuildException("Inconsistent valueSize and outputMode");
-            }
+        // We need a value registry if there are payloads (storeValues) or if we are perfhashing and checking keys.
+        if (storeValues || keyFormat == KeyFormat.HASH_STRING || keyFormat == KeyFormat.HASH_HASH32) {
             valueRegistry = new ValueRegistry(valueRegistryLength);
         } else {
             valueSize = 0; // Don't get distracted by the default in the factory.
@@ -1197,26 +1195,25 @@ public class Take5Builder {
             TableSegment valueTableSegment = new TableSegment(this, "Value Table", valueSegment);
             header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
         } else if (storeValues || keySegment != null) {
+            // in here if either there are payloads (storeValues) or if we are storing key information.
             assert valueSegment != null;
             int ix = 0;
+
             SimpleSegment valueTableSegment = null;
-            if (storeValues) {
-                // We can't use the TableSegment class since we want to interleave this with key management.
-                // So we use a SimpleSegment and fill in through the buffer.
-                valueTableSegment = new SimpleSegment(this, "Value Table", globalIndexCount * 4, 4);
-                header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
-            }
+            // We can't use the TableSegment class since we want to interleave this with key management.
+            // So we use a SimpleSegment and fill in through the buffer.
+            valueTableSegment = new SimpleSegment(this, "Value Table", globalIndexCount * 4, 4);
+            header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
+
             for (Take5EntryPoint ep : entryPoints) {
                 int bucketCount = ep.bucketCount;
                 Bucket[] bucketTable = ep.bucketTable;
                 assert bucketTable != null;
                 for (int bx = 0; bx < bucketCount; bx++) {
                     for (PerfhashKeyValuePair pair : bucketTable[bx].pairs) {
-                        if (valueTableSegment != null) {
-                            if (pair.value != null) {
-                                // leave a zero in there if there is no value at all.
-                                valueTableSegment.getIntBuffer().put(ix + pair.index, valueSegment.getAddress() + pair.value.address);
-                            }
+                        if (pair.value != null) {
+                            // leave a zero in there if there is no value at all.
+                            valueTableSegment.getIntBuffer().put(ix + pair.index, valueSegment.getAddress() + pair.value.address);
                         }
                         if (keySegment != null) {
                             assert pair.index >= 0;
