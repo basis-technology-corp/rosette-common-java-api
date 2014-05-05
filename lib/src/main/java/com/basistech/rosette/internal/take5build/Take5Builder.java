@@ -36,6 +36,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -691,7 +692,10 @@ public class Take5Builder {
                 pair.index = idx;
                 indexUsed[idx] = true;
             } else {
-                for (PerfhashKeyValuePair undoPair : pairs) {
+                ListIterator<PerfhashKeyValuePair> pairIterator = pairs.listIterator();
+                PerfhashKeyValuePair undoPair;
+                // walk until we get to the pair in question.
+                while ((undoPair = pairIterator.next()) != pair) {
                     indexUsed[undoPair.index] = false;
                 }
                 return false;
@@ -1275,6 +1279,7 @@ public class Take5Builder {
                             }
                         }
                         if (keySegment != null) {
+                            assert pair.index >= 0;
                             if (keyFormat == KeyFormat.HASH_HASH32) {
                                 keySegment.getIntBuffer().put(ix + pair.index, pair.keyHash);
                             } else {

@@ -21,7 +21,7 @@ class PerfhashKeyValuePair {
     final Value key;
     final Value value;
     final int keyHash;
-    int index;
+    int index = -1;
 
     PerfhashKeyValuePair(Value key, Value value, int keyHash) {
         this.key = key;
