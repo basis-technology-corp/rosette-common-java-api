@@ -665,14 +665,23 @@ public class Take5Builder {
             }
         }
 
+        int idx = 0;
+        for (Bucket bucket : bucketTable) {
+            if (bucket.count == 1) {
+                while (indexUsed[idx]) {
+                    idx++;
+                }
+                bucket.fun = idx;
+                bucket.pairs.getFirst().index = idx++;
+            }
+        }
+
         ep.wordCount = wordCount;
         ep.indexCount = indexCount;
         ep.bucketCount = bucketCount;
         ep.bucketTable = bucketTable;
         ep.maxHashFun = maxHashFun;
         ep.millionsTested = millionsTested + (funCnt + 500000) / 1000000;
-
-
     }
 
     private boolean tryFit(int fun, int indexCount, boolean[] indexUsed, LinkedList<PerfhashKeyValuePair> pairs) {
