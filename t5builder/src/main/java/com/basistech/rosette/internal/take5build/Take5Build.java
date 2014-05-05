@@ -23,20 +23,29 @@ import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 import org.apache.commons.io.FileUtils;
+import org.joda.time.Duration;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.OptionDef;
 import org.kohsuke.args4j.spi.FileOptionHandler;
+import org.kohsuke.args4j.spi.OneArgumentOptionHandler;
+import org.kohsuke.args4j.spi.OptionHandler;
+import org.kohsuke.args4j.spi.Parameters;
 import org.kohsuke.args4j.spi.Setter;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Command line interface for take5 builder.
@@ -66,6 +75,23 @@ public final class Take5Build {
         }
     }
 
+    public static class ByteOrderOptionHandler extends OneArgumentOptionHandler<ByteOrder> {
+        public ByteOrderOptionHandler(CmdLineParser parser, OptionDef option, Setter<? super ByteOrder> setter) {
+            super(parser, option, setter);
+        }
+
+        @Override
+        protected ByteOrder parse(String argument) throws NumberFormatException, CmdLineException {
+            if ("LE".equalsIgnoreCase(argument)) {
+                return ByteOrder.LITTLE_ENDIAN;
+            } else if ("BE".equalsIgnoreCase(argument)) {
+                return ByteOrder.BIG_ENDIAN;
+            } else {
+                throw new CmdLineException("Invalid byte order " + argument);
+            }
+        }
+    }
+
     @Argument(handler = FileOrDashOptionHandler.class, usage = "input file or - for standard input", metaVar = "INPUT")
     File commandInputFile;
 
@@ -83,9 +109,8 @@ public final class Take5Build {
             usage = "File containing a copyright notice")
     File copyrightFile;
 
-    // related to -5
     @Option(name = "-engine", metaVar = "ENGINE",
-            usage = "lookup engine")
+            usage = "lookup engine (FSA or PERFHASH).")
     Engine engine = Engine.FSA;
 
     @Option(name = "-key-format", metaVar = "FORMAT", usage = "Key format; only useful with -engine PERFHASH")
@@ -114,7 +139,7 @@ public final class Take5Build {
     @Option(name = "-simpleKeys", usage = "simple keys; no escapes")
     boolean simpleKeys;
 
-    @Option(name = "-entrypoint", metaVar = "NAME", usage = "entrypoint")
+    @Option(name = "-entrypoint", metaVar = "NAME", usage = "entrypoint (default 'main')")
     String entrypointName;
 
     @Option(name = "-contentVersion", metaVar = "VERSION",
@@ -133,7 +158,7 @@ public final class Take5Build {
     @Option(name = "-no-output", usage = "No output at all.")
     boolean noOutput;
 
-    @Option(name = "-byteOrder", usage = "byte order", metaVar = "ORDER")
+    @Option(name = "-byteOrder", usage = "byte order (LE or BE)", metaVar = "ORDER", handler = ByteOrderOptionHandler.class)
     ByteOrder byteOrder = ByteOrder.nativeOrder();
 
     private List<InputSpecification> inputSpecifications;
@@ -179,7 +204,26 @@ public final class Take5Build {
 
         try {
             that.checkOptionConsistency();
+            ThreadMXBean tm = ManagementFactory.getThreadMXBean();
+            long cpuTime = tm.getCurrentThreadCpuTime();
             that.build();
+            long endCpuTime = tm.getCurrentThreadCpuTime();
+
+            long millistart = TimeUnit.MILLISECONDS.convert(cpuTime, TimeUnit.NANOSECONDS);
+            long milliend = TimeUnit.MILLISECONDS.convert(endCpuTime, TimeUnit.NANOSECONDS);
+            Duration duration = new Duration(millistart, milliend);
+            PeriodFormatter formatter = new PeriodFormatterBuilder()
+                    .appendDays()
+                    .appendSuffix("d")
+                    .appendHours()
+                    .appendSuffix("h")
+                    .appendMinutes()
+                    .appendSuffix("m")
+                    .appendSecondsWithMillis()
+                    .appendSuffix("s")
+                    .toFormatter();
+            String formatted = formatter.print(duration.toPeriod());
+            System.out.println(formatted);
         } catch (Failure failure) {
             System.err.println(failure.getMessage());
             System.exit(1);
