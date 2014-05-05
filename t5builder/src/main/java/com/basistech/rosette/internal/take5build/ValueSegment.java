@@ -27,14 +27,7 @@ class ValueSegment extends BufferedSegment {
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
                 if (0 != (v.flags & flags)) {
-                    /* Keys require null termination. If we reserve the space here
-                     * it will contain zero without further fuss.
-                     */
-                    int length = v.length;
-                    if (v.isKey() && builder.keyFormat == KeyFormat.HASH_STRING) {
-                        length += 2;
-                    }
-                    v.address = reserveChunk(length, v.alignment);
+                    v.address = reserveChunk(v.length, v.alignment);
                 }
                 v = v.next;
             }
@@ -45,12 +38,7 @@ class ValueSegment extends BufferedSegment {
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
                 if (0 != (v.flags & flags)) {
-                    // see above.
-                    int length = v.length;
-                    if (v.isKey()) {
-                        length += 2;
-                    }
-                    allocateChunk(length, v.alignment);
+                    allocateChunk(v.length, v.alignment);
                     assert address == v.address : String.format("value segment address %x not the same as predicted value address %x", address, v.address);
                     byteBuffer.position(offset);
                     byteBuffer.put(v.data, v.offset, v.length);

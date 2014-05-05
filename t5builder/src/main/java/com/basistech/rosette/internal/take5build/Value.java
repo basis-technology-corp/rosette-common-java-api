@@ -51,6 +51,7 @@ class Value {
 
     int getKeyHash(int hashFun) {
         assert isKey();
-        return FnvHash.fnvhash(hashFun, data, 0, length);
+        // -1 to take away the null termination.
+        return FnvHash.fnvhash(hashFun, data, 0, length - 2);
     }
 }

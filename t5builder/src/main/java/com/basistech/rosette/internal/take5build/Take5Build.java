@@ -33,8 +33,6 @@ import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.OptionDef;
 import org.kohsuke.args4j.spi.FileOptionHandler;
 import org.kohsuke.args4j.spi.OneArgumentOptionHandler;
-import org.kohsuke.args4j.spi.OptionHandler;
-import org.kohsuke.args4j.spi.Parameters;
 import org.kohsuke.args4j.spi.Setter;
 
 import java.io.File;
@@ -228,7 +226,6 @@ public final class Take5Build {
             System.err.println(failure.getMessage());
             System.exit(1);
         }
-
     }
 
     void checkOptionConsistency() throws Failure {

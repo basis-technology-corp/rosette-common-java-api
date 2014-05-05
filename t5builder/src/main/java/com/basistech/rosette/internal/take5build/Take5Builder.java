@@ -376,10 +376,12 @@ public class Take5Builder {
 
     private void perfhashAddKey(char[] key, int keyLength, Value value) {
         // there's probably a quicker way to do this, and is the byte order right?
+        // perfhash keys are defined to be null-terminated.
         byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16LE);
+        keyBytes = Arrays.copyOf(keyBytes, keyBytes.length + 2);
         Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyBytes.length, 2, Value.KEY);
 
-        int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length);
+        int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length - 2); // don't hash that null!
         PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
         allPerfhashPairs.addFirst(pair);
     }
