@@ -13,16 +13,9 @@
  ******************************************************************************/
 
 
-package com.basistech.t5build;
+package com.basistech.rosette.internal.take5build;
 
 import au.com.bytecode.opencsv.CSVParser;
-import com.basistech.rosette.internal.take5build.Engine;
-import com.basistech.rosette.internal.take5build.KeyFormat;
-import com.basistech.rosette.internal.take5build.OutputFormat;
-import com.basistech.rosette.internal.take5build.Take5BuildException;
-import com.basistech.rosette.internal.take5build.Take5Builder;
-import com.basistech.rosette.internal.take5build.Take5EntryPoint;
-import com.basistech.rosette.internal.take5build.ValueFormat;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

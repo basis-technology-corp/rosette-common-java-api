@@ -12,7 +12,7 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
+package com.basistech.rosette.internal.take5build;
 import java.io.StringReader;
 
 %%

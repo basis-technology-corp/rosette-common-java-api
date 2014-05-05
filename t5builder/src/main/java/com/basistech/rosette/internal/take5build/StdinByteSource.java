@@ -12,35 +12,21 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
+
+package com.basistech.rosette.internal.take5build;
+
+import com.google.common.io.ByteSource;
+import org.apache.commons.io.input.CloseShieldInputStream;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Some utility functions for the generated lexer.
+ * Map System.in into the Guava I/O system.
  */
-abstract class PayloadLexerBase {
-
-    protected PayloadLexerBase() {
-        //
-    }
-
-    public abstract PayloadToken yylex() throws java.io.IOException, PayloadLexerException;
-
-    PayloadToken lex() throws PayloadLexerException {
-        try {
-            return yylex();
-        } catch (IOException e) {
-            // since we are always reading strings, we don't want to bother.
-            throw new RuntimeException(e);
-        }
-    }
-
-    protected static char decodeBmpEscape(String text) {
-        return (char)Integer.parseInt(text.substring(2), 16);
-    }
-
-    protected static int decodeCodepointEscape(String text) {
-        return Integer.parseInt(text.substring(2), 16);
+public class StdinByteSource extends ByteSource {
+    @Override
+    public InputStream openStream() throws IOException {
+        return new CloseShieldInputStream(System.in);
     }
 }

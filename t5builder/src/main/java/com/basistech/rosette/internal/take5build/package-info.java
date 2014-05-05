@@ -12,36 +12,7 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
-
 /**
- *
+ *Implementation of 100%-Java Take5 builder.
  */
-class PayloadLexerException extends Exception {
-    private int column = -1;
-
-    PayloadLexerException() {
-    }
-
-    PayloadLexerException(String message) {
-        super(message);
-    }
-
-    PayloadLexerException(String message, int column) {
-        super(message);
-        this.column = column;
-
-    }
-
-    PayloadLexerException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    PayloadLexerException(Throwable cause) {
-        super(cause);
-    }
-
-    int getColumn() {
-        return column;
-    }
-}
+package com.basistech.rosette.internal.take5build;

@@ -12,22 +12,36 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
-
-import java.io.File;
+package com.basistech.rosette.internal.take5build;
 
 /**
- * Input information from a control file or the command line.
+ *
  */
-class InputSpecification {
-    // derived from ESCAPES
-    boolean simpleKeys = true;
-    boolean ignorePayloads;
-    boolean noPayloads;
-    int contentFlags;
-    int minVersion = -1;
-    int maxVersion = -1;
-    String entrypointName;
-    File inputFile;
-    String defaultMode;
+class PayloadLexerException extends Exception {
+    private int column = -1;
+
+    PayloadLexerException() {
+    }
+
+    PayloadLexerException(String message) {
+        super(message);
+    }
+
+    PayloadLexerException(String message, int column) {
+        super(message);
+        this.column = column;
+
+    }
+
+    PayloadLexerException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    PayloadLexerException(Throwable cause) {
+        super(cause);
+    }
+
+    int getColumn() {
+        return column;
+    }
 }

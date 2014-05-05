@@ -12,25 +12,35 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
+package com.basistech.rosette.internal.take5build;
+
+import java.io.IOException;
 
 /**
- * Exception for problems with Take5 input.
+ * Some utility functions for the generated lexer.
  */
-public class InputFileException extends Exception {
+abstract class PayloadLexerBase {
 
-    public InputFileException() {
+    protected PayloadLexerBase() {
+        //
     }
 
-    public InputFileException(String message) {
-        super(message);
+    public abstract PayloadToken yylex() throws java.io.IOException, PayloadLexerException;
+
+    PayloadToken lex() throws PayloadLexerException {
+        try {
+            return yylex();
+        } catch (IOException e) {
+            // since we are always reading strings, we don't want to bother.
+            throw new RuntimeException(e);
+        }
     }
 
-    public InputFileException(String message, Throwable cause) {
-        super(message, cause);
+    protected static char decodeBmpEscape(String text) {
+        return (char)Integer.parseInt(text.substring(2), 16);
     }
 
-    public InputFileException(Throwable cause) {
-        super(cause);
+    protected static int decodeCodepointEscape(String text) {
+        return Integer.parseInt(text.substring(2), 16);
     }
 }

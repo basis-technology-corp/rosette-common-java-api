@@ -12,17 +12,25 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
+package com.basistech.rosette.internal.take5build;
 
 /**
-* Created by benson on 4/21/14.
-*/
-enum PayloadTokenType {
-    STRING,
-    MODE,
-    INTNUM,
-    FLONUM,
-    HEXDUMPSTART,
-    HEXDUMPITEM,
-    HEXDUMPEND
+ * Exception for problems with Take5 input.
+ */
+public class InputFileException extends Exception {
+
+    public InputFileException() {
+    }
+
+    public InputFileException(String message) {
+        super(message);
+    }
+
+    public InputFileException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public InputFileException(Throwable cause) {
+        super(cause);
+    }
 }

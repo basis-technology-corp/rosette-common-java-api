@@ -12,7 +12,22 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
+package com.basistech.rosette.internal.take5build;
+
+import java.io.File;
+
 /**
- *Implementation of 100%-Java Take5 builder.
+ * Input information from a control file or the command line.
  */
-package com.basistech.t5build;
+class InputSpecification {
+    // derived from ESCAPES
+    boolean simpleKeys = true;
+    boolean ignorePayloads;
+    boolean noPayloads;
+    int contentFlags;
+    int minVersion = -1;
+    int maxVersion = -1;
+    String entrypointName;
+    File inputFile;
+    String defaultMode;
+}

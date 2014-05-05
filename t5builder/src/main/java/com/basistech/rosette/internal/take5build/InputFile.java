@@ -12,9 +12,8 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
+package com.basistech.rosette.internal.take5build;
 
-import com.basistech.rosette.internal.take5build.Take5Pair;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;

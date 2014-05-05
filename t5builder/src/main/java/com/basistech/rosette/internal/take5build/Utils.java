@@ -14,7 +14,8 @@
 
 package com.basistech.rosette.internal.take5build;
 
-import java.io.UnsupportedEncodingException;
+import com.google.common.base.Charsets;
+
 import java.nio.ByteBuffer;
 
 final class Utils {
@@ -91,11 +92,7 @@ final class Utils {
 
     // Convert a string to ASCII bytes.
     static byte[] toAscii(String data) {
-        try {
-            return data.getBytes("ASCII");
-        } catch (UnsupportedEncodingException e) {
-            throw new Take5BuilderException(e);
-        }
+        return data.getBytes(Charsets.US_ASCII);
     }
 
     static String charString(char c) {

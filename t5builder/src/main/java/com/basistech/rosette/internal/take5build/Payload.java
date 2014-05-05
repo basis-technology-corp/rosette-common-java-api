@@ -12,21 +12,17 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-
-package com.basistech.t5build;
-
-import com.google.common.io.ByteSource;
-import org.apache.commons.io.input.CloseShieldInputStream;
-
-import java.io.IOException;
-import java.io.InputStream;
+package com.basistech.rosette.internal.take5build;
 
 /**
- * Map System.in into the Guava I/O system.
+ * Class in which we carry about a payload.
  */
-public class StdinByteSource extends ByteSource {
-    @Override
-    public InputStream openStream() throws IOException {
-        return new CloseShieldInputStream(System.in);
+public class Payload {
+    final byte[] bytes;
+    final int alignment;
+
+    public Payload(byte[] bytes, int alignment) {
+        this.bytes = bytes;
+        this.alignment = alignment;
     }
 }

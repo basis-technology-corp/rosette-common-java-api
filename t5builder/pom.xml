@@ -46,7 +46,7 @@
                             <licenseHeaderFile>etc/basisLicenseHeader.txt</licenseHeaderFile>
                             <programs>
                                 <program>
-                                    <mainClass>com.basistech.t5build.Take5Build</mainClass>
+                                    <mainClass>com.basistech.rosette.internal.take5build.Take5Build</mainClass>
                                     <id>t5build</id>
                                     <!-- To allow for gigantic -Xmx,  we don't specify at all.  appassembler is not as flexible as we might like here,
                                             we'd like a default and an override. -->
@@ -90,6 +90,19 @@
             <groupId>net.sf.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>2.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
         </dependency>
     </dependencies>
 </project>

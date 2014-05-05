@@ -12,17 +12,17 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.t5build;
+package com.basistech.rosette.internal.take5build;
 
 /**
- * Class in which we carry about a payload.
- */
-public class Payload {
-    final byte[] bytes;
-    final int alignment;
-
-    public Payload(byte[] bytes, int alignment) {
-        this.bytes = bytes;
-        this.alignment = alignment;
-    }
+* Created by benson on 4/21/14.
+*/
+enum PayloadTokenType {
+    STRING,
+    MODE,
+    INTNUM,
+    FLONUM,
+    HEXDUMPSTART,
+    HEXDUMPITEM,
+    HEXDUMPEND
 }

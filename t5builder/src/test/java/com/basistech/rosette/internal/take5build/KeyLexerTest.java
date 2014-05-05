@@ -12,26 +12,22 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
+package com.basistech.rosette.internal.take5build;
 
-package com.basistech.t5build;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Parsing exception on a payload.
+ *
  */
-public class PayloadParserException extends Exception {
-    private final int column;
+public class KeyLexerTest extends Assert {
 
-    public PayloadParserException(String message, int column) {
-        super(message);
-        this.column = column;
-    }
-
-    public PayloadParserException(String message, Throwable cause, int column) {
-        super(message, cause);
-        this.column = column;
-    }
-
-    public int getColumn() {
-        return column;
+    @Test
+    public void testLexer() throws Exception {
+        String input = "abc\\t\\r\\n\\z\\q\\u2e00\\U0001F601";
+        //0xD83D 0xDE01 is the UTF-16 for U+1F601
+        KeyLexer lexer = new KeyLexer(input);
+        String key = lexer.yylex();
+        assertEquals("abc\t\r\n\u0000\\q\u2e00\ud83d\ude01", key);
     }
 }
