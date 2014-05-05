@@ -16,9 +16,13 @@
 package com.basistech.t5build;
 
 import au.com.bytecode.opencsv.CSVParser;
+import com.basistech.rosette.internal.take5build.Engine;
+import com.basistech.rosette.internal.take5build.KeyFormat;
+import com.basistech.rosette.internal.take5build.OutputFormat;
 import com.basistech.rosette.internal.take5build.Take5BuildException;
 import com.basistech.rosette.internal.take5build.Take5Builder;
 import com.basistech.rosette.internal.take5build.Take5EntryPoint;
+import com.basistech.rosette.internal.take5build.ValueFormat;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -47,12 +51,6 @@ public final class Take5Build {
 
     private static final File NO_FILE = new File(".fnord.");
 
-    enum Engine {
-        FSA, // T5
-        LOOKUP // trie? Do we even support this in Java?
-        // TODO: new hash system.
-    }
-
     public static class FileOrDashOptionHandler extends FileOptionHandler {
 
         public FileOrDashOptionHandler(CmdLineParser parser, OptionDef option, Setter<? super File> setter) {
@@ -74,75 +72,71 @@ public final class Take5Build {
         }
     }
 
-    //THERE IS NO -8
-
     @Argument(handler = FileOrDashOptionHandler.class, usage = "input file or - for standard input", metaVar = "INPUT")
     File commandInputFile;
 
-    @Option(name = "--help", aliases = {"-h" })
+    @Option(name = "-help")
     boolean help;
 
-    @Option(name = "--output", aliases = {"-o" }, metaVar = "OUTPUT_FILE", handler = FileOrDashOptionHandler.class,
+    @Option(name = "-output", metaVar = "OUTPUT_FILE", handler = FileOrDashOptionHandler.class,
             usage = "output file")
     File outputFile;
 
-    @Option(name = "--metadata", aliases = {"-k" },
-            usage = "metadata content")
+    @Option(name = "-metadata", usage = "metadata content")
     File metadataFile;
 
-    @Option(name = "--copyright", metaVar = "COPYRIGHT_FILE",
+    @Option(name = "-copyright", metaVar = "COPYRIGHT_FILE",
             usage = "File containing a copyright notice")
     File copyrightFile;
 
     // related to -5
-    @Option(name = "--engine", metaVar = "ENGINE",
+    @Option(name = "-engine", metaVar = "ENGINE",
             usage = "lookup engine")
     Engine engine = Engine.FSA;
 
-    @Option(name = "--join", aliases = {"-j" }, metaVar = "CONTROL_FILE", usage = "Combine multiple Take5's into one output.")
+    @Option(name = "-key-format", metaVar = "FORMAT", usage = "Key format; only useful with -engine PERFHASH")
+    KeyFormat keyFormat;
+
+    @Option(name = "-join", metaVar = "CONTROL_FILE", usage = "Combine multiple Take5's into one output.")
     File controlFile;
 
-    @Option(name = "--binaryPayloads", aliases = {"-p" }, metaVar = "SIZE",
+    @Option(name = "-binaryPayloads", metaVar = "SIZE",
             usage = "payload size/alignment")
-    int alignment;
+    Integer alignment;
 
-    @Option(name = "--defaultMode", aliases = {"-d" }, metaVar = "MODE",
+    @Option(name = "-defaultMode", metaVar = "MODE",
             usage = "default payload mode (e.g. #4f).")
     String defaultPayloadFormat;
 
     // payloads are in the file, but we ignore them.
-    @Option(name = "--ignore-payloads", aliases = {"-i" }, usage = "ignore payloads")
+    @Option(name = "-ignore-payloads", usage = "expect payloads in input file but ignore them")
     boolean ignorePayloads;
 
     // no payloads in the input _at all_
-    @Option(name = "--no-payloads", usage = "no payloads")
+    @Option(name = "-no-payloads", usage = "input file is just keys")
     boolean noPayloads;
 
     //This is the inverse of -q.
-    @Option(name = "--simpleKeys", usage = "simple keys")
+    @Option(name = "-simpleKeys", usage = "simple keys; no escapes")
     boolean simpleKeys;
 
-    @Option(name = "--entrypoint", metaVar = "NAME", usage = "entrypoint")
+    @Option(name = "-entrypoint", metaVar = "NAME", usage = "entrypoint")
     String entrypointName;
 
-    @Option(name = "--contentVersion", aliases = {"-v" }, metaVar = "VERSION",
+    @Option(name = "-contentVersion", metaVar = "VERSION",
             usage = "version of content")
     int version;
 
-    @Option(name = "--indexLookup", aliases = {"-x" },
-            usage = "lookups map to (sorted) key indices")
+    @Option(name = "-indexLookup", usage = "lookups map from key to (sorted) key indices; no stored payloads.")
     boolean indexLookup;
 
-    @Option(name = "--debug-dump-lookup", aliases = {"-s" },
-            usage = "write textual lookup dump.")
+    @Option(name = "-debug-dump-lookup", usage = "write textual lookup dump.")
     boolean dumpLookup;
 
-    @Option(name = "--content-flags", aliases = {"-f" }, metaVar = "FLAGS",
-            usage = "content flags")
+    @Option(name = "-content-flags", metaVar = "FLAGS", usage = "abstruse content flags")
     int contentFlags;
 
-    @Option(name = "--no-output", aliases = {"-n" },
-            usage = "No output at all.")
+    @Option(name = "-no-output", usage = "No output at all.")
     boolean noOutput;
 
     private List<InputSpecification> inputSpecifications;
@@ -222,34 +216,62 @@ public final class Take5Build {
         }
 
         if ((outputFile == null || outputFile == NO_FILE) && !dumpLookup) {
-            throw new Failure("You must provide an output file unless you specify --debug-dump-lookup");
+            throw new Failure("You must provide an output file unless you specify -debug-dump-lookup");
+        }
+
+        if (engine == Engine.FSA) {
+            if (keyFormat == null) {
+                keyFormat = KeyFormat.FSA;
+            } else if (keyFormat != KeyFormat.FSA) {
+                throw new Failure(String.format("Invalid key format %s for FSA engine.", keyFormat.name()));
+            }
+        } else {
+            // perfhash
+            if (keyFormat == null) {
+                keyFormat = KeyFormat.HASH_STRING;
+            } else if (keyFormat == KeyFormat.FSA) {
+                throw new Failure(String.format("Invalid key format %s for PERFHASH engine.", keyFormat.name()));
+            }
         }
     }
 
     private void build() throws Failure {
         Take5Builder.Factory factory = new Take5Builder.Factory();
         // our default is to write something.
-        factory.outputFormat(Take5Builder.OutputFormat.TAKE5);
+        factory.outputFormat(OutputFormat.TAKE5);
+
+        /*
+         * Value Format
+         *  indexLookup -> ValueFormat.INDEX
+         *   ... or if noPayloads or ignorePayloads, IGNORE.
+         *  binary payloads (alignment != 0) -> ValueFormat.PTR
+         */
+
         if (noOutput) {
-            factory.outputFormat(Take5Builder.OutputFormat.NONE);
+            factory.outputFormat(OutputFormat.NONE);
         } else if (dumpLookup) {
-            factory.outputFormat(Take5Builder.OutputFormat.FSA);
-        } else if (noPayloads || ignorePayloads) {
-            factory.valueFormat(Take5Builder.ValueFormat.INDEX);
+            factory.outputFormat(OutputFormat.FSA);
+        } else if (indexLookup) {
+            factory.valueFormat(ValueFormat.INDEX);
         } else if (alignment != 0) {
-            factory.valueFormat(Take5Builder.ValueFormat.PTR);
+            factory.valueFormat(ValueFormat.PTR);
+            if (alignment == null) {
+                alignment = 2;
+            }
+            factory.valueSize(alignment);
+        } else if (noPayloads || ignorePayloads) {
+            factory.valueFormat(ValueFormat.IGNORE);
         } else {
-            // if you don't specify an alignment with -p or -i to say no payloads at all.
-            factory.valueFormat(Take5Builder.ValueFormat.IGNORE);
+            factory.valueFormat(ValueFormat.IGNORE);
         }
 
         try {
-            builder = factory.valueSize(alignment).build();
+            builder = factory.engine(engine).keyFormat(keyFormat).build();
         } catch (Take5BuildException e) {
             throw new Failure(e);
         }
-        copyright();
 
+        copyright();
         metadata();
 
         for (InputSpecification spec : inputSpecifications) {
@@ -257,7 +279,7 @@ public final class Take5Build {
             if (name == null) {
                 name = "main";
             }
-            Take5EntryPoint entrypoint = null;
+            Take5EntryPoint entrypoint;
             try {
                 entrypoint = builder.newEntryPoint(name);
             } catch (Take5BuildException e) {

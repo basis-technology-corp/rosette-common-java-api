@@ -18,8 +18,8 @@ package com.basistech.rosette.internal.take5build;
  * Value blob.
  */
 class Value {
-    final static short VALUE = 2;
-    final static short KEY = 1;
+    static final short VALUE = 2;
+    static final short KEY = 1;
 
     final byte[] data;
     int alignment; // NOT FINAL. The registry will lcm this as it merges in.

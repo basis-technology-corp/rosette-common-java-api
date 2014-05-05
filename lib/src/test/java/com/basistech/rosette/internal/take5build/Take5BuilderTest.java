@@ -18,7 +18,6 @@ package com.basistech.rosette.internal.take5build;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -136,7 +135,7 @@ public class Take5BuilderTest {
 
     @Test
     public void testSubclassedPair() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
@@ -178,7 +177,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testCanonicalExample() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
@@ -260,7 +259,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testUnsortedInput() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
@@ -282,7 +281,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testPayloads() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.PTR).valueSize(16).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.PTR).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
@@ -321,23 +320,23 @@ public class Take5BuilderTest {
 
     @Test
     public void testPerfhashString() throws Exception {
-        testPerfhash(Take5Builder.KeyFormat.HASH_STRING);
+        testPerfhash(KeyFormat.HASH_STRING);
     }
 
     @Test
     public void testPerfhashHash32() throws Exception {
-        testPerfhash(Take5Builder.KeyFormat.HASH_HASH32);
+        testPerfhash(KeyFormat.HASH_HASH32);
     }
 
     @Test
     public void testPerfhashNone32() throws Exception {
-        testPerfhash(Take5Builder.KeyFormat.HASH_NONE);
+        testPerfhash(KeyFormat.HASH_NONE);
     }
 
 
-    private void testPerfhash(Take5Builder.KeyFormat keyFormat) throws Exception {
+    private void testPerfhash(KeyFormat keyFormat) throws Exception {
         Take5EntryPoint[] ep = new Take5EntryPoint[1];
-        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Take5Builder.Engine.PERFHASH).keyFormat(keyFormat).valueFormat(Take5Builder.ValueFormat.PTR).valueSize(16).build(), ep);
+        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Engine.PERFHASH).keyFormat(keyFormat).valueFormat(ValueFormat.PTR).valueSize(16).build(), ep);
         int j = 0;
         Take5Match m = new Take5Match();
         for (String s : hexWords) {
@@ -348,7 +347,7 @@ public class Take5BuilderTest {
 
     @Test
     public void testIgnoredPayloads() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.IGNORE).valueSize(16).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.IGNORE).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
@@ -375,7 +374,7 @@ public class Take5BuilderTest {
 
     @Test
     public void testIndices() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(Take5Builder.ValueFormat.INDEX).valueSize(16).build();
+        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();

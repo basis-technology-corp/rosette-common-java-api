@@ -31,7 +31,7 @@ class ValueSegment extends BufferedSegment {
                      * it will contain zero without further fuss.
                      */
                     int length = v.length;
-                    if (v.isKey() && builder.keyFormat == Take5Builder.KeyFormat.HASH_STRING) {
+                    if (v.isKey() && builder.keyFormat == KeyFormat.HASH_STRING) {
                         length += 2;
                     }
                     v.address = reserveChunk(length, v.alignment);

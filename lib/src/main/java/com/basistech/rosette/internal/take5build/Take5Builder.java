@@ -188,60 +188,6 @@ public class Take5Builder {
     LinkedList<PerfhashKeyValuePair> allPerfhashPairs;
     Primes primes = new Primes();
 
-    public enum ValueFormat {
-        IGNORE,                        /* -i */
-        INDEX,                         /* -x */
-        PTR                            /* -p */
-    }
-
-    /**
-     * With {@link Engine#PERFHASH}, what sort of keys to write.
-     */
-    public enum KeyFormat {
-        /**
-         * For the FSA search engine.
-         */
-        FSA,                             /* -t fsa or -5 */
-        /**
-         * Just accept hash collisions.
-         */
-        HASH_NONE,                       /* -t hash/none */
-        /**
-         * Store a hash value to get very few hash collisions.
-         */
-        HASH_HASH32,                     /* -t hash/hash32 */
-        /**
-         * Store the key to get no collections.
-         */
-        HASH_STRING                      /* -t hash/str */
-    }
-
-    /**
-     * What gets written.
-     */
-    public enum OutputFormat {
-        // Take5 binary file
-        TAKE5,
-        // Textual dump of FSA
-        FSA,
-        // Nothing at all.
-        NONE
-    }
-
-    /**
-     * Which lookup engine.
-     */
-    public enum Engine {
-        /**
-         * Finite State engine.
-         */
-        FSA,
-        /**
-         * Perfect Hash Engine.
-         */
-        PERFHASH;
-    }
-
     // XXX Should be a way to vary these:
     int valueRegistryLength = 99991;
     int stateRegistryLength = 99991;
@@ -270,7 +216,7 @@ public class Take5Builder {
             }
             valueRegistry = new ValueRegistry(valueRegistryLength);
         } else {
-           valueSize = 0; // Don't get distracted by the default in the factory.
+            valueSize = 0; // Don't get distracted by the default in the factory.
         }
 
         if (keyFormat == KeyFormat.FSA) {
@@ -322,7 +268,7 @@ public class Take5Builder {
      * Note that creating a single entry point Take5 binary whose entry
      * point is named <CODE>"main"</CODE> will result in a binary that can
      * be interpreted by older Take5 runtimes.
-     *     
+     *
      * @param name the name for the new entry point.
      * @return a new, unloaded, entry point.
      */
@@ -673,7 +619,8 @@ public class Take5Builder {
                     idx++;
                 }
                 bucket.fun = idx;
-                bucket.pairs.getFirst().index = idx++;
+                final PerfhashKeyValuePair first = bucket.pairs.getFirst();
+                first.index = idx++;
             }
         }
 
@@ -831,7 +778,7 @@ public class Take5Builder {
                           && es[i] == edgeState[beg + i])) {
                         continue bucketNext;
                     }
-                }                
+                }
                 return s;
             }
         }
@@ -872,7 +819,7 @@ public class Take5Builder {
     private Value findValue(Take5Pair pair) {
         byte[] data = pair.getValue();
         if (data == null) {
-          return null;
+            return null;
         }
         int offset = pair.getOffset();
         return valueRegistry.intern(data, offset, offset + pair.getLength(), pair.getAlignment(), Value.VALUE);
@@ -1179,13 +1126,6 @@ public class Take5Builder {
                                + calendar.get(Calendar.SECOND))
                        + calendar.get(Calendar.MILLISECOND));
         }
-    }
-
-    private int alignUp(int addr, int align) {
-        assert align > 0;
-        addr += align - 1;
-        addr -= addr % align;
-        return addr;
     }
 
     void doValues(IntBuffer header) {

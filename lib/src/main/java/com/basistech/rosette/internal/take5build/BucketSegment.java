@@ -91,8 +91,8 @@ class BucketSegment extends SimpleSegment {
 
             entryIndex += Take5Builder.EPTLEN;
         }
-        assert(ix == builder.globalIndexCount);
-        assert(offset == builder.globalBucketCount);
+        assert ix == builder.globalIndexCount;
+        assert offset == builder.globalBucketCount;
 
     }
 }

@@ -15,7 +15,6 @@
 package com.basistech.rosette.internal.take5build;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * One entry point from a {@link Take5Builder}.

@@ -4,7 +4,7 @@
  ** and may only be used as permitted under the license agreement under which
  ** it has been distributed, and in no other way.
  **
- ** Copyright (c) 014 Basis Technology Corporation All rights reserved.
+ ** Copyright (c) 2014 Basis Technology Corporation All rights reserved.
  **
  ** The technical data and information provided herein are provided with
  ** `limited rights', and the computer software provided herein is provided
@@ -24,6 +24,10 @@ package com.basistech.rosette.internal.take5build;
 final class FnvHash {
     static final int FNV32_PRIME = 0x01000193;
     static final int FNV32_BASE = 0x811C9DC5;
+
+    private FnvHash() {
+        //
+    }
 
     /**
      * This returns a 31-bit hash by folding the full 32-bit FNV value in
