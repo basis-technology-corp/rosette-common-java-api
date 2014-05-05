@@ -320,9 +320,24 @@ public class Take5BuilderTest {
     }
 
     @Test
-    public void testPerfhash() throws Exception {
+    public void testPerfhashString() throws Exception {
+        testPerfhash(Take5Builder.KeyFormat.HASH_STRING);
+    }
+
+    @Test
+    public void testPerfhashHash32() throws Exception {
+        testPerfhash(Take5Builder.KeyFormat.HASH_HASH32);
+    }
+
+    @Test
+    public void testPerfhashNone32() throws Exception {
+        testPerfhash(Take5Builder.KeyFormat.HASH_NONE);
+    }
+
+
+    private void testPerfhash(Take5Builder.KeyFormat keyFormat) throws Exception {
         Take5EntryPoint[] ep = new Take5EntryPoint[1];
-        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Take5Builder.Engine.PERFHASH).keyFormat(Take5Builder.KeyFormat.HASH_STRING).valueFormat(Take5Builder.ValueFormat.PTR).valueSize(16).build(), ep);
+        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Take5Builder.Engine.PERFHASH).keyFormat(keyFormat).valueFormat(Take5Builder.ValueFormat.PTR).valueSize(16).build(), ep);
         int j = 0;
         Take5Match m = new Take5Match();
         for (String s : hexWords) {

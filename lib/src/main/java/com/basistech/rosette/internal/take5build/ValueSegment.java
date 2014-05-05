@@ -17,11 +17,13 @@ package com.basistech.rosette.internal.take5build;
 import java.io.IOException;
 
 class ValueSegment extends BufferedSegment {
+    private final short flags;
 
     // Note that the constructor has the side effect of initializing the
     // address slot in all of the values.
     ValueSegment(Take5Builder builder, String description, short flags) {
         super(builder, description);
+        this.flags = flags;
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
                 if (0 != (v.flags & flags)) {
@@ -29,7 +31,7 @@ class ValueSegment extends BufferedSegment {
                      * it will contain zero without further fuss.
                      */
                     int length = v.length;
-                    if (v.isKey()) {
+                    if (v.isKey() && builder.keyFormat == Take5Builder.KeyFormat.HASH_STRING) {
                         length += 2;
                     }
                     v.address = reserveChunk(length, v.alignment);
@@ -42,15 +44,17 @@ class ValueSegment extends BufferedSegment {
     void writeData() throws IOException {
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
-                // see above.
-                int length = v.length;
-                if (v.isKey()) {
-                    length += 2;
-                };
-                allocateChunk(length, v.alignment);
-                assert address == v.address;
-                byteBuffer.position(offset);
-                byteBuffer.put(v.data, v.offset, v.length);
+                if (0 != (v.flags & flags)) {
+                    // see above.
+                    int length = v.length;
+                    if (v.isKey()) {
+                        length += 2;
+                    }
+                    allocateChunk(length, v.alignment);
+                    assert address == v.address : String.format("value segment address %x not the same as predicted value address %x", address, v.address);
+                    byteBuffer.position(offset);
+                    byteBuffer.put(v.data, v.offset, v.length);
+                }
                 v = v.next;
             }
             flushChunk();
