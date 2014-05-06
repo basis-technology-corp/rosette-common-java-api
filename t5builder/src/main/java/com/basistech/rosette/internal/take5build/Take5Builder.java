@@ -1118,7 +1118,7 @@ public class Take5Builder {
     void doBuildTime(IntBuffer header) {
         Calendar calendar = new GregorianCalendar(TimeZone.getTimeZone("GMT"));
         if (varyNothing) {
-            // Caconical test build time is 2005/12/31 23:59:60.259 UTC:
+            // Canonical test build time is 2005/12/31 23:59:60.259 UTC:
             header.put(HDR_BUILD_DAY, 746231);
             header.put(HDR_BUILD_MSEC, 86400259);
         } else {
@@ -1158,7 +1158,6 @@ public class Take5Builder {
             break;
         case HASH_HASH32:
             assert valueTable.size() == 0;
-            //Take5Builder builder, String description,         int bufferSize, int bufferAlignment
             keySegment = new SimpleSegment(this, "Key Hash32 Table", globalIndexCount * 4, 4);
             Arrays.fill(keySegment.rawbuf, (byte)-1);
             header.put(HDR_KEYCHECK_FORMAT, Take5Format.KEYCHECK_FORMAT_HASH32);
@@ -1210,8 +1209,11 @@ public class Take5Builder {
             SimpleSegment valueTableSegment = null;
             // We can't use the TableSegment class since we want to interleave this with key management.
             // So we use a SimpleSegment and fill in through the buffer.
-            valueTableSegment = new SimpleSegment(this, "Value Table", globalIndexCount * 4, 4);
-            header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
+            // We only need the value table segment if we indeed have values.
+            if (storeValues) {
+                valueTableSegment = new SimpleSegment(this, "Value Table", globalIndexCount * 4, 4);
+                header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
+            }
 
             for (Take5EntryPoint ep : entryPoints) {
                 int bucketCount = ep.bucketCount;
@@ -1220,6 +1222,7 @@ public class Take5Builder {
                 for (int bx = 0; bx < bucketCount; bx++) {
                     for (PerfhashKeyValuePair pair : bucketTable[bx].pairs) {
                         if (pair.value != null) {
+                            assert storeValues; // pair.value should always be null in !storeValues
                             // leave a zero in there if there is no value at all.
                             valueTableSegment.getIntBuffer().put(ix + pair.index, valueSegment.getAddress() + pair.value.address);
                         }
