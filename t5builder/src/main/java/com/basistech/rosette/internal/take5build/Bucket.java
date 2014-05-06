@@ -43,6 +43,6 @@ class Bucket implements Comparable<Bucket> {
         if (rv != 0) {
             return rv;
         }
-        return index - o.index;
+        return o.index - index;
     }
 }

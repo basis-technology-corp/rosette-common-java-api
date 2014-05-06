@@ -51,6 +51,10 @@
                                     <!-- To allow for gigantic -Xmx,  we don't specify at all.  appassembler is not as flexible as we might like here,
                                             we'd like a default and an override. -->
                                 </program>
+                                <program>
+                                  <mainClass>com.basistech.rosette.internal.take5.Take5DumpHeader</mainClass>
+                                  <id>t5dump</id>
+                                </program>
                             </programs>
                         </configuration>
                     </execution>
