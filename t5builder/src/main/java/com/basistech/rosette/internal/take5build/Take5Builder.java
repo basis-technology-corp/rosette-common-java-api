@@ -52,6 +52,8 @@ import static com.basistech.rosette.internal.take5build.Take5Format.EPT_EDGE_COU
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_OFFSET;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_START;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_CHARACTER;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_HASH_FUN;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MILLIONS_TESTED;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_MATCHES;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_VALUE_SIZE;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_WORD_LENGTH;
@@ -509,6 +511,7 @@ public class Take5Builder {
 
         globalIndexCount += ep.indexCount;
         globalMillionsTested += ep.millionsTested;
+        globalMaxHashFun = Math.max(globalMaxHashFun, ep.maxHashFun);
         globalBucketCount += ep.bucketCount;
     }
 
@@ -607,7 +610,8 @@ public class Take5Builder {
                 if (fun > maxHashFun) {
                     maxHashFun = fun;
                 }
-                funCnt += 1 + (funCnt / 1000000);
+                funCnt += 1 + (fun - indexCount);
+                millionsTested += funCnt / 1000000;
                 funCnt %= 1000000;
             }
         }
@@ -997,6 +1001,8 @@ public class Take5Builder {
             entry.put(epx + EPT_CONTENT_MIN_VERSION, ep.contentMinVersion);
             entry.put(epx + EPT_CONTENT_MAX_VERSION, ep.contentMaxVersion);
             entry.put(epx + EPT_INDEX_COUNT, ep.indexCount);
+            entry.put(epx + EPT_MAX_HASH_FUN, ep.maxHashFun);
+            entry.put(epx + EPT_MILLIONS_TESTED, ep.millionsTested);
             epx = EPTLEN;
         }
 
