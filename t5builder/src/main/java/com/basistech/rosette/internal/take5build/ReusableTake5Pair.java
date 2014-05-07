@@ -27,12 +27,12 @@ package com.basistech.rosette.internal.take5build;
  * reusable.
  */
 public class ReusableTake5Pair implements Take5Pair {
-    char[] key;
-    int keyLength;
-    byte[] value;
-    int alignment;
-    int offset;
-    int length;
+    protected char[] key;
+    protected int keyLength;
+    protected byte[] value;
+    protected int alignment;
+    protected int offset;
+    protected int length;
 
     /**
      * Create a ReusableTake5Pair with the given key and the null value.

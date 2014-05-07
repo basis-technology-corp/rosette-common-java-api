@@ -313,7 +313,7 @@ public class Take5Builder {
         this.varyNothing = varyNothing;
     }
 
-    void loadContent(Take5EntryPoint ep,  Iterator<Take5Pair> pairs) throws Take5ParseError {
+    void loadContent(Take5EntryPoint ep,  Iterator<? extends Take5Pair> pairs) throws Take5ParseError {
         Take5Pair pair;
         beginKeys(ep);
         if (storeValues) {
