@@ -31,7 +31,6 @@ import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_MATC
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_VALUE_SIZE;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_WORD_LENGTH;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MIN_CHARACTER;
-import static com.basistech.rosette.internal.take5build.Take5Format.EPT_NAME;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_STATE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_STATE_START;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_WORD_COUNT;
@@ -70,7 +69,6 @@ class BucketSegment extends SimpleSegment {
             bucketBase += bucketCount * 4;
 
             // Common header:
-            entry.put(entryIndex + EPT_NAME, builder.ascizString(ep.asciiName));
             entry.put(entryIndex + EPT_CONTENT_FLAGS, ep.contentFlags);
             entry.put(entryIndex + EPT_CONTENT_MIN_VERSION, ep.contentMinVersion);
             entry.put(entryIndex + EPT_CONTENT_MAX_VERSION, ep.contentMaxVersion);

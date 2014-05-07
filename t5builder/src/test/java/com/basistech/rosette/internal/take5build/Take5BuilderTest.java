@@ -16,11 +16,13 @@ package com.basistech.rosette.internal.take5build;
 
 //import java.io.IOException;
 
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.io.output.NullWriter;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -133,11 +135,15 @@ public class Take5BuilderTest {
         }
     }
 
+    private Take5BuilderFactory testFactory() {
+        return new Take5BuilderFactory().progressWriter(new PrintWriter(new NullWriter()));
+    }
+
     @Test
     public void testSubclassedPair() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).build();
+        Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         for (String s : dmwwExample) {
             keys.add(new LocalPair(s));
         }
@@ -177,7 +183,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testCanonicalExample() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).build();
+        Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
         for (String s : dmwwExample) {
@@ -219,7 +225,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testEmptyString() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().build();
+        Take5Builder builder = testFactory().build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair(""));
@@ -237,7 +243,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testDuplicateKey() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().build();
+        Take5Builder builder = testFactory().build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
@@ -259,7 +265,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testUnsortedInput() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).build();
+        Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair("abc"));
@@ -281,7 +287,7 @@ public class Take5BuilderTest {
      */
     @Test
     public void testPayloads() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.PTR).valueSize(16).build();
+        Take5Builder builder = testFactory().valueFormat(ValueFormat.PTR).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
@@ -336,7 +342,7 @@ public class Take5BuilderTest {
 
     private void testPerfhash(KeyFormat keyFormat) throws Exception {
         Take5EntryPoint[] ep = new Take5EntryPoint[1];
-        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Engine.PERFHASH).keyFormat(keyFormat).valueFormat(ValueFormat.PTR).valueSize(16).build(), ep);
+        Take5Dictionary dict = loadGenerated(testFactory().engine(Engine.PERFHASH).keyFormat(keyFormat).valueFormat(ValueFormat.PTR).valueSize(16).build(), ep);
         perfhashVerify(dict, true);
     }
 
@@ -354,13 +360,13 @@ public class Take5BuilderTest {
     @Test
     public void testPerfhashNoPayloads() throws Exception {
         Take5EntryPoint[] ep = new Take5EntryPoint[1];
-        Take5Dictionary dict = loadGenerated(new Take5Builder.Factory().engine(Engine.PERFHASH).keyFormat(KeyFormat.HASH_STRING).valueFormat(ValueFormat.IGNORE).build(), ep);
+        Take5Dictionary dict = loadGenerated(testFactory().engine(Engine.PERFHASH).keyFormat(KeyFormat.HASH_STRING).valueFormat(ValueFormat.IGNORE).build(), ep);
         perfhashVerify(dict, false);
     }
 
     @Test
     public void testIgnoredPayloads() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.IGNORE).valueSize(16).build();
+        Take5Builder builder = testFactory().valueFormat(ValueFormat.IGNORE).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();
@@ -387,7 +393,7 @@ public class Take5BuilderTest {
 
     @Test
     public void testIndices() throws Exception {
-        Take5Builder builder = new Take5Builder.Factory().valueFormat(ValueFormat.INDEX).valueSize(16).build();
+        Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<Take5Pair>();

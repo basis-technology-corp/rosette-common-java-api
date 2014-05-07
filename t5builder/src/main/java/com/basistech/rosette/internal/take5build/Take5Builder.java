@@ -110,7 +110,7 @@ import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_6;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_LIMIT;
 
 /**
- * Builder for Take5 binaries. Use {@link com.basistech.rosette.internal.take5build.Take5Builder.Factory}
+ * Builder for Take5 binaries. Use {@link Take5BuilderFactory}
  * as a factory to obtain these classes.
  */
 public class Take5Builder {
@@ -131,11 +131,13 @@ public class Take5Builder {
     KeyFormat keyFormat;
     ValueFormat valueFormat;
     OutputFormat outputFormat;
+    PrintWriter progressWriter = new PrintWriter(System.out, true);
 
     boolean storeValues;
     boolean generateBinary;
     boolean varyNothing;
     ByteOrder byteOrder = ByteOrder.nativeOrder();
+
     byte[] copyright;
     Map<String, String> metadata;
     List<Take5EntryPoint> entryPoints = Lists.newArrayList();
@@ -200,12 +202,13 @@ public class Take5Builder {
      * alignments required by all payload values.  If the output mode is
      * something else, then the value size must be 0.
      */
-    Take5Builder(Factory factory) throws Take5BuildException {
+    Take5Builder(Take5BuilderFactory factory) throws Take5BuildException {
         this.engine = factory.engine;
         this.valueSize = factory.valueSize;
         this.keyFormat = factory.keyFormat;
         this.valueFormat = factory.valueFormat;
         this.outputFormat = factory.outputFormat;
+        this.progressWriter = factory.progressWriter;
 
         // I'd parenthesize this to make it more readable, but checkstyle
         // won't let me:
@@ -588,6 +591,23 @@ public class Take5Builder {
             bucketTable[x].pairs.addFirst(pair);
             bucketTable[x].count++;
         }
+
+
+        progressWriter.format("Starting search: (%s)\n"
+                + "  expected time: %.3f\n"
+                + "  risk of failure: %.6f\n"
+                + "  words:   %9d\n"
+                + "  buckets: %9d (%.4g words/bucket)\n"
+                + "  indexes: %9d (%.6f more)\n",
+                ep.name,
+                bestExpectedTime / TIME_BUDGET_SEC,
+                1 - bestFinishProbability,
+                wordCount,
+                bucketCount,
+                (double)wordCount / (double)bucketCount,
+                indexCount,
+                (double)(indexCount - wordCount) / (double)ep.wordCount);
+
 
         Arrays.sort(bucketTable, Collections.reverseOrder());
 
@@ -1303,62 +1323,4 @@ public class Take5Builder {
         out.flush();
     }
 
-    /**
-     * Builder class; use this to construct new instances.
-     */
-    public static final class Factory {
-        Engine engine = Engine.FSA;
-        ValueFormat valueFormat = ValueFormat.PTR;
-        KeyFormat keyFormat = KeyFormat.FSA;
-        OutputFormat outputFormat = OutputFormat.TAKE5; // default is to write Take5.
-        int valueSize = 2; // correct for STRING but not for IGNORE or INDEX, but main builder will cope.
-
-        public Factory() {
-            //
-        }
-
-        public Factory engine(Engine engine) {
-            this.engine = engine;
-            return this;
-        }
-
-        public Factory valueFormat(ValueFormat valueFormat) {
-            this.valueFormat = valueFormat;
-            return this;
-        }
-
-        public Factory keyFormat(KeyFormat keyFormat) {
-            this.keyFormat = keyFormat;
-            return this;
-        }
-
-        public Factory valueSize(int valueSize) {
-            this.valueSize = valueSize;
-            return this;
-        }
-
-        public Factory outputFormat(OutputFormat outputFormat) {
-            this.outputFormat = outputFormat;
-            return this;
-        }
-
-        public Take5Builder build() throws Take5BuildException {
-
-            if (engine == null) {
-                throw new Take5BuildException("Engine must be specified.");
-            }
-            if (valueFormat == null) {
-                throw new Take5BuildException("Mode must be specified.");
-            }
-
-            if (keyFormat == null && engine == Engine.FSA) {
-                keyFormat = KeyFormat.FSA;
-            } else if (keyFormat == null) {
-                throw new Take5BuildException("Key format must not be null.");
-            } else if (keyFormat == KeyFormat.FSA && engine != Engine.FSA) {
-                throw new Take5BuildException("Key format must not be FSA for non-FSA engine.");
-            }
-            return new Take5Builder(this);
-        }
-    }
 }

@@ -202,6 +202,13 @@ public final class Take5Build {
 
         try {
             that.checkOptionConsistency();
+        } catch (Failure failure) {
+            System.err.println(failure.getMessage());
+            parser.printUsage(System.err);
+            System.exit(1);
+        }
+
+        try {
             ThreadMXBean tm = ManagementFactory.getThreadMXBean();
             long cpuTime = tm.getCurrentThreadCpuTime();
             that.build();
@@ -274,7 +281,7 @@ public final class Take5Build {
     }
 
     void build() throws Failure {
-        Take5Builder.Factory factory = new Take5Builder.Factory();
+        Take5BuilderFactory factory = new Take5BuilderFactory();
         // our default is to write something.
         factory.outputFormat(OutputFormat.TAKE5);
 
