@@ -14,6 +14,7 @@
 
 package com.basistech.rosette.internal.take5;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -21,10 +22,13 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.junit.Assert;
@@ -649,20 +653,6 @@ public class Take5DictionaryTest extends Assert {
         fail("Not yet implemented");
     }
 
-    /**
-     * Test method for {@link com.basistech.rosette.internal.take5.
-     * Take5Dictionary#take5Search(char[], com.basistech.rosette.internal.take5.Take5Match,
-     * com.basistech.rosette.internal.take5.Take5Match[], int, int)}.
-     */
-    @Test
-    @Ignore
-    public void testTake5SearchCharArrayTake5MatchTake5MatchArrayIntInt() {
-        // The signature given above doesn't actually exist.  But we should
-        // probably actually test take5Search(char[], int, int, Take5Match,
-        // Take5Match[], Take5Match)
-        fail("Not yet implemented");
-    }
-
     @Test
     public void testGetComplexData() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
@@ -712,5 +702,16 @@ public class Take5DictionaryTest extends Assert {
         data.position(offset + 8);
         FloatBuffer floats = data.asFloatBuffer();
         checkKey0Values(bytes, floats);
+    }
+
+    @Test
+    public void testWalkPerfhashKeys() throws Exception {
+        Take5Dictionary dict = openDictionary("src/test/dicts/hex", null);
+        Set<String> keys = new HashSet<String>();
+        for (String k : dict.getPerfhashKeys()) {
+            assertTrue("each key added: " + k, keys.add(k));
+        }
+        assertEquals(53, keys.size());
+
     }
 }

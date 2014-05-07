@@ -22,6 +22,7 @@ import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Calendar;
 import java.util.Collections;
@@ -1668,6 +1669,66 @@ public class Take5Dictionary {
         }
         assert((state & 1) != 0);
         return i;
+    }
+
+    /**
+     * If this dictionary is a PERFHASH with stored keys, return an iteration over the keys.
+     * Otherwise throw {@link java.lang.UnsupportedOperationException}.
+     * @return the iteration.
+     */
+    public Iterable<String> getPerfhashKeys() {
+        if (fsaEngine != ENGINE_PERFHASH) {
+            throw new UnsupportedOperationException("This Take5Dictionary is not a perfhash.");
+        }
+        if (keyCheckFormat != KEYCHECK_FORMAT_STR) {
+            throw new UnsupportedOperationException("This perfhash Take5Dictionary does not have stored keys.");
+        }
+
+        return new Iterable<String>() {
+            @Override
+            public Iterator<String> iterator() {
+                return new Iterator<String>() {
+
+                    private int idx = 0;
+                    private final int limit = indexCount;
+                    private char[] buffer = new char[maximumWordLength()];
+
+                    @Override
+                    public boolean hasNext() {
+                        return idx < limit;
+                    }
+
+                    @Override
+                    public String next() {
+
+                        int ptr;
+                        // this will skip the unused slots that contain 0 ptrs.
+                        do {
+                            ptr = data.getInt(keyCheckData + idx * 4);
+                            idx++; // advance.
+                        } while (ptr == 0);
+
+                        int bufferIndex = 0;
+
+                        while(true) {
+                            char c = data.getChar(ptr);
+                            if (c == 0) {
+                                break;
+                            }
+                            buffer[bufferIndex++] = c;
+                            ptr += 2;
+                        }
+
+                        return new String(buffer, 0, bufferIndex);
+                    }
+
+                    @Override
+                    public void remove() {
+
+                    }
+                };
+            }
+        };
     }
 
     /**

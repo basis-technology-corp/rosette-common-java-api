@@ -98,7 +98,7 @@ public final class Take5Build {
     File controlFile;
 
     @Option(name = "-binaryPayloads", metaVar = "ALIGNMENT",
-            usage = "payload size/alignment")
+            usage = "payload size/aytelignment")
     Integer alignment;
 
     @Option(name = "-defaultMode", metaVar = "MODE",
@@ -136,7 +136,7 @@ public final class Take5Build {
     @Option(name = "-no-output", usage = "No output at all.")
     boolean noOutput;
 
-    @Option(name = "-byteOrder", usage = "byte order (LE or BE)", metaVar = "ORDER", handler = ByteOrderOptionHandler.class)
+    @Option(name = "-byteOrder", aliases = {"-byte-order" }, usage = "byte order (LE or BE)", metaVar = "ORDER", handler = ByteOrderOptionHandler.class)
     ByteOrder byteOrder = ByteOrder.nativeOrder();
 
     private List<InputSpecification> inputSpecifications;

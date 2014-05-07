@@ -29,9 +29,11 @@ import java.util.TimeZone;
 
 /**
  * This class implements loading and usage of a Take5 binary dictionary.
+ * @deprecated
  */
 // CHECKSTYLE:OFF
 @SuppressWarnings("PMD")
+@Deprecated
 public class Take5Dictionary {
     /* Binary format version numbers. */
     private static final int VERSION_5_0 = 0x00000500;

@@ -14,6 +14,7 @@
 
 package com.basistech.rosette.internal.take5;
 
+import com.basistech.rosette.internal.take5build.ByteOrderOptionHandler;
 import com.basistech.rosette.internal.take5build.Take5Format;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -46,6 +47,9 @@ public final class Take5DumpHeader {
 
     @Option(name = "-buckets", usage = "dump perfhash buckets")
     boolean buckets;
+
+    @Option(name = "-byteOrder", aliases = {"-byte-order" }, usage = "byte order (LE or BE)", metaVar = "ORDER", handler = ByteOrderOptionHandler.class)
+    ByteOrder byteOrder = ByteOrder.nativeOrder();
 
     private ByteBuffer buffer;
     private IntBuffer ints;
@@ -86,11 +90,12 @@ public final class Take5DumpHeader {
             return;
         }
 
+        if (byteOrder != ByteOrder.nativeOrder()) {
+            t5Buffer.order(byteOrder);
+        }
+
         pw = new PrintWriter(new OutputStreamWriter(System.out, Charsets.UTF_8));
         buffer = t5Buffer;
-        // for now, only handle native order.
-        // can't we auto-detect from magic?
-        buffer.order(ByteOrder.nativeOrder());
         ints = buffer.asIntBuffer();
         dumpDictionary();
         if (buckets) {
@@ -327,12 +332,12 @@ public final class Take5DumpHeader {
     }
 
     private int getNetworkInt(int intOffset) {
-        ByteOrder byteOrder = buffer.order();
+        ByteOrder tempOrder = buffer.order();
         try {
             buffer.order(ByteOrder.BIG_ENDIAN); // network is BE.
             return buffer.getInt(intOffset * 4);
         } finally {
-            buffer.order(byteOrder);
+            buffer.order(tempOrder);
         }
     }
 
