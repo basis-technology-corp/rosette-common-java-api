@@ -14,6 +14,8 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import com.google.common.base.Charsets;
+
 import java.util.Iterator;
 
 /**
@@ -22,7 +24,7 @@ import java.util.Iterator;
 public class Take5EntryPoint {
     Take5Builder builder;
     String name;
-    byte[] asciiName;
+    byte[] nameBytes;
     String inputName;           // file name or whatever
     int contentFlags;
     int contentMinVersion;
@@ -54,7 +56,7 @@ public class Take5EntryPoint {
     Take5EntryPoint(String name, Take5Builder builder) {
         this.builder = builder;
         this.name = name;
-        this.asciiName = Utils.toAscii(name);
+        this.nameBytes = name.getBytes(Charsets.UTF_8);
         this.inputName = name;
     }
 

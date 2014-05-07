@@ -20,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Calendar;
@@ -43,6 +44,7 @@ public class Take5Dictionary {
     private static final int VERSION_5_5 = 0x00000505;
     private static final int VERSION_5_6 = 0x00000506;
     private static final int VERSION_MINIMUM = VERSION_5_0;
+    private static final Charset UTF8 = Charset.forName("utf-8");
 
     /* Versions supported by runtime. */
     // XXX Why are these public?
@@ -716,11 +718,7 @@ public class Take5Dictionary {
                 for (int j = 0; j < len; j++) {
                     buf[j] = data.get(beg + j);
                 }
-                try {
-                    entryPointNames.add(i, new String(buf, "ASCII"));
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException(e);
-                }
+                entryPointNames.add(i, new String(buf, UTF8));
             }
         } else {
             entryPointCount = 1;

@@ -338,6 +338,8 @@ public class Take5Builder {
         inputName = ep.inputName;
         keyCount = 0;
         maxKeyLength = 0;
+        minCharacter = 0xFFFF;
+        maxCharacter = 0;
         if (valueRegistry != null) {
             valueRegistry.maxValueSize = 0;
         }
@@ -349,8 +351,6 @@ public class Take5Builder {
     }
 
     private void fsaBeginKeys() {
-        minCharacter = 0xFFFF;
-        maxCharacter = 0;
         frameCount = 0;
         frameIndex[0] = 1;
         edgeIsAccept[0] = false;
@@ -380,6 +380,16 @@ public class Take5Builder {
     }
 
     private void perfhashAddKey(char[] key, int keyLength, Value value) {
+        for (int cx = 0; cx < keyLength; cx++) {
+            char c = key[cx];
+            if (c < minCharacter) {
+                minCharacter = c;
+            }
+            if (c > maxCharacter) {
+                maxCharacter = c;
+            }
+
+        }
         // there's probably a quicker way to do this, and is the byte order right?
         // perfhash keys are defined to be null-terminated.
         byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16LE);
@@ -506,6 +516,11 @@ public class Take5Builder {
             globalMaxValueSize = Math.max(globalMaxValueSize, valueRegistry.maxValueSize);
         }
 
+        ep.minCharacter = minCharacter;
+        if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
+        ep.maxCharacter = maxCharacter;
+        if (maxCharacter > globalMaxCharacter) { globalMaxCharacter = maxCharacter; }
+
         if (keyFormat == KeyFormat.FSA) {
             fsaEndKeys(ep);
         } else {
@@ -540,10 +555,6 @@ public class Take5Builder {
             ep.indexCount++;
         }
 
-        ep.minCharacter = minCharacter;
-        if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
-        ep.maxCharacter = maxCharacter;
-        if (maxCharacter > globalMaxCharacter) { globalMaxCharacter = maxCharacter; }
 
         ep.stateCount = 0;
         ep.edgeCount = 0;
@@ -1015,7 +1026,7 @@ public class Take5Builder {
             if (!ep.loaded) {
                 throw new Take5BuilderException(String.format("Entrypoint %s not loaded.", ep.name));
             }
-            entry.put(epx + EPT_NAME, ascizString(ep.asciiName));
+            entry.put(epx + EPT_NAME, stringSegment(ep.nameBytes));
             entry.put(epx + EPT_MAX_WORD_LENGTH, ep.maxKeyLength);
             entry.put(epx + EPT_CONTENT_FLAGS, ep.contentFlags);
             entry.put(epx + EPT_CONTENT_MIN_VERSION, ep.contentMinVersion);
@@ -1094,17 +1105,17 @@ public class Take5Builder {
     }
 
     // Allocate a null-terminated ASCII string in the output and return it's address.
-    int ascizString(byte[] ascii) {
-        SimpleSegment seg = new SimpleSegment(this, "ASCIZ", ascii.length + 1, 1);
+    int stringSegment(byte[] chars) {
+        SimpleSegment seg = new SimpleSegment(this, "a string", chars.length + 1, 1);
         ByteBuffer buf = seg.getByteBuffer();
-        buf.put(ascii);
+        buf.put(chars);
         buf.put((byte)0);
         return seg.getAddress();
     }
 
     void doCopyright(IntBuffer header) {
         if (copyright != null) {
-            header.put(HDR_COPYRIGHT_STRING, ascizString(copyright));
+            header.put(HDR_COPYRIGHT_STRING, stringSegment(copyright));
             header.put(HDR_COPYRIGHT_SIZE, copyright.length);
         } else {
             header.put(HDR_COPYRIGHT_STRING, 0);
