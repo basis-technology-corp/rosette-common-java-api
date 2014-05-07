@@ -31,7 +31,6 @@ import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.OptionDef;
 import org.kohsuke.args4j.spi.FileOptionHandler;
-import org.kohsuke.args4j.spi.OneArgumentOptionHandler;
 import org.kohsuke.args4j.spi.Setter;
 
 import java.io.File;
@@ -71,25 +70,8 @@ public final class Take5Build {
         }
     }
 
-    public static class ByteOrderOptionHandler extends OneArgumentOptionHandler<ByteOrder> {
-        public ByteOrderOptionHandler(CmdLineParser parser, OptionDef option, Setter<? super ByteOrder> setter) {
-            super(parser, option, setter);
-        }
-
-        @Override
-        protected ByteOrder parse(String argument) throws NumberFormatException, CmdLineException {
-            if ("LE".equalsIgnoreCase(argument)) {
-                return ByteOrder.LITTLE_ENDIAN;
-            } else if ("BE".equalsIgnoreCase(argument)) {
-                return ByteOrder.BIG_ENDIAN;
-            } else {
-                throw new CmdLineException(owner, "Invalid byte order " + argument);
-            }
-        }
-    }
-
     @Argument(handler = FileOrDashOptionHandler.class, usage = "input file or - for standard input", metaVar = "INPUT")
-    File commandInputFile;
+    File commandInputFile = NO_FILE;
 
     @Option(name = "-help")
     boolean help;

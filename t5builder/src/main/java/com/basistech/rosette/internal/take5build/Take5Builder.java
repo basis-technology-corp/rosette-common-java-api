@@ -476,16 +476,16 @@ public class Take5Builder {
             globalMaxValueSize = Math.max(globalMaxValueSize, valueRegistry.maxValueSize);
         }
 
-        ep.minCharacter = minCharacter;
-        if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
-        ep.maxCharacter = maxCharacter;
-        if (maxCharacter > globalMaxCharacter) { globalMaxCharacter = maxCharacter; }
-
         if (keyFormat == KeyFormat.FSA) {
             fsaEndKeys(ep);
         } else {
             perfhashEndKeys(ep);
         }
+
+        ep.minCharacter = minCharacter;
+        if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
+        ep.maxCharacter = maxCharacter;
+        if (maxCharacter > globalMaxCharacter) { globalMaxCharacter = maxCharacter; }
 
         globalIndexCount += ep.indexCount;
         globalMillionsTested += ep.millionsTested;
@@ -577,7 +577,7 @@ public class Take5Builder {
                 bucketCount,
                 (double)wordCount / (double)bucketCount,
                 indexCount,
-                (double)(indexCount - wordCount) / (double)ep.wordCount);
+                (double)(indexCount - wordCount) / (double)wordCount);
 
 
         Arrays.sort(bucketTable, Collections.reverseOrder());
@@ -1005,6 +1005,8 @@ public class Take5Builder {
         }
 
         // fill in some trailing engine-independent header fields.
+        header.put(HDR_MIN_CHARACTER, globalMinCharacter);
+        header.put(HDR_MAX_CHARACTER, globalMaxCharacter);
         header.put(HDR_WORD_COUNT, totalKeyCount);
         header.put(HDR_MAX_WORD_LENGTH, globalMaxKeyLength);
         header.put(HDR_MAX_VALUE_SIZE, globalMaxValueSize);
@@ -1060,8 +1062,7 @@ public class Take5Builder {
         header.put(HDR_EDGE_COUNT, edgeCount);
         header.put(HDR_ACCEPT_EDGE_COUNT, acceptEdgeCount);
         header.put(HDR_MAX_MATCHES, globalMaxMatches);
-        header.put(HDR_MIN_CHARACTER, globalMinCharacter);
-        header.put(HDR_MAX_CHARACTER, globalMaxCharacter);
+
     }
 
     // Allocate a null-terminated ASCII string in the output and return it's address.
@@ -1084,7 +1085,7 @@ public class Take5Builder {
     }
 
     void doMetaData(IntBuffer header) {
-        if (metadata != null) {
+        if (metadata != null && !metadata.isEmpty()) {
             StringBuilder build = new StringBuilder(100);
             for (String key : metadata.keySet()) {
                 build.append(key);
