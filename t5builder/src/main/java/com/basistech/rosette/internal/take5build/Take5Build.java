@@ -18,7 +18,6 @@ package com.basistech.rosette.internal.take5build;
 import au.com.bytecode.opencsv.CSVParser;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
@@ -42,7 +41,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
 import java.nio.ByteOrder;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -85,7 +83,7 @@ public final class Take5Build {
             } else if ("BE".equalsIgnoreCase(argument)) {
                 return ByteOrder.BIG_ENDIAN;
             } else {
-                throw new CmdLineException("Invalid byte order " + argument);
+                throw new CmdLineException(owner, "Invalid byte order " + argument);
             }
         }
     }
@@ -309,19 +307,28 @@ public final class Take5Build {
         } else {
             factory.valueFormat(ValueFormat.IGNORE);
         }
+        factory.engine(engine).keyFormat(keyFormat);
+        if (byteOrder != ByteOrder.nativeOrder()) {
+            factory.order(byteOrder);
+        }
+
+        metadata(factory);
+
+        if (copyrightFile != null) {
+            try {
+                factory.copyright(FileUtils.readFileToString(copyrightFile, "utf-8"));
+            } catch (IOException e) {
+                throw new Failure("Error reading copyight file " + copyrightFile.getAbsolutePath());
+            }
+        }
 
         try {
-            builder = factory.engine(engine).keyFormat(keyFormat).build();
+            builder = factory.build();
         } catch (Take5BuildException e) {
             throw new Failure(e);
         }
 
-        if (byteOrder != ByteOrder.nativeOrder()) {
-            builder.setByteOrder(byteOrder);
-        }
 
-        copyright();
-        metadata();
 
         for (InputSpecification spec : inputSpecifications) {
             String name = spec.entrypointName;
@@ -375,41 +382,30 @@ public final class Take5Build {
         }
     }
 
-    private void metadata() throws Failure {
+    private void metadata(final Take5BuilderFactory factory) throws Failure {
         if (metadataFile != null) {
             CharSource metaSource = Files.asCharSource(metadataFile, Charsets.UTF_8);
             try {
-                builder.setMetadata(metaSource.readLines(new LineProcessor<Map<String, String>>() {
-                    private final Map<String, String> results = Maps.newHashMap();
+                metaSource.readLines(new LineProcessor<Void>() {
                     private final CSVParser parser = new CSVParser('\t');
 
                     @Override
                     public boolean processLine(String line) throws IOException {
                         String[] tokens = parser.parseLine(line);
-                        results.put(tokens[0], tokens[1]);
+                        factory.putMetadata(tokens[0], tokens[1]);
                         return true;
                     }
 
                     @Override
-                    public Map<String, String> getResult() {
-                        return results;
+                    public Void getResult() {
+                        return null;
                     }
-                }));
+                });
             } catch (IOException e) {
                 throw new Failure("Failed to read metadata" + metadataFile.getAbsolutePath(), e);
-            } catch (Take5BuildException e) {
-                throw new Failure("Error in metadata " + metadataFile.getAbsolutePath(), e);
             }
         }
     }
 
-    private void copyright() throws Failure {
-        if (copyrightFile != null) {
-            try {
-                builder.setCopyright(FileUtils.readFileToString(copyrightFile, "UTF-8"));
-            } catch (IOException e) {
-                throw new Failure("Failed to read copyright file " + copyrightFile.getAbsolutePath());
-            }
-        }
-    }
+
 }

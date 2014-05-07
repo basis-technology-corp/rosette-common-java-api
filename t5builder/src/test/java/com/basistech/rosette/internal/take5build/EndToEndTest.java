@@ -19,6 +19,7 @@ import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.basistech.rosette.internal.take5build.Engine;
 import com.basistech.rosette.internal.take5build.KeyFormat;
 import com.basistech.rosette.internal.take5build.Take5Format;
+import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,17 +33,27 @@ import java.nio.ByteBuffer;
  */
 public class EndToEndTest extends Assert {
 
+    public static final String COPYRIGHT_C_2014_ELMER_FUDD = "Copyright (c) 2014 elmer fudd.";
+
     @Test
     public void perfhashKeysOnly() throws Exception {
         File t5File = File.createTempFile("t5btest.", ".bin");
         t5File.deleteOnExit();
         File inputFile = new File("src/test/data/hex-keys.txt");
+        File mdFile = File.createTempFile("md.", ".tsv");
+        mdFile.deleteOnExit();
+        Files.write("k1\tvalue 1\nk2\tvalue 2\n", mdFile, Charsets.UTF_8);
+        File copyrightFile = File.createTempFile("copyright.", ".txt");
+        Files.write(COPYRIGHT_C_2014_ELMER_FUDD, copyrightFile, Charsets.UTF_8);
+        copyrightFile.deleteOnExit();
         Take5Build cmd = new Take5Build();
         cmd.noPayloads = true;
         cmd.engine = Engine.PERFHASH;
         cmd.outputFile = t5File;
         cmd.keyFormat = KeyFormat.HASH_STRING;
         cmd.commandInputFile = inputFile;
+        cmd.metadataFile = mdFile;
+        cmd.copyrightFile = copyrightFile;
         cmd.checkOptionConsistency();
         cmd.build();
 
@@ -53,6 +64,9 @@ public class EndToEndTest extends Assert {
 
         Take5Match match = new Take5Match();
         assertTrue(dict.matchExact("bedded".toCharArray(), 0, "bedded".length(), match));
+        assertEquals(COPYRIGHT_C_2014_ELMER_FUDD, dict.getCopyright());
+        assertEquals("value 1", dict.getMetadata().get("k1"));
+        assertEquals("value 2", dict.getMetadata().get("k2"));
     }
 
     private int dictSpyInt(Take5Dictionary dict, String fieldName) {

@@ -14,7 +14,11 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import com.google.common.collect.Maps;
+
 import java.io.PrintWriter;
+import java.nio.ByteOrder;
+import java.util.Map;
 
 /**
  * Builder class; use this to construct new instances.
@@ -26,9 +30,12 @@ public final class Take5BuilderFactory {
     OutputFormat outputFormat = OutputFormat.TAKE5; // default is to write Take5.
     int valueSize = 2; // correct for STRING but not for IGNORE or INDEX, but main builder will cope.
     PrintWriter progressWriter = new PrintWriter(System.out, true);
+    String copyright;
+    ByteOrder byteOrder = ByteOrder.nativeOrder();
+    Map<String, String> metadata;
 
     public Take5BuilderFactory() {
-        //
+        metadata = Maps.newHashMap();
     }
 
     public Take5BuilderFactory engine(Engine engine) {
@@ -58,6 +65,26 @@ public final class Take5BuilderFactory {
 
     public Take5BuilderFactory progressWriter(PrintWriter progressWriter) {
         this.progressWriter = progressWriter;
+        return this;
+    }
+
+    public Take5BuilderFactory copyright(String copyright) {
+        this.copyright = copyright;
+        return this;
+    }
+
+    public Take5BuilderFactory order(ByteOrder order) {
+        this.byteOrder = order;
+        return this;
+    }
+
+    public Take5BuilderFactory putMetadata(String key, String value) {
+        metadata.put(key, value);
+        return this;
+    }
+
+    public Take5BuilderFactory metadata(Map<String, String> metadata) {
+        this.metadata = metadata;
         return this;
     }
 

@@ -131,12 +131,12 @@ public class Take5Builder {
     KeyFormat keyFormat;
     ValueFormat valueFormat;
     OutputFormat outputFormat;
-    PrintWriter progressWriter = new PrintWriter(System.out, true);
+    PrintWriter progressWriter;
 
     boolean storeValues;
     boolean generateBinary;
     boolean varyNothing;
-    ByteOrder byteOrder = ByteOrder.nativeOrder();
+    ByteOrder byteOrder;
 
     byte[] copyright;
     Map<String, String> metadata;
@@ -209,6 +209,12 @@ public class Take5Builder {
         this.valueFormat = factory.valueFormat;
         this.outputFormat = factory.outputFormat;
         this.progressWriter = factory.progressWriter;
+        if (factory.copyright != null) {
+            this.copyright = factory.copyright.getBytes(Charsets.UTF_8);
+        }
+        this.byteOrder = factory.byteOrder;
+        this.metadata = factory.metadata;
+
 
         // I'd parenthesize this to make it more readable, but checkstyle
         // won't let me:
@@ -239,31 +245,6 @@ public class Take5Builder {
     }
 
     /**
-     * Set the copyright string to be stored in the Take5 binary.
-     *
-     * @param copyright the copyright notice.
-     */
-    public void setCopyright(String copyright) {
-        this.copyright = copyright.getBytes(Charsets.UTF_8);
-    }
-
-    /**
-     * Set the metadata map to be stored in the Take5 binary.  Neither the
-     * keys nor the values in the metadata map may contain the null
-     * character.
-     *
-     * @param metadata the metadate map.
-     */
-    public void setMetadata(Map<String, String> metadata) throws Take5BuildException {
-        for (String key : metadata.keySet()) {
-            if (0 <= key.indexOf(0) || 0 <= metadata.get(key).indexOf(0)) {
-                throw new Take5BuildException("Metadata contains a null");
-            }
-        }
-        this.metadata = metadata;
-    }
-
-    /**
      * Create a new entry point.  Every entry point you create must be
      * loaded with content before you can build a Take5 binary.  The name
      * must consist of only ASCII characters. (why?)
@@ -285,27 +266,6 @@ public class Take5Builder {
         Take5EntryPoint ep = new Take5EntryPoint(name, this);
         entryPoints.add(ep);
         return ep;
-    }
-
-    /**
-     * Set the byte order for the generated binary.  By default, the byte
-     * order is set to the native byte order, so you probably don't want to
-     * call this unless you are cross-compiling.
-     *
-     * @param byteOrder the new byte order.
-     */
-    public void setByteOrder(ByteOrder byteOrder) {
-        this.byteOrder = byteOrder;
-    }
-
-    /**
-     * Get the byte order that will be used for the generated binary.  By
-     * default, the byte order is set to the native byte order.
-     *
-     * @return the currrent byte order.
-     */
-    public ByteOrder getByteOrder() {
-        return byteOrder;
     }
 
     // Intentionally not public.  This is just for testing purposes.
