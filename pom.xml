@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-java</artifactId>
     <name>common-java</name>
-    <version>28-SNAPSHOT</version>
+    <version>28.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Common Java Library and Tools</description>
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>basis-parent</artifactId>
-        <version>55.1</version>
+        <version>55.2</version>
     </parent>
     <prerequisites>
         <maven>3.0.4</maven>
