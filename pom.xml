@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>basis-parent</artifactId>
-        <version>54</version>
+        <version>55.1</version>
     </parent>
     <prerequisites>
         <maven>3.0.4</maven>
@@ -38,7 +38,6 @@
         <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
         <maven-shade-plugin.version>2.2</maven-shade-plugin.version>
         <maven-site-plugin.version>3.3</maven-site-plugin.version>
-        <maven-source-plugin.version>2.1.2</maven-source-plugin.version>
         <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
         <jackson-version>2.3.0</jackson-version>
         <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
