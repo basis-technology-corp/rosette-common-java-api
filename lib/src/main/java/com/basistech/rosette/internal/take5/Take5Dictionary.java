@@ -1673,10 +1673,11 @@ public class Take5Dictionary {
 
     /**
      * If this dictionary is a PERFHASH with stored keys, return an iteration over the keys.
+     * This will be extended to FSA keys at some point.
      * Otherwise throw {@link java.lang.UnsupportedOperationException}.
      * @return the iteration.
      */
-    public Iterable<String> getPerfhashKeys() {
+    public Iterable<String> keyIterator() {
         if (fsaEngine != ENGINE_PERFHASH) {
             throw new UnsupportedOperationException("This Take5Dictionary is not a perfhash.");
         }

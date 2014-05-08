@@ -14,7 +14,6 @@
 
 package com.basistech.rosette.internal.take5;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
@@ -22,7 +21,6 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -708,7 +706,7 @@ public class Take5DictionaryTest extends Assert {
     public void testWalkPerfhashKeys() throws Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/hex", null);
         Set<String> keys = new HashSet<String>();
-        for (String k : dict.getPerfhashKeys()) {
+        for (String k : dict.keyIterator()) {
             assertTrue("each key added: " + k, keys.add(k));
         }
         assertEquals(53, keys.size());
