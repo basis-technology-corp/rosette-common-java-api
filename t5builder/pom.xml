@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>common-java</artifactId>
-        <version>28.1-SNAPSHOT</version>
+        <version>28.1</version>
     </parent>
     <build>
       <plugins>
