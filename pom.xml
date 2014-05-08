@@ -40,13 +40,7 @@
         <maven-site-plugin.version>3.3</maven-site-plugin.version>
         <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
         <jackson-version>2.3.0</jackson-version>
-        <sonar.dynamicAnalysis>true</sonar.dynamicAnalysis>
-        <sonar.java.coveragePlugin>clover</sonar.java.coveragePlugin>
-        <sonar.jdbc.url>jdbc:postgresql://davenport.basistech.net/sonar</sonar.jdbc.url>
-        <sonar.jdbc.driver>org.postgresql.Driver</sonar.jdbc.driver>
-        <sonar.jdbc.username>sonar</sonar.jdbc.username>
-        <sonar.jdbc.password>mm74GzBM3e9X3u</sonar.jdbc.password>
-        <sonar.host.url>http://jenkinsvm.basistech.net:9000</sonar.host.url>
+        <maven-pmd-plugin.version>3.1</maven-pmd-plugin.version>
     </properties>
     <url>${url.base}</url>
     <scm>
