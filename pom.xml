@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>basis-parent</artifactId>
-        <version>55.2</version>
+        <version>55.3</version>
     </parent>
     <prerequisites>
         <maven>3.0.4</maven>
@@ -40,7 +40,6 @@
         <maven-site-plugin.version>3.3</maven-site-plugin.version>
         <maven-surefire-plugin.version>2.16</maven-surefire-plugin.version>
         <jackson-version>2.3.0</jackson-version>
-        <maven-pmd-plugin.version>3.1</maven-pmd-plugin.version>
     </properties>
     <url>${url.base}</url>
     <scm>
