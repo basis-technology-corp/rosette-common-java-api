@@ -22,13 +22,14 @@ import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.TimeZone;
 
 /**
@@ -1696,7 +1697,14 @@ public class Take5Dictionary {
 
                     @Override
                     public boolean hasNext() {
-                        return idx < limit;
+                        while (idx < limit) {
+                            // Skip slots that contain 0 ptrs...
+                            if (0 != data.getInt(keyCheckData + idx * 4)) {
+                                return true;
+                            }
+                            idx++;
+                        }
+                        return false;
                     }
 
                     @Override
@@ -1705,6 +1713,9 @@ public class Take5Dictionary {
                         int ptr;
                         // this will skip the unused slots that contain 0 ptrs.
                         do {
+                            if  (idx >= limit) {
+                                throw new NoSuchElementException();
+                            }
                             ptr = data.getInt(keyCheckData + idx * 4);
                             idx++; // advance.
                         } while (ptr == 0);
@@ -1725,7 +1736,7 @@ public class Take5Dictionary {
 
                     @Override
                     public void remove() {
-
+                        throw new UnsupportedOperationException();
                     }
                 };
             }
