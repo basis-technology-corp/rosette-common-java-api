@@ -15,10 +15,10 @@
 package com.basistech.rosette.internal.take5build;
 
 /**
-* Created by benson on 5/5/14.
+* What the keys of the table map to.
 */
 public enum ValueFormat {
-    IGNORE,                        /* -i */
-    INDEX,                         /* -x */
-    PTR                            /* -p */
+    IGNORE,                        /* -i: keys ignored. The result is a 'Set' in java terms. */
+    INDEX,                         /* -x: each key maps to its index in the sorted key set. */
+    PTR                            /* -p: each key maps to a payload. */
 }
