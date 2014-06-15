@@ -71,7 +71,7 @@ public class InterruptibleCharSequence implements CharSequence {
     @Override
     public String toString() {
         check();
-        return new String(data, startOffset, endOffset);
+        return new String(data, startOffset, endOffset - startOffset);
     }
 
     public char[] getData() {
