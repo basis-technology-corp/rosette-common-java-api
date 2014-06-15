@@ -66,7 +66,7 @@ public class InterruptibleCharSequenceTest extends Assert {
         // this also tests toString(), while we are at it.
         InterruptibleCharSequence seq = new InterruptibleCharSequence(DATA.toCharArray(), 0, DATA.length());
         CharSequence sub = seq.subSequence(1, 4);
-        assertEquals("his ", sub.toString());
+        assertEquals("his", sub.toString());
     }
 
     private static class SelfInterruptingThread extends Thread {
