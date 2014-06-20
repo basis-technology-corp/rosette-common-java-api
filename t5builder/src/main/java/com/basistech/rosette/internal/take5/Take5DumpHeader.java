@@ -90,9 +90,8 @@ public final class Take5DumpHeader {
             return;
         }
 
-        if (byteOrder != ByteOrder.nativeOrder()) {
-            t5Buffer.order(byteOrder);
-        }
+        // ByteBuffers always start as big-endian, so change to the byte order we want:
+        t5Buffer.order(byteOrder);
 
         pw = new PrintWriter(new OutputStreamWriter(System.out, Charsets.UTF_8));
         buffer = t5Buffer;
