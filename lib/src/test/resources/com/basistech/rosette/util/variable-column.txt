@@ -1,0 +1,7 @@
+# All-comment
+     # Whitespace -- should not count as a line.
+     	     # two zero-length fields
+		f # two zero-length and last is "f"
+g # single field
+
+# ^ empty line should not be counted
