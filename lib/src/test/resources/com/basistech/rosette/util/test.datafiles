@@ -1,0 +1,16 @@
+# This is a correctly formed configuration file for testing:
+
+# This should create entries for the keys "eng", "spa" and "x_1":
+*	*	src/test/resources/com/basistech/rosette/util/test_*.txt
+
+# Override the existing "eng" key:
+eng	*	rlpnc/no-such-directory/overridden_eng
+
+# Add "x_2", "x_3" and "x_17":
+x_2	*	rlpnc/no-such-directory/x_2
+x_3	*	rlpnc/no-such-directory/x_3
+x_17	*	rlpnc/no-such-directory/x_17
+
+# This would match all the .datafiles in this directory, but since this
+# isn't a VAX (!) it won't generate any keys:
+*	VAX	src/test/resources/com/basistech/rosette/util/*.datafiles
