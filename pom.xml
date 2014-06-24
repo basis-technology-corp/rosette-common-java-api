@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-java</artifactId>
     <name>common-java</name>
-    <version>28.5</version>
+    <version>28.6</version>
     <packaging>pom</packaging>
     <description>Common Java Library and Tools</description>
     <parent>
