@@ -185,7 +185,7 @@ public class Take5BuilderTest {
     public void testCanonicalExample() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         for (String s : dmwwExample) {
             keys.add(new ReusableTake5Pair(s));
         }
@@ -290,7 +290,7 @@ public class Take5BuilderTest {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.PTR).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         int i = 0;
         for (String s : hexWords) {
             keys.add(generatePayload(s, i++));

@@ -17,6 +17,7 @@ package com.basistech.rosette.internal.take5build;
 
 import au.com.bytecode.opencsv.CSVParser;
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
@@ -140,7 +141,6 @@ public final class Take5Build {
     ByteOrder byteOrder = ByteOrder.nativeOrder();
 
     private List<InputSpecification> inputSpecifications;
-    private Take5Builder builder;
 
     static class Failure extends Exception {
         Failure() {
@@ -304,13 +304,12 @@ public final class Take5Build {
             }
         }
 
+        Take5Builder builder;
         try {
             builder = factory.build();
         } catch (Take5BuildException e) {
             throw new Failure(e);
         }
-
-
 
         for (InputSpecification spec : inputSpecifications) {
             String name = spec.entrypointName;
@@ -323,7 +322,11 @@ public final class Take5Build {
             } catch (Take5BuildException e) {
                 throw new Failure(e);
             }
-            oneEntrypoint(spec, entrypoint);
+            try {
+                oneEntrypoint(spec, entrypoint);
+            } catch (Take5BuildException e) {
+                throw new Failure("Problem setting up entrypoint " + spec.entrypointName, e);
+            }
         }
 
         try {
@@ -337,7 +340,13 @@ public final class Take5Build {
         }
     }
 
-    private void oneEntrypoint(InputSpecification spec, Take5EntryPoint entrypoint) throws Failure {
+    private void oneEntrypoint(InputSpecification spec, Take5EntryPoint entrypoint) throws Failure, Take5BuildException {
+
+        entrypoint.setContentFlags(spec.contentFlags);
+        if (spec.minVersion != -1 && spec.maxVersion != -1) {
+            entrypoint.setContentVersion(spec.minVersion, spec.maxVersion);
+        }
+
         CharSource source;
         if (spec.inputFile == NO_FILE) {
             source = new StdinByteSource().asCharSource(Charsets.UTF_8);
@@ -348,14 +357,16 @@ public final class Take5Build {
         inputFile.setSimpleKeys(spec.simpleKeys);
         inputFile.setPayloads(!spec.noPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
+        inputFile.setDefaultFormat(spec.defaultMode);
         try {
             inputFile.read(source); // pull the whole thing into memory.
         } catch (IOException e) {
             throw new Failure("IO error reading " + (spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath()));
         } catch (InputFileException e) {
+            Throwable rootException = Throwables.getRootCause(e);
             throw new Failure(String.format("Format error reading %s: %s",
                     spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath(),
-                    e.getCause().getMessage()));
+                    rootException.getMessage()));
         }
         try {
             entrypoint.loadContent(inputFile.getPairs().iterator());
