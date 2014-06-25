@@ -140,7 +140,6 @@ public final class Take5Build {
     ByteOrder byteOrder = ByteOrder.nativeOrder();
 
     private List<InputSpecification> inputSpecifications;
-    private Take5Builder builder;
 
     static class Failure extends Exception {
         Failure() {
@@ -304,6 +303,7 @@ public final class Take5Build {
             }
         }
 
+        Take5Builder builder;
         try {
             builder = factory.build();
         } catch (Take5BuildException e) {
@@ -348,6 +348,7 @@ public final class Take5Build {
         inputFile.setSimpleKeys(spec.simpleKeys);
         inputFile.setPayloads(!spec.noPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
+        inputFile.setDefaultFormat(spec.defaultMode);
         try {
             inputFile.read(source); // pull the whole thing into memory.
         } catch (IOException e) {

@@ -27,11 +27,15 @@ import org.junit.Test;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.nio.ShortBuffer;
+
+import static org.hamcrest.core.Is.is;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 /**
- * Tests that actually build a T5
+ * Tests that run the command-line class {@link Take5Build}.
  */
-public class EndToEndTest extends Assert {
+public class CommandLineTest extends Assert {
 
     public static final String COPYRIGHT_C_2014_ELMER_FUDD = "Copyright (c) 2014 elmer fudd.";
 
@@ -68,6 +72,34 @@ public class EndToEndTest extends Assert {
         assertEquals("value 1", dict.getMetadata().get("k1"));
         assertEquals("value 2", dict.getMetadata().get("k2"));
     }
+
+    @Test
+    public void defaultFormat() throws Exception {
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        File inputFile = new File("src/test/data/default-format-test.txt");
+        //t5File.deleteOnExit();
+        System.out.println(t5File.getAbsoluteFile());
+        Take5Build cmd = new Take5Build();
+        cmd.noPayloads = true;
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.commandInputFile = inputFile;
+        cmd.defaultPayloadFormat = "#2!i";
+        cmd.alignment = 2;
+        cmd.checkOptionConsistency();
+        cmd.build();
+
+        ByteBuffer resultT5 = Files.map(t5File);
+        Take5Dictionary dict = new Take5Dictionary(resultT5, resultT5.capacity());
+        assertEquals(Take5Format.ENGINE_SEARCH, dictSpyInt(dict, "fsaEngine"));
+        Take5Match match = new Take5Match();
+        assertThat(dict.matchExact("key1".toCharArray(), 0, "key1".length(), match), is(equalTo(true)));
+        int valueOffset = match.getOffsetValue();
+        ShortBuffer dictAsShorts = resultT5.asShortBuffer();
+        assertThat(dictAsShorts.get(valueOffset), equalTo((short)1));
+    }
+
 
     private int dictSpyInt(Take5Dictionary dict, String fieldName) {
         try {
