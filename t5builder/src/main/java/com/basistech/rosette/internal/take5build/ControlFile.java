@@ -18,6 +18,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
+import com.google.common.primitives.UnsignedInts;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +31,22 @@ public class ControlFile {
 
 
     class Processor implements LineProcessor<List<InputSpecification>> {
-        private int lineNumber;
+        private int lineNumber = 1;
         private List<InputSpecification> results = Lists.newArrayList();
+        private InputSpecification spec;
+
+        private void finishEntrypoint() {
+            if (spec != null) {
+                if (spec.entrypointName == null) {
+                    throw Throwables.propagate(new InputFileException(String.format("No entrypoint name provided: line %d", lineNumber)));
+                }
+                if (spec.inputFile == null) {
+                    throw Throwables.propagate(new InputFileException(String.format("No input file name provided: line %d", lineNumber)));
+                }
+                results.add(spec);
+                spec = null;
+            }
+        }
 
         @Override
         public boolean processLine(String line) throws IOException {
@@ -39,14 +54,23 @@ public class ControlFile {
                 return true;
             }
 
+            if (line.trim().length() == 0) {
+                finishEntrypoint();
+                return true;
+            }
+
+            if (spec == null) {
+                spec = new InputSpecification();
+            }
+
             int eqidx = line.indexOf('=');
             if (eqidx < 1) {
                 throw Throwables.propagate(new InputFileException("No key on line " + lineNumber));
             }
             String key = line.substring(0, eqidx);
+            key = key.trim();
             String value = line.substring(eqidx + 1);
-
-            InputSpecification spec = new InputSpecification();
+            value = value.trim();
 
             /*
              * Where I<kind> is C<0> for no escapes, C<1> for backslash escape sequences
@@ -54,40 +78,41 @@ public class ControlFile {
              * or B<-u> were given on the command line, this defaults to that setting,
              * otherwise it defaults to no escapes.
              */
-            if ("ESCAPE".equalsIgnoreCase(key)) {
+            if ("escape".equalsIgnoreCase(key)) {
                 if ("0".equals(value) || "none".equalsIgnoreCase(value)) {
                     spec.simpleKeys = true;
                 } else if ("1".equals(value) || "backslash".equalsIgnoreCase(value)) {
-                    // OK as we are
+                    spec.simpleKeys = false;
                 } else if ("2".equals(value)) {
                     // obsolete
                     throw Throwables.propagate(new InputFileException(String.format("Backslash escapes are not supported at line %d", lineNumber)));
                 } else {
                     throw Throwables.propagate(new InputFileException(String.format("Unsupported ESCAPE value %s at line %d", value, lineNumber)));
                 }
-            } else if ("MIN_VERSION".equalsIgnoreCase(key)) {
+            } else if ("min_version".equalsIgnoreCase(key)) {
                 spec.minVersion = Integer.parseInt(value);
-            } else if ("MAX_VERSION".equalsIgnoreCase(key)) {
+            } else if ("max_version".equalsIgnoreCase(key)) {
                 spec.maxVersion = Integer.parseInt(value);
-            } else if ("NAME".equalsIgnoreCase(key)) {
+            } else if ("name".equalsIgnoreCase(key)) {
                 spec.entrypointName = value;
-            } else if ("PATH".equalsIgnoreCase(key)) {
+            } else if ("path".equalsIgnoreCase(key)) {
                 spec.inputFile = new File(value);
-            } else if ("VALUE_MODE".equalsIgnoreCase(key)) {
+            } else if ("value_mode".equalsIgnoreCase(key)) {
                 spec.defaultMode = value;
-            } else if ("VERSION".equalsIgnoreCase(key)) {
+            } else if ("version".equalsIgnoreCase(key)) {
                 spec.minVersion = Integer.parseInt(value);
                 spec.maxVersion = spec.minVersion;
-            } else if ("FLAGS".equalsIgnoreCase(key)) {
+            } else if ("flags".equalsIgnoreCase(key)) {
                 if (value.startsWith("0x") || value.startsWith("0X")) {
-                    spec.contentFlags = Integer.parseInt(value.substring(2), 16);
+                    spec.contentFlags = UnsignedInts.parseUnsignedInt(value.substring(2), 16);
                 } else {
-                    spec.contentFlags = Integer.parseInt(value);
+                    spec.contentFlags = UnsignedInts.parseUnsignedInt(value);
                 }
             } else {
                 throw Throwables.propagate(new InputFileException(String.format("Unsupported specification %s at line %d", key, lineNumber)));
             }
-            results.add(spec);
+            //TODO: missing all sorts of stuff here.
+
             lineNumber++;
             return true;
         }
@@ -100,7 +125,10 @@ public class ControlFile {
 
     List<InputSpecification> read(CharSource source) throws IOException, InputFileException {
         try {
-            return source.readLines(new Processor());
+            final Processor processor = new Processor();
+            source.readLines(processor); // ignore return ...
+            processor.finishEntrypoint(); // finish last entrypoint.
+            return processor.getResult(); // now retrieve results.
         } catch (RuntimeException e) {
             if (e.getCause() instanceof InputFileException) {
                 throw (InputFileException) e.getCause();

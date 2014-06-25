@@ -69,6 +69,10 @@
                                     <mainClass>com.basistech.rosette.internal.take5.Take5DumpHeader</mainClass>
                                     <id>t5dump</id>
                                 </program>
+                                <program>
+                                    <mainClass>com.basistech.rosette.internal.take5.Take5DumpKeys</mainClass>
+                                    <id>t5dumpkeys</id>
+                                </program>
                             </programs>
                         </configuration>
                     </execution>

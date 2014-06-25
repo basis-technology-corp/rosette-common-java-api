@@ -14,6 +14,7 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import com.basistech.rosette.internal.take5.Take5Exception;
 import com.basistech.rosette.internal.take5.Take5Match;
 import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.basistech.rosette.internal.take5build.Engine;
@@ -22,15 +23,19 @@ import com.basistech.rosette.internal.take5build.Take5Format;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.ShortBuffer;
 
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
+import static org.hamcrest.core.IsNot.not;
 
 /**
  * Tests that run the command-line class {@link Take5Build}.
@@ -38,6 +43,11 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class CommandLineTest extends Assert {
 
     public static final String COPYRIGHT_C_2014_ELMER_FUDD = "Copyright (c) 2014 elmer fudd.";
+
+    //CHECKSTYLE:OFF
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+    //CHECKSTYLE:ON
 
     @Test
     public void perfhashKeysOnly() throws Exception {
@@ -78,10 +88,8 @@ public class CommandLineTest extends Assert {
         File t5File = File.createTempFile("t5btest.", ".bin");
         t5File.deleteOnExit();
         File inputFile = new File("src/test/data/default-format-test.txt");
-        //t5File.deleteOnExit();
-        System.out.println(t5File.getAbsoluteFile());
+        t5File.deleteOnExit();
         Take5Build cmd = new Take5Build();
-        cmd.noPayloads = true;
         cmd.engine = Engine.FSA;
         cmd.outputFile = t5File;
         cmd.commandInputFile = inputFile;
@@ -97,7 +105,93 @@ public class CommandLineTest extends Assert {
         assertThat(dict.matchExact("key1".toCharArray(), 0, "key1".length(), match), is(equalTo(true)));
         int valueOffset = match.getOffsetValue();
         ShortBuffer dictAsShorts = resultT5.asShortBuffer();
-        assertThat(dictAsShorts.get(valueOffset), equalTo((short)1));
+        assertThat(dictAsShorts.get(valueOffset / 2), equalTo((short)0x4e56));
+    }
+
+    // make sure that the above test means something because the default is not #2!i
+    @Test
+    public void defaultFormatContrast() throws Exception {
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        File inputFile = new File("src/test/data/default-format-test.txt");
+        t5File.deleteOnExit();
+        Take5Build cmd = new Take5Build();
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.commandInputFile = inputFile;
+        cmd.defaultPayloadFormat = "#4!i";
+        cmd.alignment = 4;
+        cmd.checkOptionConsistency();
+        cmd.build();
+
+        ByteBuffer resultT5 = Files.map(t5File);
+        Take5Dictionary dict = new Take5Dictionary(resultT5, resultT5.capacity());
+        assertEquals(Take5Format.ENGINE_SEARCH, dictSpyInt(dict, "fsaEngine"));
+        Take5Match match = new Take5Match();
+        assertThat(dict.matchExact("key1".toCharArray(), 0, "key1".length(), match), is(equalTo(true)));
+        int valueOffset = match.getOffsetValue();
+        ShortBuffer dictAsShorts = resultT5.asShortBuffer();
+        assertThat(dictAsShorts.get(valueOffset / 2), not(equalTo((short) 0x4e56)));
+    }
+
+    @Test
+    public void controlFileNoMain() throws Exception {
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        Take5Build cmd = new Take5Build();
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.alignment = 4;
+        cmd.controlFile = new File("src/test/data/mixed-two-entry-points.ctl.txt");
+        cmd.checkOptionConsistency();
+        cmd.build();
+
+        exception.expect(Take5Exception.class);
+
+        ByteBuffer resultT5 = Files.map(t5File);
+        new Take5Dictionary(resultT5, resultT5.capacity());
+    }
+
+    @Test
+    public void controlFileBasic() throws Exception {
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        Take5Build cmd = new Take5Build();
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.alignment = 4;
+        cmd.controlFile = new File("src/test/data/mixed-two-entry-points.ctl.txt");
+        cmd.checkOptionConsistency();
+        cmd.build();
+
+        ByteBuffer resultT5 = Files.map(t5File);
+        Take5Dictionary dict1 = new Take5Dictionary(resultT5, resultT5.capacity(), "mixed1");
+        assertThat(dict1.getContentFlags(), is(equalTo(0xdeadbeef)));
+        //key2	"some 2-byte string"
+        String key = "key2";
+        String value = "some 2-byte string";
+        Take5Match match = new Take5Match();
+        assertThat(dict1.matchExact(key.toCharArray(), 0, key.length(), match), is(equalTo(true)));
+        int valueOffset = match.getOffsetValue();
+        CharBuffer dictAsChars = resultT5.asCharBuffer();
+        char[] dictChars = new char[value.length()];
+        dictAsChars.position(valueOffset / 2);
+        dictAsChars.get(dictChars);
+        assertThat(new String(dictChars, 0, dictChars.length), is(equalTo(value)));
+
+        Take5Dictionary dict2 = new Take5Dictionary(resultT5, resultT5.capacity(), "mixed2");
+        //@key\u4e00	"key with an escape"
+        key = "@key\u4e00";
+        value = "key with an escape";
+        assertThat(dict2.matchExact(key.toCharArray(), 0, key.length(), match), is(equalTo(true)));
+        valueOffset = match.getOffsetValue();
+        dictAsChars = resultT5.asCharBuffer();
+        dictChars = new char[value.length()];
+        dictAsChars.position(valueOffset / 2);
+        dictAsChars.get(dictChars);
+        assertThat(new String(dictChars, 0, dictChars.length), is(equalTo(value)));
+        assertThat(dict2.getMinimumContentVersion(), is(equalTo(1)));
+        assertThat(dict2.getMaximumContentVersion(), is(equalTo(3)));
     }
 
 

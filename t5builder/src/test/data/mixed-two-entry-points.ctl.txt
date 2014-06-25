@@ -7,8 +7,4 @@ path = src/test/data/mixed2.txt
 escape = backslash
 min_version = 1
 max_version = 3
-version = 2
-
-
-
 

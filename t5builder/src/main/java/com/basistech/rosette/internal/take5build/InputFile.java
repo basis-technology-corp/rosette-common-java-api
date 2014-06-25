@@ -104,7 +104,7 @@ class InputFile {
 
     private class PayloadsInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
-        private int lineCount;
+        private int lineCount = 1;
 
         @Override
         public boolean processLine(String line) throws IOException {
