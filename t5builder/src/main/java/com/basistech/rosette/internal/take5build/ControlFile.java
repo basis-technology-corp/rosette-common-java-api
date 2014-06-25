@@ -15,6 +15,7 @@
 package com.basistech.rosette.internal.take5build;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.Lists;
 import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
 
@@ -23,13 +24,13 @@ import java.io.IOException;
 import java.util.List;
 
 /**
-  */
+ */
 public class ControlFile {
 
 
     class Processor implements LineProcessor<List<InputSpecification>> {
         private int lineNumber;
-        private List<InputSpecification> results;
+        private List<InputSpecification> results = Lists.newArrayList();
 
         @Override
         public boolean processLine(String line) throws IOException {
@@ -50,7 +51,7 @@ public class ControlFile {
             Where I<kind> is C<0> for no escapes, C<1> for backslash escape sequences
 (see B<-q>), or C<2> for sortable escape sequences (see B<-u>).  If B<-q>
 or B<-u> were given on the command line, this defaults to that setting,
-otherwise it defaults to no escapes
+otherwise it defaults to no escapes.
              */
             if ("ESCAPE".equals(key)) {
                 if ("0".equals(value)) {
@@ -77,6 +78,7 @@ otherwise it defaults to no escapes
                 spec.contentFlags = Integer.parseInt(value);
             }
             results.add(spec);
+            lineNumber++;
             return true;
         }
 
@@ -91,7 +93,7 @@ otherwise it defaults to no escapes
             return source.readLines(new Processor());
         } catch (RuntimeException e) {
             if (e.getCause() instanceof InputFileException) {
-                throw (InputFileException)e.getCause();
+                throw (InputFileException) e.getCause();
             }
             throw e;
         }
