@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Unit test for exceptions generated mostly when reading binary format.
  */
-public class Take5ExceptionTest extends Assert {
+public class ObsoleteTake5ExceptionTest extends Assert {
 
     /**
      * JUnit test that checks that returned messages and type numbers

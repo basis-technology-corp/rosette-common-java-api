@@ -33,7 +33,8 @@ import org.junit.Test;
 /**
  * 
  */
-public class Take5DictionaryTest extends Assert {
+@SuppressWarnings("deprecation")
+public class ObsoleteTake5DictionaryTest extends Assert {
     
     private Take5Dictionary daysDictionary;
     private ByteBuffer daysData;

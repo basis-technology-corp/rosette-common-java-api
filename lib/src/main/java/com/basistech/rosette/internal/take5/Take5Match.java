@@ -173,10 +173,11 @@ public class Take5Match {
     public ByteBuffer getComplexData(int dataLength) throws Take5Exception {
         int ptr = getOffsetValue();
         ByteBuffer tmp = dict.data.asReadOnlyBuffer();
+        tmp.order(dict.data.order());
         tmp.position(ptr);
         tmp.limit(ptr + dataLength);
         ByteBuffer rbb = tmp.slice();
-        rbb.order(ByteOrder.nativeOrder());
+        rbb.order(dict.data.order());
         return rbb;
     }
 
