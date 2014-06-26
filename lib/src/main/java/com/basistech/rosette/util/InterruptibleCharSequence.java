@@ -59,10 +59,10 @@ public class InterruptibleCharSequence implements CharSequence {
     @Override
     public CharSequence subSequence(int start, int end) {
         check();
-        if (start > length() - 1) {
+        if (start > endOffset) {
             throw new IndexOutOfBoundsException("Invalid start offset");
         }
-        if (end > length()) {
+        if (end > endOffset) {
             throw new IndexOutOfBoundsException("Invalid end offset");
         }
         return new InterruptibleCharSequence(data, startOffset + start, startOffset + end);
