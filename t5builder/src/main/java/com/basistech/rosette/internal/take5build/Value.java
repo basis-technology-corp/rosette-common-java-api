@@ -51,9 +51,9 @@ class Value {
 
     int getKeyHash(int hashFun) {
         assert isKey();
-        // -2 to take away the null termination.
         CharBuffer dataAsChars = data.asCharBuffer();
         try {
+            // -1 to take away the null termination.
             dataAsChars.limit(dataAsChars.capacity() - 1);
             return FnvHash.fnvhash(hashFun, dataAsChars);
         } finally {

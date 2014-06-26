@@ -357,6 +357,7 @@ public class Take5Builder {
         keyByteBuffer.order(byteOrder);
         CharBuffer keyCharBuffer = keyByteBuffer.asCharBuffer();
         keyCharBuffer.put(key, 0, keyLength);
+        keyCharBuffer.put((char)0);                   // be certain about that null
         keyCharBuffer.position(0);
 
         assert keyByteBuffer.position() == 0;
