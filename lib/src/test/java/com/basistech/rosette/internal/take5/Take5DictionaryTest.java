@@ -14,14 +14,16 @@
 
 package com.basistech.rosette.internal.take5;
 
+import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel.MapMode;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
@@ -29,65 +31,84 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import com.google.common.io.Files;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
- *
+ * Tests of the Take5 runtime.
  */
+@RunWith(Parameterized.class)
 public class Take5DictionaryTest extends Assert {
+    private static final String[] DAYS = {
+            "Friday",
+            "Monday",
+            "Saturday",
+            "Sun",
+            "Sundae",
+            "Sundaes",
+            "Sunday",
+            "Thursday",
+            "Tuesday",
+            "Wednesday",
+            "july 4th",
+    };
 
+    private static final String[] NEXT_LETTERS = {
+            "a", "b", "c", "d", "e", "f",
+            "gaa", "gab", "gac",
+            "gb", "gc", "gd", "ge", "gf", "gg", "gh", "gi",
+            "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
+            "r", "s", "t", "u", "v", "w", "x", "y", "z",
+    };
+
+    private final ByteOrder order;
     private Take5Dictionary daysDictionary;
     private ByteBuffer daysData;
     private Take5Dictionary nextLettersDictionary;
 
-    private String[] days = {
-        "Friday",
-        "Monday",
-        "Saturday",
-        "Sun",
-        "Sundae",
-        "Sundaes",
-        "Sunday",
-        "Thursday",
-        "Tuesday",
-        "Wednesday",
-        "july 4th",
-    };
+    public Take5DictionaryTest(ByteOrder order) {
+        this.order = order;
+    }
 
-    private String[] nextLetters = {
-        "a", "b", "c", "d", "e", "f",
-        "gaa", "gab", "gac",
-        "gb", "gc", "gd", "ge", "gf", "gg", "gh", "gi",
-        "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
-        "r", "s", "t", "u", "v", "w", "x", "y", "z",
-    };
 
-    static String endianDictionaryName(String name) {
-        if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) {
+
+    @Parameterized.Parameters(name = "{index}: {0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {ByteOrder.BIG_ENDIAN}, {ByteOrder.LITTLE_ENDIAN}
+        });
+    }
+
+    String endianDictionaryName(String name) {
+        if (order == ByteOrder.BIG_ENDIAN) {
             return name + "-BE.bin";
         } else {
             return name + "-LE.bin";
         }
     }
 
-    static Take5Dictionary openDictionary(String path, ByteBuffer[] outData)
+    Take5Dictionary openDictionary(String path, ByteBuffer[] outData)
         throws IOException, Take5Exception {
         return openDictionary(path, "main", outData);
     }
 
-    static Take5Dictionary openDictionary(String path, String entryPoint, ByteBuffer[] outData)
+    Take5Dictionary openDictionary(String path, String entryPoint, ByteBuffer[] outData)
         throws IOException, Take5Exception {
-        String fullName = endianDictionaryName(path);
-        RandomAccessFile randomAccessFile = new RandomAccessFile(fullName, "r");
-        MappedByteBuffer mappedDict = randomAccessFile.getChannel().map(MapMode.READ_ONLY, 0,
-                                                                        randomAccessFile.length());
+        File dictFile = new File(endianDictionaryName(path));
+        return openDictionary(entryPoint, outData, dictFile);
+    }
+
+    Take5Dictionary openDictionary(String entryPoint, ByteBuffer[] outData, File dictFile) throws IOException, Take5Exception {
+        MappedByteBuffer mappedDict = Files.map(dictFile, MapMode.READ_ONLY);
         if (outData != null) {
             outData[0] = mappedDict;
         }
-        return new Take5Dictionary(mappedDict, randomAccessFile.length(), entryPoint);
+        return new Take5Dictionary(mappedDict, mappedDict.capacity(), entryPoint);
     }
 
     @Before
@@ -190,7 +211,7 @@ public class Take5DictionaryTest extends Assert {
     @Test
     public void testWordCount() {
         assertEquals(11, daysDictionary.wordCount());
-        assertEquals(nextLetters.length, nextLettersDictionary.wordCount());
+        assertEquals(NEXT_LETTERS.length, nextLettersDictionary.wordCount());
     }
 
     /**
@@ -436,8 +457,8 @@ public class Take5DictionaryTest extends Assert {
      */
     @Test
     public void testReverseLookup() throws Take5Exception {
-        testReverseLookupAll(nextLettersDictionary, nextLetters);
-        testReverseLookupAll(daysDictionary, days);
+        testReverseLookupAll(nextLettersDictionary, NEXT_LETTERS);
+        testReverseLookupAll(daysDictionary, DAYS);
     }
 
     // XXX: Unfortunately, the way this works wont really work as a test of
@@ -463,11 +484,11 @@ public class Take5DictionaryTest extends Assert {
         Take5Dictionary dict = daysDictionary;
         Take5Match start = dict.getStartMatch();
         char[] buffer = new char[50];
-        TestWalker walker = new TestWalker(days);
+        TestWalker walker = new TestWalker(DAYS);
 
         // The numbers below were generated using pencil and paper for what
         // seemed to be the interesting tree depths.  If you mess with the
-        // keys in days.txt, you'll just have to recompute what they should
+        // keys in DAYS.txt, you'll just have to recompute what they should
         // be.
 
         // Depth 9 -- just deep enough.
@@ -581,7 +602,7 @@ public class Take5DictionaryTest extends Assert {
         match = dict.matchExact("gad");
         assertNull(match);
 
-        testReverseLookupAll(dict, nextLetters);
+        testReverseLookupAll(dict, NEXT_LETTERS);
 
         dict.setEntryPoint("main"); // this is the "days" dictionary
         assertEquals(0x20, dict.minimumCharacter());
@@ -595,7 +616,7 @@ public class Take5DictionaryTest extends Assert {
         match = dict.matchExact("Foobar");
         assertNull(match);
 
-        testReverseLookupAll(dict, days);
+        testReverseLookupAll(dict, DAYS);
     }
 
     /**
@@ -612,7 +633,7 @@ public class Take5DictionaryTest extends Assert {
         match = dict.matchExact("gad");
         assertNull(match);
 
-        // Not yet: testReverseLookupAll(dict, nextLetters);
+        // Not yet: testReverseLookupAll(dict, NEXT_LETTERS);
 
         dict.setEntryPoint("main"); // this is the "days" dictionary
         assertEquals(0x20, dict.minimumCharacter());
@@ -636,7 +657,7 @@ public class Take5DictionaryTest extends Assert {
         match = dict.matchExact("Foobar");
         assertNull(match);
 
-        // Not yet: testReverseLookupAll(dict, days);
+        // Not yet: testReverseLookupAll(dict, DAYS);
     }
 
     /**
@@ -652,7 +673,7 @@ public class Take5DictionaryTest extends Assert {
     }
 
     @Test
-    public void testGetComplexData() throws IOException, Take5Exception {
+     public void testGetComplexData() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
         Take5Match match = dict.matchExact("key0");
         assertNotNull(match);
@@ -697,6 +718,7 @@ public class Take5DictionaryTest extends Assert {
         ByteBuffer data = dict.getData();
         data.position(offset);
         ByteBuffer bytes = data.slice();
+        bytes.order(data.order());
         data.position(offset + 8);
         FloatBuffer floats = data.asFloatBuffer();
         checkKey0Values(bytes, floats);

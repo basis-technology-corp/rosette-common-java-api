@@ -20,8 +20,10 @@ import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
+import java.nio.IntBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -307,7 +309,7 @@ public class Take5Dictionary {
         ByteBuffer buffer = data.asReadOnlyBuffer();
         buffer.position(0);
         buffer.limit(buffer.capacity());
-        buffer.order(ByteOrder.nativeOrder());
+        buffer.order(data.order());
         return buffer;
     }
 
@@ -567,6 +569,8 @@ public class Take5Dictionary {
     static final int VALUE_FORMAT_FIXED = 0x03000000;
     static final int VALUE_FORMAT_INDIRECT = 0x04000000;
 
+    private static final byte[] MAGIC = {'T', '4', 'K', '3' };
+
     /**
      * Reads the header of the given data file.
      */
@@ -575,16 +579,30 @@ public class Take5Dictionary {
             throw new Take5Exception(Take5Exception.FILE_TOO_SHORT);
         }
 
-        data.order(ByteOrder.nativeOrder());
+        // trying BE first has the effect of failing very quickly
+        // on our usual LE machines with the usual collection of checked-in
+        // LE dictionaries.
+        data.order(ByteOrder.BIG_ENDIAN);
 
-        // Check magic.
-        if (!(data.get() == 'T' && data.get() == '4' && data.get() == 'K' && data.get() == '3')) {
-            throw new Take5Exception(Take5Exception.BAD_DATA);
+        byte[] magic = new byte[4];
+        data.position(0);
+        data.get(magic);
+
+        if (!Arrays.equals(MAGIC, magic)) {
+            throw new Take5Exception(Take5Exception.BAD_DATA, "Invalid sentinel");
+        }
+
+        // buffer is BE at this point, we can say:
+        flags = data.getInt(12);
+
+        if (0 != (flags & FLAG_LITTLE_ENDIAN)) {
+            data.order(ByteOrder.LITTLE_ENDIAN);
         }
 
         fileVersion = data.getInt();
         contentMaxVersion = data.getInt();
-        flags = data.getInt();
+        data.getInt(); // skip flags, read them.
+
         contentFlags = data.getInt();
         minVersion = data.getInt();
         contentMinVersion = data.getInt();
@@ -610,16 +628,10 @@ public class Take5Dictionary {
         edgeCount = data.getInt();
         acceptEdgeCount = data.getInt();
 
-        // Reverse bytes from network order fields.
-        if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
+        // Two more fields always in BE.
+        if (data.order() == ByteOrder.LITTLE_ENDIAN) {
             fileVersion = reverseBytes(fileVersion);
-            flags = reverseBytes(flags);
             minVersion = reverseBytes(minVersion);
-        }
-
-        // Check byte order.
-        if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN != ((flags & FLAG_LITTLE_ENDIAN) != 0)) {
-            throw new Take5Exception(Take5Exception.WRONG_BYTE_ORDER);
         }
 
         // Check version numbers.
@@ -681,9 +693,9 @@ public class Take5Dictionary {
             if (metadata_size > 0) {
                 // byte order?
                 ByteBuffer metadataSubset = data.duplicate();
+                metadataSubset.order(data.order());
                 metadataSubset.position(metadata_string);
                 metadataSubset.limit(metadata_string + 2 * metadata_size);
-                metadataSubset.order(ByteOrder.nativeOrder());
                 CharBuffer charified = metadataSubset.asCharBuffer();
                 // this has embedded nulls, now we get to parse them out.
                 while (charified.hasRemaining()) {
