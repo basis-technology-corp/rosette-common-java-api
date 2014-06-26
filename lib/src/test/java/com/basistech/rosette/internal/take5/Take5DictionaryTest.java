@@ -114,7 +114,7 @@ public class Take5DictionaryTest extends Assert {
     @Before
     public void before() throws IOException, Take5Exception {
         ByteBuffer[] data = new ByteBuffer[1];
-        daysDictionary = openDictionary("src/test/dicts/DAYS", data);
+        daysDictionary = openDictionary("src/test/dicts/days", data);
         daysData = data[0];
         nextLettersDictionary = openDictionary("src/test/dicts/next_letters", null);
     }
@@ -604,7 +604,7 @@ public class Take5DictionaryTest extends Assert {
 
         testReverseLookupAll(dict, NEXT_LETTERS);
 
-        dict.setEntryPoint("main"); // this is the "DAYS" dictionary
+        dict.setEntryPoint("main"); // this is the "days" dictionary
         assertEquals(0x20, dict.minimumCharacter());
         assertEquals(0x79, dict.maximumCharacter());
 
@@ -635,7 +635,7 @@ public class Take5DictionaryTest extends Assert {
 
         // Not yet: testReverseLookupAll(dict, NEXT_LETTERS);
 
-        dict.setEntryPoint("main"); // this is the "DAYS" dictionary
+        dict.setEntryPoint("main"); // this is the "days" dictionary
         assertEquals(0x20, dict.minimumCharacter());
         assertEquals(0x79, dict.maximumCharacter());
 
