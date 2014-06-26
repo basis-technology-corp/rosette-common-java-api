@@ -15,6 +15,7 @@
 package com.basistech.rosette.internal.take5build;
 
 import com.basistech.rosette.internal.take5.Take5Dictionary;
+import com.basistech.rosette.internal.take5.Take5DumpHeader;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.apache.commons.io.output.NullWriter;
@@ -87,6 +88,15 @@ import static org.hamcrest.core.IsEqual.equalTo;
  max_value_size: 196
  min_character: 0x30
  max_character: 0xFFFF
+
+ Buckets:
+ main:
+ 0x0000000B
+ 0x0000000C
+ 0x0000000B
+ 0x0000000F
+ 0x00000000
+
  *
  * BE dump
  *
@@ -138,6 +148,15 @@ import static org.hamcrest.core.IsEqual.equalTo;
  max_value_size: 196
  min_character: 0x30
  max_character: 0xFFFF
+
+ Buckets:
+ main:
+ 0x0000000B
+ 0x0000000C
+ 0x0000000B
+ 0x0000000F
+ 0x00000000
+
  *
  */
 public class BruteForceCrossBuildTest extends Assert {
@@ -146,7 +165,8 @@ public class BruteForceCrossBuildTest extends Assert {
     public void buildAndCompare() throws Exception {
         Assume.assumeThat(ByteOrder.nativeOrder(), is(equalTo(ByteOrder.LITTLE_ENDIAN)));
         File t5File = File.createTempFile("t5btest.", ".bin");
-        t5File.deleteOnExit();
+        //t5File.deleteOnExit();
+        System.out.println(t5File.getAbsolutePath());
         File inputFile = new File("src/test/data/mixed.txt");
         Take5Build cmd = new Take5Build();
         cmd.alignment = 4;
@@ -158,6 +178,7 @@ public class BruteForceCrossBuildTest extends Assert {
         cmd.commandInputFile = inputFile;
         cmd.checkOptionConsistency();
         cmd.build();
+
 
         ByteBuffer resultT5 = Files.map(t5File);
         Take5Dictionary dict = new Take5Dictionary(resultT5, resultT5.capacity());
