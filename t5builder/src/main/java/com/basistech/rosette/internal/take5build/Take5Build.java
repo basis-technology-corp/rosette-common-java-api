@@ -98,11 +98,14 @@ public final class Take5Build {
     @Option(name = "-join", metaVar = "CONTROL_FILE", usage = "Combine multiple Take5's into one output.")
     File controlFile;
 
-    @Option(name = "-binaryPayloads", metaVar = "ALIGNMENT",
-            usage = "payload size/aytelignment")
+    @Option(name = "-binary-payloads",
+            aliases = {"-alignment", "-binaryPayloads"},
+            metaVar = "ALIGNMENT",
+            usage = "payload size/alignment")
     Integer alignment;
 
     @Option(name = "-defaultMode", metaVar = "MODE",
+            aliases = {"-default-mode"},
             usage = "default payload mode (e.g. #4f).")
     String defaultPayloadFormat;
 
@@ -115,17 +118,20 @@ public final class Take5Build {
     boolean noPayloads;
 
     //This is the inverse of -q.
-    @Option(name = "-simpleKeys", usage = "simple keys; no escapes")
+    @Option(name = "-simpleKeys", usage = "simple keys; no escapes",
+            aliases = {"-simple-keys"})
     boolean simpleKeys;
 
     @Option(name = "-entrypoint", metaVar = "NAME", usage = "entrypoint (default 'main')")
     String entrypointName;
 
     @Option(name = "-contentVersion", metaVar = "VERSION",
+            aliases = {"-content-version"},
             usage = "version of content")
     int version;
 
-    @Option(name = "-indexLookup", usage = "lookups map from key to (sorted) key indices; no stored payloads.")
+    @Option(name = "-indexLookup", usage = "lookups map from key to (sorted) key indices; no stored payloads.",
+            aliases = {"-index-lookup"})
     boolean indexLookup;
 
     @Option(name = "-debug-dump-lookup", usage = "write textual lookup dump.")

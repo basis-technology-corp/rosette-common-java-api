@@ -366,7 +366,7 @@ public class Take5Builder {
         // int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length - 2); // don't hash that null!
 
 
-        int keyHash = FnvHash.fnvhash(0, keyBytes, 0, keyBytes.length);
+        int keyHash = FnvHash.fnvhash(0, keyBytes, 0, keyBytes.length - 2); // don't hash the trailing null.
         PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
         allPerfhashPairs.addFirst(pair);
     }
