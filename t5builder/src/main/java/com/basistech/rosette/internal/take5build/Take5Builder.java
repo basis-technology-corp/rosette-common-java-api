@@ -28,6 +28,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -350,13 +351,14 @@ public class Take5Builder {
             }
 
         }
-        // there's probably a quicker way to do this, and is the byte order right?
+        // there's probably a quicker way to do this.
         // perfhash keys are defined to be null-terminated.
+
         byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16LE);
         keyBytes = Arrays.copyOf(keyBytes, keyBytes.length + 2);
         Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyBytes.length, 2, Value.KEY);
 
-        int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length - 2); // don't hash that null!
+        int keyHash = FnvHash.fnvhash(0, keyBytes, 0, keyBytes.length);
         PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
         allPerfhashPairs.addFirst(pair);
     }

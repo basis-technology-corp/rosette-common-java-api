@@ -31,7 +31,7 @@ public enum KeyFormat {
      */
     HASH_HASH32,                     /* -t hash/hash32 */
     /**
-     * Store the key to get no collections.
+     * Store the key to get no collisions.
      */
     HASH_STRING                      /* -t hash/str */
 }
