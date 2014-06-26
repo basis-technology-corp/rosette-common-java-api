@@ -374,7 +374,7 @@ public final class Take5DumpHeader {
         }
 
         final int stateStart = buffer.getInt(epBase + (Take5Format.EPT_STATE_START * 4));
-        pw.format("  state_state: %d\n", stateStart);
+        pw.format("  state_start: %d\n", stateStart);
         stateStarts.add(stateStart);
         pw.format("  index_start: %d\n", buffer.getInt(epBase + (Take5Format.EPT_INDEX_START * 4)));
         pw.format("  index_offset: %d\n", buffer.getInt(epBase + (Take5Format.EPT_INDEX_OFFSET * 4)));

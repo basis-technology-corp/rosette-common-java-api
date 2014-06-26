@@ -27,7 +27,7 @@ class ValueSegment extends BufferedSegment {
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
                 if (0 != (v.flags & flags)) {
-                    v.address = reserveChunk(v.length, v.alignment);
+                    v.address = reserveChunk(v.data.capacity(), v.alignment);
                 }
                 v = v.next;
             }
@@ -38,10 +38,12 @@ class ValueSegment extends BufferedSegment {
         for (Value v : builder.valueRegistry.values) {
             while (v != null) {
                 if (0 != (v.flags & flags)) {
-                    allocateChunk(v.length, v.alignment);
+                    allocateChunk(v.data.capacity(), v.alignment);
                     assert address == v.address : String.format("value segment address %x not the same as predicted value address %x", address, v.address);
                     byteBuffer.position(offset);
-                    byteBuffer.put(v.data, v.offset, v.length);
+                    v.data.position(0);
+                    v.data.limit(v.data.capacity());
+                    byteBuffer.put(v.data);
                 }
                 v = v.next;
             }

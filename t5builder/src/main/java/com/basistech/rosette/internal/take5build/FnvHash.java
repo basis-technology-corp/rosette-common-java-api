@@ -15,6 +15,8 @@
 package com.basistech.rosette.internal.take5build;
 
 
+import java.nio.CharBuffer;
+
 /** Fowler/Noll/Vo hashing.
  *
  * See: <http://tools.ietf.org/html/draft-eastlake-fnv-07> for info on the
@@ -35,17 +37,13 @@ final class FnvHash {
      * bytes while FNV32 was originally designed for 8-bit bytes -- but it
      * still works.
      *
-     * Note that C takes advantage of punning 8 and 16-byte quantities. This code has to
-     * unwind that. It takes a byte length but insists that it is even. The alternative
-     * would be to make {@link Value} store char[], which might be clever, but would require
-     * more thought.
      */
-    static int fnvhash(int fun, final byte[] data, final int start, final int end) {
-        assert 0 == ((end - start) & 1) : "Attempt to hash odd number of bytes";
+    static int fnvhash(int fun, final CharBuffer data) {
 
         int rv = (fun + 1) * FNV32_BASE;
-        for (int idx = start; idx < end; idx += 2) {
-            char v = (char)((data[idx + 1] << 8) | (0xff & data[idx]));
+        data.position(0);
+        for (int idx = 0; idx < data.limit(); idx++) { // respect limit; used to avoid hashing null termination
+            char v = data.get();
             rv ^= v;
             rv *= FNV32_PRIME;
         }

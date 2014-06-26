@@ -350,13 +350,22 @@ public class Take5Builder {
             }
 
         }
-        // there's probably a quicker way to do this, and is the byte order right?
-        // perfhash keys are defined to be null-terminated.
-        byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16LE);
-        keyBytes = Arrays.copyOf(keyBytes, keyBytes.length + 2);
-        Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyBytes.length, 2, Value.KEY);
+        // there's probably a quicker way to do this.
+        // perfhash keys are defined to be null-termitated.
 
-        int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length - 2); // don't hash that null!
+        ByteBuffer keyByteBuffer = ByteBuffer.allocate((keyLength + 1) * 2); // room for null
+        keyByteBuffer.order(byteOrder);
+        CharBuffer keyCharBuffer = keyByteBuffer.asCharBuffer();
+        keyCharBuffer.put(key, 0, keyLength);
+        keyCharBuffer.put((char)0);                   // be certain about that null
+        keyCharBuffer.position(0);
+
+        assert keyByteBuffer.position() == 0;
+        assert keyByteBuffer.limit() == keyByteBuffer.capacity();
+
+        Value keyAsValue = valueRegistry.intern(keyByteBuffer, 2, Value.KEY);
+        keyCharBuffer.limit(keyLength); // omit the trailing null.
+        int keyHash = FnvHash.fnvhash(0, keyCharBuffer);
         PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
         allPerfhashPairs.addFirst(pair);
     }
@@ -812,12 +821,14 @@ public class Take5Builder {
     }
 
     private Value findValue(Take5Pair pair) {
-        byte[] data = pair.getValue();
-        if (data == null) {
+        if (pair.getValue() == null) {
             return null;
         }
-        int offset = pair.getOffset();
-        return valueRegistry.intern(data, offset, offset + pair.getLength(), pair.getAlignment(), Value.VALUE);
+        ByteBuffer buffer = ByteBuffer.allocate(pair.getLength());
+        buffer.order(byteOrder);
+        buffer.put(pair.getValue(), pair.getOffset(), pair.getLength());
+        buffer.position(0); // undo result of relative put.
+        return valueRegistry.intern(buffer, pair.getAlignment(), Value.VALUE);
     }
 
     /**

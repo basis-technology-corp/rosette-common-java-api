@@ -14,6 +14,8 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import java.nio.ByteBuffer;
+
 /**
  * This is essentially a Map&lt;byte[], Value&gt;, focussed on an 'intern' scheme.
  */
@@ -29,40 +31,39 @@ class ValueRegistry {
 
     /**
      * Add a value, or return an existing one with the same data/alignment.
-     * @param data
-     * @param start
-     * @param end
-     * @param alignment
-     * @return
+     * @param data data to store
+     * @param alignment alignment
+     * @return interned value
      */
-    Value intern(byte[] data, int start, int end, int alignment, short flags) {
+    Value intern(ByteBuffer data, int alignment, short flags) {
 
         if (data == null) {
-            data = new byte[0];
-            start = 0;
-            end = 0;
+            data = ByteBuffer.allocate(0);
             alignment = 1;
         }
 
         commonAlign = Utils.lcm(commonAlign, alignment);
 
-        int length = end - start;
+        data.limit(data.capacity());
+        data.position(0);
+        int length = data.capacity();
 
         if (length > maxValueSize) { maxValueSize = length; }
-        int hash = Utils.hashBytes(data, start, length);
+        int hash = Utils.hashBytes(data);
         int index = (hash & 0x7FFFFFFF) % values.length;
         Value firstValue = values[index];
         Value v;
 
         for (v = firstValue; v != null; v = v.next) {
-            if (v.hash == hash && v.length == length
-                    && Utils.equalBytes(v.data, v.offset, data, start, length)) {
+            v.data.position(0);
+            v.data.limit(v.data.capacity());
+            if (v.hash == hash && v.data.capacity() == length && v.data.equals(data)) {
                 v.alignment = Utils.lcm(alignment, v.alignment);
 
                 return v;
             }
         }
-        v = new Value(data, start, length, alignment, flags, hash, firstValue);
+        v = new Value(data, alignment, flags, hash, firstValue);
         size++;
         values[index] = v;
         return v;
