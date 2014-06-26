@@ -14,6 +14,9 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+
 /**
  * Value blob.
  */
@@ -21,21 +24,18 @@ class Value {
     static final short VALUE = 2;
     static final short KEY = 1;
 
-    final byte[] data;
+    final ByteBuffer data;
     int alignment; // NOT FINAL. The registry will lcm this as it merges in.
-    final int offset;                 // offset into data
-    final int length;
+
     final int hash;                   // for valueRegistry
     final Value next;                 // for valueRegistry
     final short flags;
     int address;
 
-    Value(byte[] data, int offset, int length, int alignment, short flags, int hash, Value next) {
-        assert !(flags == KEY && ((length & 1) != 0)) : "Odd byte length of key";
+    Value(ByteBuffer data, int alignment, short flags, int hash, Value next) {
+        assert !(flags == KEY && ((data.capacity() & 1) != 0)) : "Odd byte length of key";
         this.data = data;
         this.alignment = alignment;
-        this.offset = offset;
-        this.length = length;
         this.hash = hash;
         this.next = next;
         this.flags = flags;
@@ -52,6 +52,13 @@ class Value {
     int getKeyHash(int hashFun) {
         assert isKey();
         // -2 to take away the null termination.
-        return FnvHash.fnvhash(hashFun, data, 0, length - 2);
+        CharBuffer dataAsChars = data.asCharBuffer();
+        try {
+            dataAsChars.limit(dataAsChars.capacity() - 1);
+            return FnvHash.fnvhash(hashFun, dataAsChars);
+        } finally {
+            // don't leave a side-effect on the limit.
+            dataAsChars.limit(dataAsChars.capacity());
+        }
     }
 }

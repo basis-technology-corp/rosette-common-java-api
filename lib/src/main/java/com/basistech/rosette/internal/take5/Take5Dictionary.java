@@ -1900,7 +1900,7 @@ public class Take5Dictionary {
     // hash functions.  (Replace the link above when/if it becomes an RFC.)
     private static final int FNV32_PRIME = 0x01000193;
     private static final int FNV32_BASE = 0x811C9DC5;
-    private static final int fnvHash(int fun, char[] key, int i, int end) {
+    private static int fnvHash(int fun, char[] key, int i, int end) {
         int rv = (fun + 1) * FNV32_BASE;
         while (i < end) {
             rv ^= key[i++];

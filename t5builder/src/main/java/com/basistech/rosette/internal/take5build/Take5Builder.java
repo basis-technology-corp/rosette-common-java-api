@@ -28,7 +28,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.IntBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -352,21 +351,20 @@ public class Take5Builder {
 
         }
         // there's probably a quicker way to do this.
-        // perfhash keys are defined to be null-terminated.
+        // perfhash keys are defined to be null-termitated.
 
-        Charset keyCharset;
-        if (byteOrder == ByteOrder.BIG_ENDIAN) {
-            keyCharset = Charsets.UTF_16BE;
-        } else {
-            keyCharset = Charsets.UTF_16LE;
-        }
-        byte[] keyBytes = new String(key, 0, keyLength).getBytes(keyCharset);
-        keyBytes = Arrays.copyOf(keyBytes, keyBytes.length + 2);
-        Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyBytes.length, 2, Value.KEY);
-        // int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length - 2); // don't hash that null!
+        ByteBuffer keyByteBuffer = ByteBuffer.allocate((keyLength + 1) * 2); // room for null
+        keyByteBuffer.order(byteOrder);
+        CharBuffer keyCharBuffer = keyByteBuffer.asCharBuffer();
+        keyCharBuffer.put(key, 0, keyLength);
+        keyCharBuffer.position(0);
 
+        assert keyByteBuffer.position() == 0;
+        assert keyByteBuffer.limit() == keyByteBuffer.capacity();
 
-        int keyHash = FnvHash.fnvhash(0, keyBytes, 0, keyBytes.length - 2); // don't hash the trailing null.
+        Value keyAsValue = valueRegistry.intern(keyByteBuffer, 2, Value.KEY);
+        keyCharBuffer.limit(keyLength); // omit the trailing null.
+        int keyHash = FnvHash.fnvhash(0, keyCharBuffer);
         PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
         allPerfhashPairs.addFirst(pair);
     }
@@ -822,12 +820,14 @@ public class Take5Builder {
     }
 
     private Value findValue(Take5Pair pair) {
-        byte[] data = pair.getValue();
-        if (data == null) {
+        if (pair.getValue() == null) {
             return null;
         }
-        int offset = pair.getOffset();
-        return valueRegistry.intern(data, offset, offset + pair.getLength(), pair.getAlignment(), Value.VALUE);
+        ByteBuffer buffer = ByteBuffer.allocate(pair.getLength());
+        buffer.order(byteOrder);
+        buffer.put(pair.getValue(), pair.getOffset(), pair.getLength());
+        buffer.position(0); // undo result of relative put.
+        return valueRegistry.intern(buffer, pair.getAlignment(), Value.VALUE);
     }
 
     /**

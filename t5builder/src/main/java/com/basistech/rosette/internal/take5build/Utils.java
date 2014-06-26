@@ -75,6 +75,18 @@ final class Utils {
         return hash;
     }
 
+    static int hashBytes(ByteBuffer bytes) {
+        int length = bytes.capacity();
+        int hash = length;
+        bytes.position(0);
+        while (length > 0) {
+            hash = hashStep(hash, bytes.get());
+            length--;
+        }
+        bytes.position(0);
+        return hash;
+    }
+
     // There isn't a library routine that does this as far as I can see...
     static boolean equalBytes(byte[] bytes1, int offset1,
                               byte[] bytes2, int offset2,
