@@ -30,7 +30,8 @@ import java.util.List;
 /**
  * This class is an entire input to a Take5 build. It stores a sorted
  * list of key-value pairs, where the keys are UTF-16 and the values are
- * ByteBuffers. It will read in and then deliver as an iteration of {@link com.basistech.rosette.internal.take5build.Take5Pair}
+ * ByteBuffers. It will read in and then deliver as an iteration of
+ * {@link com.basistech.rosette.internal.take5build.Take5Pair}
  * objects.
  *
  * This class has a set of bean properties; an application should create the class, set
