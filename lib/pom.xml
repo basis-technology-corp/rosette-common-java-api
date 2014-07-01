@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>common-java</artifactId>
-        <version>31-SNAPSHOT</version>
+        <version>30.1-SNAPSHOT</version>
     </parent>
     <properties>
       <spring.version>2.5.4</spring.version>
