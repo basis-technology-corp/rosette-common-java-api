@@ -19,6 +19,7 @@ import com.google.common.primitives.UnsignedBytes;
 import com.google.common.primitives.UnsignedInts;
 import com.google.common.primitives.UnsignedLongs;
 
+import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.DoubleBuffer;
@@ -42,7 +43,7 @@ public final class PayloadParser {
     }
 
     // this could be replaced by making bigger and bigger buffers if we want to support Really Big payloads.
-    static final int DEFAULT_MAXIMUM_PAYLOAD_BYTES = 16384; // is the enough?
+    static final int DEFAULT_MAXIMUM_PAYLOAD_BYTES = 16384; // is this enough?
     private static final int FLOAT_LENGTH = 4;
     private static final int DOUBLE_LENGTH = 8;
 
@@ -61,31 +62,56 @@ public final class PayloadParser {
     private DoubleBuffer doubleView;
 
     private PayloadParser() {
-        this(DEFAULT_MAXIMUM_PAYLOAD_BYTES, new Mode());
+        this(new Mode());
     }
 
-    private PayloadParser(int maxSize, Mode initialMode) {
-        buffer = ByteBuffer.allocate(maxSize);
+    private PayloadParser(Mode initialMode) {
+        buffer = ByteBuffer.allocate(DEFAULT_MAXIMUM_PAYLOAD_BYTES);
         currentMode = initialMode;
-        charView = buffer.asCharBuffer();
-        shortView = buffer.asShortBuffer();
-        intView = buffer.asIntBuffer();
-        longView = buffer.asLongBuffer();
-        floatView = buffer.asFloatBuffer();
-        doubleView = buffer.asDoubleBuffer();
+        allocateViews();
     }
 
-    private PayloadParser(int maxSize, String initialModeString) throws PayloadParserException {
-        buffer = ByteBuffer.allocate(maxSize);
+    private PayloadParser(String initialModeString) throws PayloadParserException {
+        buffer = ByteBuffer.allocate(DEFAULT_MAXIMUM_PAYLOAD_BYTES);
         if (initialModeString != null) {
             parseMode(initialModeString, 0);
         }
+        allocateViews();
+    }
+
+    private void reallocate() {
+        int newSize = buffer.capacity() * 2;
+        ByteBuffer newBuffer = ByteBuffer.allocate(newSize);
+        newBuffer.position(0);
+        newBuffer.limit(newSize);
+        newBuffer.order(buffer.order());
+        newBuffer.put(buffer);
+        newBuffer.position(0);
+        buffer = newBuffer;
+        allocateViews();
+    }
+
+    private void allocateViews() {
         charView = buffer.asCharBuffer();
         shortView = buffer.asShortBuffer();
         intView = buffer.asIntBuffer();
         longView = buffer.asLongBuffer();
         floatView = buffer.asFloatBuffer();
         doubleView = buffer.asDoubleBuffer();
+    }
+
+    // grow buffer as needed.
+    private void withReallocation(Runnable todo) {
+        while (true) {
+            try {
+                todo.run();
+                break;
+            } catch (BufferOverflowException boe) {
+                reallocate(); // and go around until we succeed or OOM.
+            } catch (IndexOutOfBoundsException iobe) {
+                reallocate(); // and go around until we succeed or OOM.
+            }
+        }
     }
 
     Payload parse(String text) throws PayloadParserException {
@@ -179,27 +205,48 @@ public final class PayloadParser {
         return (short)(intVal & 0xffff);
     }
 
-    private void appendLong(long l, int column) throws PayloadParserException {
+    private void appendLong(final long val, int column) throws PayloadParserException {
         checkAlignment(8, column);
-        longView.put(used / 8, l);
+        withReallocation(new Runnable() {
+            @Override
+            public void run() {
+                longView.put(used / 8, val);
+            }
+        });
         used += 8;
     }
 
-    private void appendInt(int l, int column) throws PayloadParserException {
+    private void appendInt(final int val, int column) throws PayloadParserException {
         checkAlignment(4, column);
-        intView.put(used / 4, (int)l);
+        withReallocation(new Runnable() {
+            @Override
+            public void run() {
+                intView.put(used / 4, val);
+            }
+        });
+
         used += 4;
 
     }
 
-    private void appendByte(byte l, int column) {
-        buffer.put(used, (byte)(l & 0xff));
+    private void appendByte(final byte val, int column) {
+        withReallocation(new Runnable() {
+            @Override
+            public void run() {
+                buffer.put(used, (byte)(val & 0xff));
+            }
+        });
         used++;
     }
 
-    private void appendShort(short l, int column) throws PayloadParserException {
+    private void appendShort(final short val, int column) throws PayloadParserException {
         checkAlignment(2, column);
-        shortView.put(used / 2, (short)(l & 0xffff));
+        withReallocation(new Runnable() {
+            @Override
+            public void run() {
+                shortView.put(used / 2, (short)(val & 0xffff));
+            }
+        });
         used += 2;
     }
 
@@ -227,7 +274,12 @@ public final class PayloadParser {
             } else {
                 f = Float.parseFloat(token.text);
             }
-            floatView.put(used / FLOAT_LENGTH, f);
+            withReallocation(new Runnable() {
+                @Override
+                public void run() {
+                    floatView.put(used / FLOAT_LENGTH, f);
+                }
+            });
         } else if (length == DOUBLE_LENGTH) {
             final double d;
             if ("inf".equals(token.text)) {
@@ -239,7 +291,12 @@ public final class PayloadParser {
             } else {
                 d = Double.parseDouble(token.text);
             }
-            doubleView.put(used / DOUBLE_LENGTH, d);
+            withReallocation(new Runnable() {
+                @Override
+                public void run() {
+                    doubleView.put(used / DOUBLE_LENGTH, d);
+                }
+            });
         } else {
             throw new PayloadParserException("Invalid float length " + length, token.column);
         }
@@ -374,7 +431,6 @@ public final class PayloadParser {
         if (c == '!' || c == '*') { // flag
             flag = c;
             cur++;
-            c = text.charAt(cur);
         }
 
         char which = text.charAt(cur);
@@ -456,13 +512,22 @@ public final class PayloadParser {
             throw new PayloadParserException("Invalid string flag " + temporaryModeChar, token.column);
         }
 
+        final boolean finalNullTerminated = nullTerminated;
+
+
         if (length == 1) {
-            byte[] bytes = token.text.getBytes(Charsets.US_ASCII);
-            buffer.position(used);
-            buffer.put(bytes);
-            if (nullTerminated) {
-                buffer.put((byte)0);
-            }
+            final byte[] bytes = token.text.getBytes(Charsets.US_ASCII);
+            withReallocation(new Runnable() {
+                @Override
+                public void run() {
+                    buffer.position(used);
+                    buffer.put(bytes);
+                    if (finalNullTerminated) {
+                        buffer.put((byte)0);
+                    }
+                }
+            });
+
             buffer.position(0);
             used += bytes.length;
             if (nullTerminated) {
@@ -470,12 +535,18 @@ public final class PayloadParser {
             }
         } else {
             checkAlignment(2, token.column);
-            char[] chars = token.text.toCharArray();
-            charView.position(used / 2);
-            charView.put(chars);
-            if (nullTerminated) {
-                charView.put((char)0);
-            }
+            final char[] chars = token.text.toCharArray();
+            withReallocation(new Runnable() {
+                @Override
+                public void run() {
+                    charView.position(used / 2);
+                    charView.put(chars);
+                    if (finalNullTerminated) {
+                        charView.put((char)0);
+                    }
+                }
+            });
+
             charView.position(0);
             used += chars.length * 2;
             if (nullTerminated) {
@@ -488,11 +559,11 @@ public final class PayloadParser {
         return new PayloadParser();
     }
 
-    public static PayloadParser newParser(int maxLength, String initialMode) throws PayloadParserException {
-        return new PayloadParser(maxLength, initialMode);
+    public static PayloadParser newParser(String initialMode) throws PayloadParserException {
+        return new PayloadParser(initialMode);
     }
 
-    public static PayloadParser newParser(int maxLength, Mode initialMode) {
-        return new PayloadParser(maxLength, initialMode);
+    public static PayloadParser newParser(Mode initialMode) {
+        return new PayloadParser(initialMode);
     }
 }

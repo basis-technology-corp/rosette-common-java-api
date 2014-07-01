@@ -125,7 +125,7 @@ class InputFile {
             if (!ignorePayloads) {
                 String payloadInput = line.substring(tabIndex + 1);
                 try {
-                    payload = PayloadParser.newParser(maximumItemPayloadSize, defaultFormat).parse(payloadInput);
+                    payload = PayloadParser.newParser(defaultFormat).parse(payloadInput);
                 } catch (PayloadParserException e) {
                     throw Throwables.propagate(new InputFileException(String.format("Malformed payload on line %d", lineCount), e));
                 }
