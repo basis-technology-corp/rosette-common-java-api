@@ -21,6 +21,7 @@ import com.google.common.primitives.UnsignedLongs;
 
 import java.nio.BufferOverflowException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
@@ -61,18 +62,20 @@ public final class PayloadParser {
     private FloatBuffer floatView;
     private DoubleBuffer doubleView;
 
-    private PayloadParser() {
-        this(new Mode());
+    private PayloadParser(ByteOrder order) {
+        this(new Mode(), order);
     }
 
-    private PayloadParser(Mode initialMode) {
+    private PayloadParser(Mode initialMode, ByteOrder order) {
         buffer = ByteBuffer.allocate(DEFAULT_MAXIMUM_PAYLOAD_BYTES);
+        buffer.order(order);
         currentMode = initialMode;
         allocateViews();
     }
 
-    private PayloadParser(String initialModeString) throws PayloadParserException {
+    private PayloadParser(String initialModeString, ByteOrder order) throws PayloadParserException {
         buffer = ByteBuffer.allocate(DEFAULT_MAXIMUM_PAYLOAD_BYTES);
+        buffer.order(order);
         if (initialModeString != null) {
             parseMode(initialModeString, 0);
         }
@@ -82,6 +85,7 @@ public final class PayloadParser {
     private void reallocate() {
         int newSize = buffer.capacity() * 2;
         ByteBuffer newBuffer = ByteBuffer.allocate(newSize);
+        newBuffer.order(buffer.order());
         newBuffer.position(0);
         newBuffer.limit(newSize);
         newBuffer.order(buffer.order());
@@ -555,15 +559,15 @@ public final class PayloadParser {
         }
     }
 
-    public static PayloadParser newParser() {
-        return new PayloadParser();
+    public static PayloadParser newParser(ByteOrder order) {
+        return new PayloadParser(order);
     }
 
-    public static PayloadParser newParser(String initialMode) throws PayloadParserException {
-        return new PayloadParser(initialMode);
+    public static PayloadParser newParser(String initialMode, ByteOrder order) throws PayloadParserException {
+        return new PayloadParser(initialMode, order);
     }
 
-    public static PayloadParser newParser(Mode initialMode) {
-        return new PayloadParser(initialMode);
+    public static PayloadParser newParser(Mode initialMode, ByteOrder order) {
+        return new PayloadParser(initialMode, order);
     }
 }

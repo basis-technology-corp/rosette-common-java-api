@@ -22,6 +22,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URL;
+import java.nio.ByteOrder;
 import java.util.List;
 
 /**
@@ -47,7 +48,7 @@ public class InputFileTest extends Assert {
         URL url = Resources.getResource(PayloadLexerTest.class, "simple-keys-and-payloads.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
-        InputFile inputFile = new InputFile();
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
         inputFile.setPayloads(true);
         inputFile.setSimpleKeys(true);
         inputFile.read(source);
@@ -75,7 +76,7 @@ public class InputFileTest extends Assert {
         URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
-        InputFile inputFile = new InputFile();
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
         inputFile.setPayloads(false);
         inputFile.setSimpleKeys(false);
         inputFile.read(source);
