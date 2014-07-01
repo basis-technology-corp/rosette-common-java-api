@@ -39,12 +39,19 @@ public class PayloadParserTest extends Assert {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     //CHECKSTYLE:ON
+    
+    private ByteBuffer wrap(byte[] bytes) {
+        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+        buffer.order(ByteOrder.nativeOrder());
+        return buffer;
+    }
 
     @Test
     public void testHexdump() throws Exception {
         //                                                      .  .  . .  . . . .
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("[ 35 36 3435 34353637 ]");
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
+
         assertEquals(4, payload.alignment);
         assertEquals(8, buffer.limit());
         assertEquals((byte)0x35, buffer.get(0));
@@ -63,7 +70,7 @@ public class PayloadParserTest extends Assert {
     public void testBigEndianOrder() throws Exception {
         // tests reversed order on LE, harmless on BE.
         Payload payload = PayloadParser.newParser(ByteOrder.BIG_ENDIAN).parse("[ 35 36 3435 34353637 ]");
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
         buffer.order(ByteOrder.BIG_ENDIAN);
         assertEquals(4, payload.alignment);
         assertEquals(8, buffer.limit());
@@ -79,7 +86,8 @@ public class PayloadParserTest extends Assert {
     public void testStrings() throws Exception {
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("\"hello\"");
         assertEquals(2, payload.alignment);
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
+        buffer.order(ByteOrder.nativeOrder());
         assertEquals(6 * 2, buffer.limit());
         char[] retrieved = new char[6];
         buffer.asCharBuffer().get(retrieved);
@@ -89,7 +97,9 @@ public class PayloadParserTest extends Assert {
 
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#!s \"hello\"");
         assertEquals(2, payload.alignment);
-        buffer = ByteBuffer.wrap(payload.bytes);
+        buffer = wrap(payload.bytes);
+        buffer.order(ByteOrder.nativeOrder());
+
         assertEquals(5 * 2, buffer.limit());
         retrieved = new char[5];
         buffer.asCharBuffer().get(retrieved);
@@ -98,7 +108,7 @@ public class PayloadParserTest extends Assert {
         // byte string
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#1!s \"hello\"");
         assertEquals(1, payload.alignment);
-        buffer = ByteBuffer.wrap(payload.bytes);
+        buffer = wrap(payload.bytes);
         assertEquals(5, buffer.limit());
         byte[] retrievedBytes = new byte[5];
         buffer.get(retrievedBytes);
@@ -106,7 +116,7 @@ public class PayloadParserTest extends Assert {
 
         //terminated byte string
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#1s \"hello\"");
-        buffer = ByteBuffer.wrap(payload.bytes);
+        buffer = wrap(payload.bytes);
         assertEquals(6, buffer.limit());
         retrievedBytes = new byte[6];
         buffer.get(retrievedBytes);
@@ -117,7 +127,7 @@ public class PayloadParserTest extends Assert {
     public void testStringsTempModes() throws Exception {
         // turn off null termination
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#!: \"hello\"");
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
         assertEquals(5 * 2, buffer.limit());
         char[] retrieved = new char[5];
         buffer.asCharBuffer().get(retrieved);
@@ -125,7 +135,7 @@ public class PayloadParserTest extends Assert {
 
         // byte string
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#1!: \"hello\"");
-        buffer = ByteBuffer.wrap(payload.bytes);
+        buffer = wrap(payload.bytes);
         assertEquals(5, buffer.limit());
         byte[] retrievedBytes = new byte[5];
         buffer.get(retrievedBytes);
@@ -133,14 +143,14 @@ public class PayloadParserTest extends Assert {
 
         //terminated byte string
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#1: \"hello\"");
-        buffer = ByteBuffer.wrap(payload.bytes);
+        buffer = wrap(payload.bytes);
         assertEquals(6, buffer.limit());
         retrievedBytes = new byte[6];
         buffer.get(retrievedBytes);
         assertArrayEquals("hello\u0000".getBytes(Charsets.US_ASCII), retrievedBytes);
 
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#1!s #2*: \"hello\"");
-        buffer = ByteBuffer.wrap(payload.bytes);
+        buffer = wrap(payload.bytes);
         assertEquals(6 * 2, buffer.limit());
         retrieved = new char[6];
         buffer.asCharBuffer().get(retrieved);
@@ -173,7 +183,7 @@ public class PayloadParserTest extends Assert {
     @Test
     public void testInts() throws Exception {
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("42 -567 0x54 0b101 -0x45 -0b1011");
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
         assertEquals(24, buffer.limit());
         assertEquals(42, buffer.asIntBuffer().get(0));
         assertEquals(-567, buffer.asIntBuffer().get(1));
@@ -186,7 +196,7 @@ public class PayloadParserTest extends Assert {
     @Test
     public void testSizedIntegers() throws Exception {
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("42 #1: 43 #1: 44 #2: 0x2332 #4: 0x12345678");
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
         assertEquals(12, buffer.limit());
         IntBuffer ints = buffer.asIntBuffer();
         ShortBuffer shorts = buffer.asShortBuffer();
@@ -202,7 +212,7 @@ public class PayloadParserTest extends Assert {
     public void testUnsignedIntegers() throws Exception {
         // a series of unsigned items
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#!i #1: 0xf0 #1: 0xf1 #2: 0xf000 #4: 0xf0000000");
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
         assertEquals(8, buffer.limit());
         assertEquals((byte)0xf0, buffer.get(0));
         assertEquals((byte)0xf1, buffer.get(1));
@@ -218,7 +228,7 @@ public class PayloadParserTest extends Assert {
         String floatTestCase = String.format("#4f %g 0 #8f %g inf NaN", fval, dval);
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse(floatTestCase);
         assertEquals(8, payload.alignment);
-        ByteBuffer buffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer buffer = wrap(payload.bytes);
         Float floatResult = buffer.getFloat(0);
         Double doubleResult = buffer.getDouble(8);
         assertEquals(Float.floatToRawIntBits(fval), Float.floatToRawIntBits(floatResult));
@@ -240,7 +250,7 @@ public class PayloadParserTest extends Assert {
         }
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse(sb.toString());
         assertThat(payload.bytes.length, is(equalTo(count * 8)));
-        ByteBuffer payloadBuffer = ByteBuffer.wrap(payload.bytes);
+        ByteBuffer payloadBuffer = wrap(payload.bytes);
         LongBuffer longPayloadBuffer = payloadBuffer.asLongBuffer();
         assertThat(longPayloadBuffer.get(101), is(equalTo((long)42)));
 
