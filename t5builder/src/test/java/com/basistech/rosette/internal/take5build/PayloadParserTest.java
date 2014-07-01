@@ -23,7 +23,11 @@ import org.junit.rules.ExpectedException;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.LongBuffer;
 import java.nio.ShortBuffer;
+
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
 
 /**
  *
@@ -208,5 +212,67 @@ public class PayloadParserTest extends Assert {
 
         payload = PayloadParser.newParser().parse("#4f 0.1");
         assertEquals(4, payload.alignment);
+    }
+
+    @Test
+    public void veryLargePayload() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append("#8i");
+        int count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 3;
+        for (int x = 0; x < count; x ++) {
+            sb.append(" 42");
+        }
+        Payload payload = PayloadParser.newParser().parse(sb.toString());
+        assertThat(payload.bytes.length, is(equalTo(count * 8)));
+        ByteBuffer payloadBuffer = ByteBuffer.wrap(payload.bytes);
+        LongBuffer longPayloadBuffer = payloadBuffer.asLongBuffer();
+        assertThat(longPayloadBuffer.get(101), is(equalTo((long)42)));
+
+        sb = new StringBuilder();
+        sb.append("#4i");
+        count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 6;
+        for (int x = 0; x < count; x ++) {
+            sb.append(" 42");
+        }
+        payload = PayloadParser.newParser().parse(sb.toString());
+        assertThat(payload.bytes.length, is(equalTo(count * 4)));
+
+        sb = new StringBuilder();
+        sb.append("#2i");
+        count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 9;
+        for (int x = 0; x < count; x ++) {
+            sb.append(" 42");
+        }
+        payload = PayloadParser.newParser().parse(sb.toString());
+        assertThat(payload.bytes.length, is(equalTo(count * 2)));
+
+        sb = new StringBuilder();
+        sb.append("#1i");
+        count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 12;
+        for (int x = 0; x < count; x ++) {
+            sb.append(" 42");
+        }
+        payload = PayloadParser.newParser().parse(sb.toString());
+        assertThat(payload.bytes.length, is(equalTo(count)));
+
+        sb = new StringBuilder();
+        sb.append("#2s \"");
+        count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 12;
+        for (int x = 0; x < count; x ++) {
+            sb.append("0");
+        }
+        sb.append("\"");
+        payload = PayloadParser.newParser().parse(sb.toString());
+        assertThat(payload.bytes.length, is(equalTo(2 + (count * 2))));
+
+        sb = new StringBuilder();
+        sb.append("#1s \"");
+        count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 12;
+        for (int x = 0; x < count; x ++) {
+            sb.append("0");
+        }
+        sb.append("\"");
+        payload = PayloadParser.newParser().parse(sb.toString());
+        assertThat(payload.bytes.length, is(equalTo(1 + count)));
     }
 }
