@@ -22,6 +22,7 @@ import com.google.common.io.CharSource;
 import com.google.common.io.LineProcessor;
 
 import java.io.IOException;
+import java.nio.ByteOrder;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -29,13 +30,15 @@ import java.util.List;
 /**
  * This class is an entire input to a Take5 build. It stores a sorted
  * list of key-value pairs, where the keys are UTF-16 and the values are
- * ByteBuffers. It will read in and then deliver as an iteration of {@link com.basistech.rosette.internal.take5build.Take5Pair}
+ * ByteBuffers. It will read in and then deliver as an iteration of
+ * {@link com.basistech.rosette.internal.take5build.Take5Pair}
  * objects.
  *
  * This class has a set of bean properties; an application should create the class, set
  * the appropriate properties, and then read the input.
  */
 class InputFile {
+    private final ByteOrder order;
     private boolean simpleKeys;
     // if false, expect input lines to be purely key.
     private boolean payloads;
@@ -125,7 +128,7 @@ class InputFile {
             if (!ignorePayloads) {
                 String payloadInput = line.substring(tabIndex + 1);
                 try {
-                    payload = PayloadParser.newParser(defaultFormat).parse(payloadInput);
+                    payload = PayloadParser.newParser(defaultFormat, order).parse(payloadInput);
                 } catch (PayloadParserException e) {
                     throw Throwables.propagate(new InputFileException(String.format("Malformed payload on line %d", lineCount), e));
                 }
@@ -162,8 +165,8 @@ class InputFile {
         }
     }
 
-    InputFile() {
-        // nothing to do for now.
+    InputFile(ByteOrder order) {
+        this.order = order;
     }
 
     // this throws a runtime exception for the convenience of its callers, who have no useful checked exceptions.

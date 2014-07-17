@@ -361,7 +361,7 @@ public final class Take5Build {
         } else {
             source = Files.asCharSource(spec.inputFile, Charsets.UTF_8);
         }
-        InputFile inputFile = new InputFile();
+        InputFile inputFile = new InputFile(byteOrder);
         inputFile.setSimpleKeys(spec.simpleKeys);
         inputFile.setPayloads(!spec.noPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
