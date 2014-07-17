@@ -22,6 +22,9 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.CharBuffer;
 import java.util.List;
 
 /**
@@ -47,7 +50,7 @@ public class InputFileTest extends Assert {
         URL url = Resources.getResource(PayloadLexerTest.class, "simple-keys-and-payloads.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
-        InputFile inputFile = new InputFile();
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
         inputFile.setPayloads(true);
         inputFile.setSimpleKeys(true);
         inputFile.read(source);
@@ -64,8 +67,10 @@ public class InputFileTest extends Assert {
         assertArrayEquals("key0".toCharArray(), pair.key);
         pair = resultPairs.get(2);
         assertArrayEquals("key2".toCharArray(), pair.key);
+        ByteBuffer dataBuffer = ByteBuffer.wrap(pair.payload);
+        dataBuffer.order(ByteOrder.nativeOrder());
         //BE? I'm too tired to sort this out.
-        assertArrayEquals("some 2-byte string\u0000".toCharArray(), new String(pair.payload, Charsets.UTF_16BE).toCharArray());
+        assertEquals(CharBuffer.wrap("some 2-byte string\u0000"), dataBuffer.asCharBuffer());
         pair = resultPairs.get(10);
         assertArrayEquals("key9\\u".toCharArray(), pair.key);
     }
@@ -75,7 +80,7 @@ public class InputFileTest extends Assert {
         URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
-        InputFile inputFile = new InputFile();
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
         inputFile.setPayloads(false);
         inputFile.setSimpleKeys(false);
         inputFile.read(source);

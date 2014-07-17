@@ -30,6 +30,7 @@ import org.junit.rules.ExpectedException;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.CharBuffer;
 import java.nio.ShortBuffer;
 
@@ -104,6 +105,7 @@ public class CommandLineTest extends Assert {
         Take5Match match = new Take5Match();
         assertThat(dict.matchExact("key1".toCharArray(), 0, "key1".length(), match), is(equalTo(true)));
         int valueOffset = match.getOffsetValue();
+        resultT5.order(ByteOrder.nativeOrder());
         ShortBuffer dictAsShorts = resultT5.asShortBuffer();
         assertThat(dictAsShorts.get(valueOffset / 2), equalTo((short)0x4e56));
     }
@@ -173,6 +175,8 @@ public class CommandLineTest extends Assert {
         Take5Match match = new Take5Match();
         assertThat(dict1.matchExact(key.toCharArray(), 0, key.length(), match), is(equalTo(true)));
         int valueOffset = match.getOffsetValue();
+        resultT5.order(ByteOrder.nativeOrder());
+
         CharBuffer dictAsChars = resultT5.asCharBuffer();
         char[] dictChars = new char[value.length()];
         dictAsChars.position(valueOffset / 2);
