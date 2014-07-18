@@ -38,7 +38,7 @@ import java.util.TimeZone;
  * This class implements loading and usage of a Take5 binary dictionary.
  */
 // CHECKSTYLE:OFF
-public class Take5Dictionary {
+public class Take5Dictionary implements Cloneable {
     /* Binary format version numbers. */
     private static final int VERSION_5_0 = 0x00000500;
     private static final int VERSION_5_1 = 0x00000501;
@@ -176,6 +176,21 @@ public class Take5Dictionary {
         }
 
         readEntryPoint(entryPoint);
+    }
+
+    @Override
+    public Take5Dictionary clone() throws CloneNotSupportedException {
+        Take5Dictionary clone = (Take5Dictionary) super.clone();
+
+        // copy the data, just so we don't have to worry about
+        // concurrent modification of the position during readEntryPoint
+        clone.data = data.duplicate();
+        clone.data.order(data.order());
+
+        // no other fields need to be deeply copied, since they are either
+        // read-only, or (e.g., skipBits) are assigned all at once
+
+        return clone;
     }
 
     /**
