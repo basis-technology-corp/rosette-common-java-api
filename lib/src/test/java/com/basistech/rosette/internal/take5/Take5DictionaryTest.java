@@ -660,6 +660,35 @@ public class Take5DictionaryTest extends Assert {
         // Not yet: testReverseLookupAll(dict, DAYS);
     }
 
+    @Test
+    public void testCloning() throws IOException, Take5Exception, CloneNotSupportedException {
+        Take5Dictionary dict1 = openDictionary("src/test/dicts/unified", "next_letters", null);
+
+        Take5Dictionary dict2 = dict1.clone();
+
+        dict2.setEntryPoint("main"); // this is the "days" dictionary
+
+        Take5Match match = dict1.matchExact("gab");
+        assertNotNull(match);
+        assertEquals(3, match.getLength());
+        assertEquals(7, match.getIndex());
+
+        match = dict1.matchExact("gad");
+        assertNull(match);
+
+        testReverseLookupAll(dict1, NEXT_LETTERS);
+
+        match = dict2.matchExact("Sundae");
+        assertNotNull(match);
+        assertEquals(6, match.getLength());
+        assertEquals(4, match.getIndex());
+
+        match = dict2.matchExact("Foobar");
+        assertNull(match);
+
+        testReverseLookupAll(dict2, DAYS);
+    }
+
     /**
      * Test method for {@link
      * com.basistech.rosette.internal.take5.Take5Dictionary#advanceByChar(
