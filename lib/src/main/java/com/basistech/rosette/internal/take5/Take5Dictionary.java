@@ -178,6 +178,10 @@ public class Take5Dictionary implements Cloneable {
         readEntryPoint(entryPoint);
     }
 
+    /**
+     * Creates and returns a copy of this dictionary, which shares the same
+     * underlying data.
+     */
     @Override
     public Take5Dictionary clone() throws CloneNotSupportedException {
         Take5Dictionary clone = (Take5Dictionary) super.clone();
