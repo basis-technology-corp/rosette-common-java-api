@@ -15,10 +15,13 @@
 package com.basistech.rosette.internal.take5build;
 
 /**
-* What the keys of the table map to.
+* What payloads are stored in the binary file.
 */
 public enum ValueFormat {
+    /** No payloads. */
     IGNORE,                        /* -i: keys ignored. The result is a 'Set' in java terms. */
+    /** For each key, map it to its ordinal position in the key set. */
     INDEX,                         /* -x: each key maps to its index in the sorted key set. */
+    /** Store arbitrary data payloads. */
     PTR                            /* -p: each key maps to a payload. */
 }

@@ -15,13 +15,13 @@
 package com.basistech.rosette.internal.take5build;
 
 /**
- * What gets written.
+ * Options for what {@link com.basistech.rosette.internal.take5build.Take5Builder} writes.
  */
 public enum OutputFormat {
-    // Take5 binary file
+    /** A standard binary file. */
     TAKE5,
-    // Textual dump of FSA
+    /** A textual dump of the FSA, or nothing for PERFHASH. */
     FSA,
-    // Nothing at all.
+    /** nothing at all. Useful for checking for valid data. */
     NONE
 }
