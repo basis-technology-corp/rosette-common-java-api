@@ -18,7 +18,6 @@ import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 
-import java.nio.ByteOrder;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.SortedMap;
@@ -28,14 +27,10 @@ import java.util.SortedMap;
  */
 public class MapTake5PairSource implements Iterable<Take5Pair> {
     private final Map<String, CharSequence> data;
-    private final ByteOrder order;
+    private final Take5Builder builder;
 
-    public MapTake5PairSource(Map<String, CharSequence> inputData) {
-        this(ByteOrder.nativeOrder(), inputData);
-    }
-
-    public MapTake5PairSource(ByteOrder order, Map<String, CharSequence> inputData) {
-        this.order = order;
+    public MapTake5PairSource(Take5Builder builder, Map<String, CharSequence> inputData) {
+        this.builder = builder;
         if (inputData instanceof SortedMap) {
             data = inputData;
         } else {
@@ -48,7 +43,7 @@ public class MapTake5PairSource implements Iterable<Take5Pair> {
         return Iterables.transform(data.entrySet(), new Function<Map.Entry<String, CharSequence>, Take5Pair>() {
             @Override
             public Take5Pair apply(final Map.Entry<String, CharSequence> input) {
-                return new SimpleCharValueTake5Pair(order, input.getKey(), input.getValue());
+                return new SimpleCharValueTake5Pair(builder, input.getKey(), input.getValue());
             }
         });
     }

@@ -31,16 +31,17 @@ public class MapTake5PairSourceTest extends Assert {
 
     @Test
     public void testMappedBuild() throws Exception {
-        Map<String, CharSequence> inputData = Maps.newHashMap();
-        inputData.put("duck", "quack");
-        inputData.put("kine", "low");
-        inputData.put("frog", "croak");
-        MapTake5PairSource source = new MapTake5PairSource(inputData);
 
         Take5Builder builder = new Take5BuilderFactory().valueFormat(ValueFormat.PTR)
                 .engine(Engine.PERFHASH)
                 .keyFormat(KeyFormat.HASH_STRING)
                 .build();
+
+        Map<String, CharSequence> inputData = Maps.newHashMap();
+        inputData.put("duck", "quack");
+        inputData.put("kine", "low");
+        inputData.put("frog", "croak");
+        MapTake5PairSource source = new MapTake5PairSource(builder, inputData);
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
         ep.loadContent(source.iterator());

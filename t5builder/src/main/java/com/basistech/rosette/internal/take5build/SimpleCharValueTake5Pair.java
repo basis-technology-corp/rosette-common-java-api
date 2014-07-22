@@ -14,8 +14,6 @@
 
 package com.basistech.rosette.internal.take5build;
 
-import java.nio.ByteOrder;
-
 /**
  * Take5 pair that stores a String.
  */
@@ -24,14 +22,8 @@ public class SimpleCharValueTake5Pair extends AbstractCharValueTake5Pair {
     private final char[] key;
     private final CharSequence data;
 
-    public SimpleCharValueTake5Pair(String key, CharSequence data) {
-        super(ByteOrder.nativeOrder());
-        this.key = key.toCharArray();
-        this.data = data;
-    }
-
-    public SimpleCharValueTake5Pair(ByteOrder order, String key, CharSequence data) {
-        super(order);
+    public SimpleCharValueTake5Pair(Take5Builder builder, String key, CharSequence data) {
+        super(builder);
         this.key = key.toCharArray();
         this.data = data;
     }

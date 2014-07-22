@@ -15,7 +15,6 @@
 package com.basistech.rosette.internal.take5build;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 
 /**
  * This class makes it easier to build Take5's with values that are null-terminated UTF-16 values.
@@ -23,10 +22,10 @@ import java.nio.ByteOrder;
  * structure.
  */
 public abstract class AbstractCharValueTake5Pair implements Take5Pair {
-    private final ByteOrder byteOrder;
+    private final Take5Builder builder;
 
-    protected AbstractCharValueTake5Pair(ByteOrder byteOrder) {
-        this.byteOrder = byteOrder;
+    protected AbstractCharValueTake5Pair(Take5Builder builder) {
+        this.builder = builder;
     }
 
     protected abstract CharSequence getCharacterData();
@@ -36,7 +35,7 @@ public abstract class AbstractCharValueTake5Pair implements Take5Pair {
         CharSequence data = getCharacterData();
         byte[] array = new byte[2 * (data.length() + 1)];
         ByteBuffer buffer = ByteBuffer.wrap(array);
-        buffer.order(byteOrder);
+        buffer.order(builder.byteOrder);
         for (int x = 0; x < data.length(); x++) {
             buffer.putChar(data.charAt(x));
         }
