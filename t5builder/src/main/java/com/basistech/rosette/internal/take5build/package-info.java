@@ -77,6 +77,27 @@
  * }
  * </pre>
  * <h1>Data</h1>
- *
+ * Once you have an instance of {@link com.basistech.rosette.internal.take5build.Take5Builder}, you load it with data.
+ * A Take5 can have multiple entrypoints. You load each entrypoint with key-value pairs. The builder detects sharable
+ * values, even across entrypoints, so value data is not duplicated. If you are only creating one entrypoint, you should
+ * name it <tt>main</tt>.
+ * <p/>
+ * You call {@link com.basistech.rosette.internal.take5build.Take5Builder#newEntryPoint(String)} for each entrypoint.
+ * You call {@link com.basistech.rosette.internal.take5build.Take5EntryPoint#loadContent(java.util.Iterator)}
+ * to load the content. The content is defined as an {@link java.util.Iterator} that returns instances of
+ * {@link com.basistech.rosette.internal.take5build.Take5Pair}.
+ * For {@link com.basistech.rosette.internal.take5build.Engine#FSA}, the iterator must return the pairs in
+ * the lexicographic order of the keys.
+ * <h1>Bulding the File</h1>
+ * {@link com.basistech.rosette.internal.take5build.Take5Builder} provides three methods that build the results.
+ * <ul>
+ *     <li>{@link com.basistech.rosette.internal.take5build.Take5Builder#buildArray()} creates the Take5 as a
+ *     byte array. This isn't very useful.</li>
+ *     <li>{@link com.basistech.rosette.internal.take5build.Take5Builder#buildBuffer()} creates the Take5
+ *     as a {@link java.nio.ByteBuffer}. You can construct a {@link com.basistech.rosette.internal.take5.Take5Dictionary}
+ *     with this.</li>
+ *     <li>{@link com.basistech.rosette.internal.take5build.Take5Builder#buildToSink(com.google.common.io.ByteSink)}
+ *     writes the Take5 to an output stream obtained from a Guava {@link com.google.common.io.ByteSink}.</li>
+ * </ul>
  */
 package com.basistech.rosette.internal.take5build;

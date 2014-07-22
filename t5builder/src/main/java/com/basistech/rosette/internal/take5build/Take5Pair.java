@@ -16,19 +16,21 @@ package com.basistech.rosette.internal.take5build;
 
 /**
  * A key-value pair for insertion into a {@link Take5EntryPoint}.
- * <P>
+ * <P/>
  * The key in a Take5Pair is an arrays of chars.
- * <P>
+ * <P/>
  * The value in a Take5Pair is an array of bytes plus a required alignment for those bytes in
  * memory.  (The Java runtime doesn't care about alignment issues, but the C runtime definitely
  * does!)
- * <P>
+ * <P/>
  * The value in a Take5Pair can also be null.
- * <P>
+ * <P/>
  * Note that {@link Take5EntryPoint#loadContent} does not save Take5Pairs between iterations.
  * Instead it immediately calls the accessors defined by this interface, saves the returned values, and
  * discards the Take5Pair.  Thus it is guaranteed to be safe to return the same
  * Take5Pair every time -- see {@link ReusableTake5Pair}.
+ * <p/>
+ * Note that the application is responsible for the byte order of the value.
  */
 public interface Take5Pair {
 

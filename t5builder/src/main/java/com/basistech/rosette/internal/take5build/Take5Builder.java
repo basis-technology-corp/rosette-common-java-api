@@ -111,7 +111,10 @@ import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_LIMI
 
 /**
  * Builder for Take5 binaries. Use {@link Take5BuilderFactory}
- * as a factory to obtain these classes.
+ * as a factory to obtain these classes. Call {@link #newEntryPoint(String)}
+ * for each entrypoint, and then one of {@link #buildArray()},
+ * {@link #buildBuffer()}, or {@link #buildToSink(com.google.common.io.ByteSink)}
+ * to write the output file.
  */
 public class Take5Builder {
     // Currently this builder is up to version 5.6:
@@ -245,10 +248,13 @@ public class Take5Builder {
     }
 
     /**
-     * Create a new entry point.  Every entry point you create must be
-     * loaded with content before you can build a Take5 binary.  The name
-     * must consist of only ASCII characters. (why?)
-     * <P>
+     * Create a new entry point. All the entrypoints that you create must be
+     * loaded with content before you call {@link #buildArray()},
+     * {@link #buildBuffer()}, or {@link #buildToSink(com.google.common.io.ByteSink)}.
+     * <p/>
+     * Call {@link com.basistech.rosette.internal.take5build.Take5EntryPoint#loadContent(java.util.Iterator)}
+     * to load the entrypoint with keys and values.
+     * <P/>
      * Note that creating a single entry point Take5 binary whose entry
      * point is named <CODE>"main"</CODE> will result in a binary that can
      * be interpreted by older Take5 runtimes.
@@ -866,7 +872,7 @@ public class Take5Builder {
     /**
      * Write a Take5 binary into a {@link ByteSink}.
      *
-     * @param sink the sinl.
+     * @param sink the sink.
      */
     public void buildToSink(ByteSink sink) throws IOException {
         if (outputFormat == OutputFormat.NONE) {
