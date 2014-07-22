@@ -99,5 +99,7 @@
  *     <li>{@link com.basistech.rosette.internal.take5build.Take5Builder#buildToSink(com.google.common.io.ByteSink)}
  *     writes the Take5 to an output stream obtained from a Guava {@link com.google.common.io.ByteSink}.</li>
  * </ul>
+ * <h1>Examples</h1>
+ * See com.basistech.rosette.internal.take5build.examples in src/test/java for example programs.
  */
 package com.basistech.rosette.internal.take5build;

@@ -17,10 +17,13 @@ package com.basistech.rosette.internal.take5build.examples;
 import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.basistech.rosette.internal.take5.Take5Match;
 import com.basistech.rosette.internal.take5build.MapTake5PairSource;
+import com.basistech.rosette.internal.take5build.ReusableTake5Pair;
 import com.basistech.rosette.internal.take5build.Take5Builder;
 import com.basistech.rosette.internal.take5build.Take5BuilderFactory;
 import com.basistech.rosette.internal.take5build.Take5EntryPoint;
+import com.basistech.rosette.internal.take5build.Take5Pair;
 import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteSink;
 import com.google.common.io.Files;
@@ -30,24 +33,20 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.Map;
+import java.util.List;
 
 /**
- * Demonstrate building a basic String->(null-terminated) String take5.
+ * Example that demonstrates payload details.
+ * This makes an LE take5, always, even if you run it on a BE machine.
  */
-public final class StringToString {
-
-    @Argument(usage = "tsv: key, value", metaVar = "INPUT", required = true)
-    File inputFile;
-
-    @Argument(index = 1, usage = "Output T5", metaVar = "OUTPUT", required = true)
+public class StringToInt {
+    @Argument(index = 0, usage = "Output T5", metaVar = "OUTPUT", required = true)
     File outputFile;
 
     public static void main(String args[]) throws Exception {
-        StringToString that = new StringToString();
+        StringToInt that = new StringToInt();
         CmdLineParser parser = new CmdLineParser(that);
         try {
             parser.parseArgument(args);
@@ -60,48 +59,34 @@ public final class StringToString {
         that.build();
     }
 
-    private void build() throws Exception {
-        final Map<String, CharSequence> data = Maps.newTreeMap(); // has to be ordered.
-        Files.readLines(inputFile, Charsets.UTF_8, new LineProcessor<Void>() {
-            @Override
-            public boolean processLine(String line) throws IOException {
-                String[] bits = line.split("\t");
-                data.put(bits[0], bits[1]);
-                return true;
-            }
+    private byte[] makePayload(int value) {
+        byte[] data = new byte[4];
+        ByteBuffer buffer = ByteBuffer.wrap(data);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.putInt(value);
+        return data;
+    }
 
-            @Override
-            public Void getResult() {
-                return null;
-            }
-        });
+    private void build() throws Exception {
+        List<Take5Pair> data = Lists.newArrayList();
+        data.add(new ReusableTake5Pair("a", makePayload(1000), 4));
+        data.add(new ReusableTake5Pair("b", makePayload(2000), 4));
+        data.add(new ReusableTake5Pair("c", makePayload(2000), 4));
 
         Take5BuilderFactory builderFactory = new Take5BuilderFactory();
-        builderFactory.putMetadata("Humpty", "Dumpty");
+        builderFactory.valueSize(4)
+                .putMetadata("Humpty", "Dumpty");
         Take5Builder builder = builderFactory.build();
         Take5EntryPoint entrypoint = builder.newEntryPoint("main");
-        MapTake5PairSource source = new MapTake5PairSource(builder, data);
-        entrypoint.loadContent(source.iterator());
-
+        entrypoint.loadContent(data.iterator());
         ByteSink sink = Files.asByteSink(outputFile);
         builder.buildToSink(sink);
 
         ByteBuffer dictBuffer = Files.map(outputFile);
         dictBuffer.order(ByteOrder.LITTLE_ENDIAN);
         Take5Dictionary dict = new Take5Dictionary(dictBuffer, dictBuffer.capacity());
-        for (String k : data.keySet()) {
-            Take5Match match = dict.matchExact(k);
-            System.out.printf("%s -> %s\n", k, readNullTermString(dictBuffer, match.getOffsetValue()));
-        }
-    }
-
-    private String readNullTermString(ByteBuffer buffer, int offset) {
-        char c;
-        StringBuilder sb = new StringBuilder();
-        while ((c = buffer.getChar(offset)) != 0) {
-            sb.append(c);
-            offset += 2;
-        }
-        return sb.toString();
+        Take5Match match = dict.matchExact("a");
+        int val = dictBuffer.getInt(match.getOffsetValue());
+        System.out.printf("a -> %d\n", val);
     }
 }
