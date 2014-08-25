@@ -17,10 +17,12 @@ package com.basistech.rosette.internal.take5build;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -43,6 +45,30 @@ public class InputFileTest extends Assert {
             this.payload = pair.getValue();
             this.alignment = pair.getAlignment();
         }
+    }
+
+    @Test
+    public void testBom() throws Exception {
+        File input = File.createTempFile("t5.", ".txt");
+        Files.write("\ufeffkey0\t\"value\"", input, Charsets.UTF_8);
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimpleKeys(false);
+        CharSource source = Files.asCharSource(input, Charsets.UTF_8);
+        inputFile.read(source);
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        Take5Pair pair = pairs.iterator().next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
+
+        Files.write("\ufeffkey0", input, Charsets.UTF_8);
+        inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(false);
+        inputFile.setSimpleKeys(false);
+        source = Files.asCharSource(input, Charsets.UTF_8);
+        inputFile.read(source);
+        pairs = inputFile.getPairs();
+        pair = pairs.iterator().next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
     }
 
     @Test

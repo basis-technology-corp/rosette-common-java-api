@@ -108,9 +108,18 @@ class InputFile {
     private class PayloadsInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
         private int lineCount = 1;
+        private boolean first = true;
 
         @Override
         public boolean processLine(String line) throws IOException {
+
+            if (first) {
+                if (line.length() > 0 && line.charAt(0) == '\ufeff') {
+                    line = line.substring(1);
+                }
+                first = false;
+            }
+
             int tabIndex = line.indexOf('\t');
 
             if (tabIndex == -1 || tabIndex == 0) {
@@ -149,9 +158,16 @@ class InputFile {
     private class SimpleInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
         private int lineCount;
+        private boolean first = true;
 
         @Override
         public boolean processLine(String line) throws IOException {
+            if (first) {
+                if (line.length() > 0 && line.charAt(0) == '\ufeff') {
+                    line = line.substring(1);
+                }
+                first = false;
+            }
             String key = parseKey(line, lineCount);
             items.add(new Item(key));
 
