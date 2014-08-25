@@ -27,6 +27,8 @@ import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -45,6 +47,52 @@ public class InputFileTest extends Assert {
             this.payload = pair.getValue();
             this.alignment = pair.getAlignment();
         }
+    }
+
+    @Test
+    public void simplePayloads() throws Exception {
+        URL url = Resources.getResource(PayloadLexerTest.class, "simple-payloads.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimplePayloads(true);
+        inputFile.setSimpleKeys(true);
+        inputFile.read(source);
+        Charset charset;
+        if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) {
+            charset = Charsets.UTF_16BE;
+        } else {
+            charset = Charsets.UTF_16LE;
+        }
+
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        Iterator<Take5Pair> it = pairs.iterator();
+        Take5Pair pair = it.next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
+        assertArrayEquals("frog\u0000".getBytes(charset), pair.getValue());
+        pair = it.next();
+        assertArrayEquals("key1".toCharArray(), pair.getKey());
+        assertArrayEquals("goo\"se\u0000".getBytes(charset), pair.getValue());
+        pair = it.next();
+        assertArrayEquals("key2".toCharArray(), pair.getKey());
+        assertArrayEquals("helter\u2012skelter\u0000".getBytes(charset), pair.getValue());
+    }
+
+    @Test
+    public void emptyPayloads() throws Exception {
+        URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(false);
+        inputFile.setSimpleKeys(false);
+        inputFile.setEmptyPayloads(true);
+        inputFile.read(source);
+
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        Take5Pair pair = pairs.iterator().next();
+        assertArrayEquals(new byte[] { 0 }, pair.getValue());
     }
 
     @Test

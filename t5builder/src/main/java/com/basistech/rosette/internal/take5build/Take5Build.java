@@ -119,10 +119,19 @@ public final class Take5Build {
     @Option(name = "-no-payloads", usage = "input file is just keys")
     boolean noPayloads;
 
+    // no payloads in the input, but stub payloads in the output.
+    // who knew that C++ worked this way?
+    @Option(name = "-empty-payloads", usage = "input file is just keys, but create stub payloads")
+    boolean emptyPayloads;
+
     //This is the inverse of -q.
     @Option(name = "-simple-keys", usage = "simple keys; no escapes",
             aliases = {"-simpleKeys" })
     boolean simpleKeys;
+
+    @Option(name = "-simple-payloads", usage = "payloads are read as simple strings, and written as UTF-16 strings, null-terminated")
+    boolean simplePayloads;
+
 
     @Option(name = "-entrypoint", metaVar = "NAME", usage = "entrypoint (default 'main')")
     String entrypointName;
@@ -243,7 +252,9 @@ public final class Take5Build {
             spec.entrypointName = entrypointName;
             spec.inputFile = commandInputFile;
             spec.simpleKeys = simpleKeys;
+            spec.simplePayloads = simplePayloads;
             spec.noPayloads = noPayloads;
+            spec.emptyPayloads = emptyPayloads;
             spec.ignorePayloads = ignorePayloads;
             inputSpecifications.add(spec);
         }
@@ -363,7 +374,8 @@ public final class Take5Build {
         }
         InputFile inputFile = new InputFile(byteOrder);
         inputFile.setSimpleKeys(spec.simpleKeys);
-        inputFile.setPayloads(!spec.noPayloads);
+        inputFile.setSimplePayloads(spec.simplePayloads);
+        inputFile.setPayloads(!spec.noPayloads && !spec.emptyPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
         inputFile.setDefaultFormat(spec.defaultMode);
         try {
