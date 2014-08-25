@@ -44,6 +44,10 @@ class InputFile {
     private boolean payloads;
     // if true, expect input lines to have payloads, but ignore them.
     private boolean ignorePayloads;
+    // payloads are just plain strings.
+    private boolean simplePayloads;
+    // like !payloads, but fabricate empty payloads. Compatibility with C++.
+    private boolean emptyPayloads;
 
     private String defaultFormat;
     private int maximumItemPayloadSize = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES;
@@ -105,6 +109,14 @@ class InputFile {
         }
     }
 
+    InputFile(ByteOrder order) {
+        this.order = order;
+    }
+
+    private String packageSimplePayload(String data) {
+        return "#2s \"" + data.replace("\"", "\\\"") + "\"";
+    }
+
     private class PayloadsInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
         private int lineCount = 1;
@@ -137,7 +149,12 @@ class InputFile {
             if (!ignorePayloads) {
                 String payloadInput = line.substring(tabIndex + 1);
                 try {
-                    payload = PayloadParser.newParser(defaultFormat, order).parse(payloadInput);
+                    if (simplePayloads) {
+                        final String packaged = packageSimplePayload(payloadInput);
+                        payload = PayloadParser.newParser(defaultFormat, order).parse(packaged);
+                    } else {
+                        payload = PayloadParser.newParser(defaultFormat, order).parse(payloadInput);
+                    }
                 } catch (PayloadParserException e) {
                     throw Throwables.propagate(new InputFileException(String.format("Malformed payload on line %d", lineCount), e));
                 }
@@ -155,6 +172,9 @@ class InputFile {
         }
     }
 
+    /**
+     * This is used for key-only files.
+     */
     private class SimpleInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
         private int lineCount;
@@ -169,7 +189,12 @@ class InputFile {
                 first = false;
             }
             String key = parseKey(line, lineCount);
-            items.add(new Item(key));
+            if (emptyPayloads) {
+                // fabricate a single-byte payload.
+                items.add(new Item(key, new Payload(new byte[1], 1)));
+            } else {
+                items.add(new Item(key));
+            }
 
             lineCount++;
             return true;
@@ -181,9 +206,6 @@ class InputFile {
         }
     }
 
-    InputFile(ByteOrder order) {
-        this.order = order;
-    }
 
     // this throws a runtime exception for the convenience of its callers, who have no useful checked exceptions.
     // the IOException will never happen because the IO is on strings.
@@ -205,6 +227,7 @@ class InputFile {
             if (payloads) {
                 processor = new PayloadsInputLineProcessor();
             } else {
+                // end up here for 'emptyPayloads'
                 processor = new SimpleInputLineProcessor();
             }
             items = charSource.readLines(processor);
@@ -276,5 +299,21 @@ class InputFile {
 
     public void setIgnorePayloads(boolean ignorePayloads) {
         this.ignorePayloads = ignorePayloads;
+    }
+
+    public boolean isSimplePayloads() {
+        return simplePayloads;
+    }
+
+    public void setSimplePayloads(boolean simplePayloads) {
+        this.simplePayloads = simplePayloads;
+    }
+
+    public boolean isEmptyPayloads() {
+        return emptyPayloads;
+    }
+
+    public void setEmptyPayloads(boolean emptyPayloads) {
+        this.emptyPayloads = emptyPayloads;
     }
 }
