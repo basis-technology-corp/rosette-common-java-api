@@ -198,6 +198,29 @@ public class CommandLineTest extends Assert {
         assertThat(dict2.getMaximumContentVersion(), is(equalTo(3)));
     }
 
+    @Test
+    public void emptyPayloadTest() throws Exception {
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        File inputFile = new File("src/test/data/hex-keys.txt");
+        t5File.deleteOnExit();
+        Take5Build cmd = new Take5Build();
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.commandInputFile = inputFile;
+        cmd.emptyPayloads = true;
+        cmd.checkOptionConsistency();
+        cmd.build();
+
+        ByteBuffer resultT5 = Files.map(t5File);
+        Take5Dictionary dict = new Take5Dictionary(resultT5, resultT5.capacity());
+        assertEquals(Take5Format.ENGINE_SEARCH, dictSpyInt(dict, "fsaEngine"));
+        Take5Match match = new Take5Match();
+        assertThat(dict.matchExact("abed".toCharArray(), 0, "abed".length(), match), is(equalTo(true)));
+        int valueOffset = match.getOffsetValue();
+        resultT5.order(ByteOrder.nativeOrder());
+        assertThat(resultT5.get(valueOffset), equalTo((byte) 0));
+    }
 
     private int dictSpyInt(Take5Dictionary dict, String fieldName) {
         try {

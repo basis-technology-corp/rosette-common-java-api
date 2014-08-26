@@ -305,6 +305,8 @@ public final class Take5Build {
             factory.valueSize(alignment);
         } else if (noPayloads || ignorePayloads) {
             factory.valueFormat(ValueFormat.IGNORE);
+        } else if (emptyPayloads) {
+            factory.valueFormat(ValueFormat.PTR);
         } else {
             factory.valueFormat(ValueFormat.IGNORE);
         }
@@ -378,6 +380,8 @@ public final class Take5Build {
         inputFile.setPayloads(!spec.noPayloads && !spec.emptyPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
         inputFile.setDefaultFormat(spec.defaultMode);
+        inputFile.setEmptyPayloads(spec.emptyPayloads);
+
         try {
             inputFile.read(source); // pull the whole thing into memory.
         } catch (IOException e) {
