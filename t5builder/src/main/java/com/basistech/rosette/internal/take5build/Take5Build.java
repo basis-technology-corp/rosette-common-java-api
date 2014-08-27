@@ -103,7 +103,7 @@ public final class Take5Build {
     @Option(name = "-binary-payloads",
             aliases = {"-alignment", "-binaryPayloads" },
             metaVar = "ALIGNMENT",
-            usage = "payload size/alignment")
+            usage = "payload size/alignment. If this is present, the input file has <key>TAB<value> format. If it is absent, the file is just keys.")
     Integer alignment;
 
     @Option(name = "-default-mode", metaVar = "MODE",
