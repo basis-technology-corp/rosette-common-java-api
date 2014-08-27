@@ -76,23 +76,42 @@ public class InputFileTest extends Assert {
         assertArrayEquals("goo\"se\u0000".getBytes(charset), pair.getValue());
         pair = it.next();
         assertArrayEquals("key2".toCharArray(), pair.getKey());
-        assertArrayEquals("helter\u2012skelter\u0000".getBytes(charset), pair.getValue());
+        // note: this tests that we do _not_ process escapes!
+        assertArrayEquals("helter\\u2012skelter\u0000".getBytes(charset), pair.getValue());
     }
 
     @Test
-    public void emptyPayloads() throws Exception {
+    public void noPayloads() throws Exception {
         URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
         InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
         inputFile.setPayloads(false);
         inputFile.setSimpleKeys(false);
-        inputFile.setEmptyPayloads(true);
         inputFile.read(source);
 
         Iterable<Take5Pair> pairs = inputFile.getPairs();
-        Take5Pair pair = pairs.iterator().next();
-        assertArrayEquals(new byte[] { 0 }, pair.getValue());
+        for (Take5Pair pair : pairs) {
+            assertNull(pair.getValue());
+        }
+    }
+
+    // test an entire file of keys with no values, each gets a value of a null-terminated zero-length string.
+    @Test
+    public void emptySimplePayloads() throws Exception {
+        URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimplePayloads(true);
+        inputFile.setSimpleKeys(false);
+        inputFile.read(source);
+
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        for (Take5Pair pair : pairs) {
+            assertArrayEquals(new byte[] { 0, 0 }, pair.getValue());
+        }
     }
 
     @Test

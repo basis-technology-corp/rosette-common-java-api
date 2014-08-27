@@ -14,6 +14,7 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
@@ -46,8 +47,6 @@ class InputFile {
     private boolean ignorePayloads;
     // payloads are just plain strings.
     private boolean simplePayloads;
-    // like !payloads, but fabricate empty payloads. Compatibility with C++.
-    private boolean emptyPayloads;
 
     private String defaultFormat;
     private int maximumItemPayloadSize = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES;
@@ -113,10 +112,6 @@ class InputFile {
         this.order = order;
     }
 
-    private String packageSimplePayload(String data) {
-        return "#2s \"" + data.replace("\"", "\\\"") + "\"";
-    }
-
     private class PayloadsInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
         private int lineCount = 1;
@@ -133,27 +128,35 @@ class InputFile {
             }
 
             int tabIndex = line.indexOf('\t');
+            boolean emptyPayload = false;
+            String key;
+            String payloadInput = null;
 
-            if (tabIndex == -1 || tabIndex == 0) {
-                throw Throwables.propagate(new InputFileException(String.format("No key on line %d", lineCount)));
-            }
-            if (tabIndex == line.length() - 1) {
-                throw Throwables.propagate(new InputFileException(String.format("No key on line %d", lineCount)));
+            if (tabIndex == -1) { // no tab, no payload. Perhaps empty key
+                emptyPayload = true;
+                key = parseKey(line, lineCount);
+            } else if (tabIndex == 0) { // tab at the beginning: empty key.
+                key = "";
+                payloadInput = line;
+            } else { // otherwise, key and value.
+                String keyInput = line.substring(0, tabIndex);
+                key = parseKey(keyInput, lineCount);
+                payloadInput = line.substring(tabIndex + 1);
             }
 
-            String keyInput = line.substring(0, tabIndex);
-            String key = parseKey(keyInput, lineCount);
             Payload payload = null;
 
             // for compatibility, support reading key\tpayload but ignore the payload.
             if (!ignorePayloads) {
-                String payloadInput = line.substring(tabIndex + 1);
                 try {
                     if (simplePayloads) {
-                        final String packaged = packageSimplePayload(payloadInput);
-                        payload = PayloadParser.newParser(defaultFormat, order).parse(packaged);
+                        payload = parseSimplePayload(payloadInput); // 'parse' is an overstatement
                     } else {
-                        payload = PayloadParser.newParser(defaultFormat, order).parse(payloadInput);
+                        if (emptyPayload) {
+                            payload = new Payload(new byte[1], 1);  // nothing in particular.
+                        } else {
+                            payload = PayloadParser.newParser(defaultFormat, order).parse(payloadInput);
+                        }
                     }
                 } catch (PayloadParserException e) {
                     throw Throwables.propagate(new InputFileException(String.format("Malformed payload on line %d", lineCount), e));
@@ -170,6 +173,22 @@ class InputFile {
         public List<Item> getResult() {
             return items;
         }
+    }
+
+    private Payload parseSimplePayload(String payloadInput) {
+        if (payloadInput == null) {
+            payloadInput = "\u0000";
+        } else {
+            payloadInput = payloadInput + "\u0000";
+        }
+
+        byte[] payloadBytes;
+        if (order == ByteOrder.LITTLE_ENDIAN) {
+            payloadBytes = payloadInput.getBytes(Charsets.UTF_16LE);
+        } else {
+            payloadBytes = payloadInput.getBytes(Charsets.UTF_16BE);
+        }
+        return new Payload(payloadBytes, 2);
     }
 
     /**
@@ -189,13 +208,7 @@ class InputFile {
                 first = false;
             }
             String key = parseKey(line, lineCount);
-            if (emptyPayloads) {
-                // fabricate a single-byte payload.
-                items.add(new Item(key, new Payload(new byte[1], 1)));
-            } else {
-                items.add(new Item(key));
-            }
-
+            items.add(new Item(key));
             lineCount++;
             return true;
         }
@@ -309,11 +322,4 @@ class InputFile {
         this.simplePayloads = simplePayloads;
     }
 
-    public boolean isEmptyPayloads() {
-        return emptyPayloads;
-    }
-
-    public void setEmptyPayloads(boolean emptyPayloads) {
-        this.emptyPayloads = emptyPayloads;
-    }
 }

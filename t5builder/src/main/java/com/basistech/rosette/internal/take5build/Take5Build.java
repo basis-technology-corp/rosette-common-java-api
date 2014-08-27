@@ -119,11 +119,6 @@ public final class Take5Build {
     @Option(name = "-no-payloads", usage = "input file is just keys")
     boolean noPayloads;
 
-    // no payloads in the input, but stub payloads in the output.
-    // who knew that C++ worked this way?
-    @Option(name = "-empty-payloads", usage = "input file is just keys, but create stub payloads")
-    boolean emptyPayloads;
-
     //This is the inverse of -q.
     @Option(name = "-simple-keys", usage = "simple keys; no escapes",
             aliases = {"-simpleKeys" })
@@ -254,7 +249,6 @@ public final class Take5Build {
             spec.simpleKeys = simpleKeys;
             spec.simplePayloads = simplePayloads;
             spec.noPayloads = noPayloads;
-            spec.emptyPayloads = emptyPayloads;
             spec.ignorePayloads = ignorePayloads;
             inputSpecifications.add(spec);
         }
@@ -297,16 +291,14 @@ public final class Take5Build {
             factory.outputFormat(OutputFormat.FSA);
         } else if (indexLookup) {
             factory.valueFormat(ValueFormat.INDEX);
-        } else if (alignment != null) {
+        } else if (alignment != null || simplePayloads) { // if the caller asked for simple payloads, they don't also have to give us an alignment.
             factory.valueFormat(ValueFormat.PTR);
-            if (alignment < 2) {
+            if (alignment == null || alignment < 2) {
                 alignment = 2;
             }
             factory.valueSize(alignment);
         } else if (noPayloads || ignorePayloads) {
             factory.valueFormat(ValueFormat.IGNORE);
-        } else if (emptyPayloads) {
-            factory.valueFormat(ValueFormat.PTR);
         } else {
             factory.valueFormat(ValueFormat.IGNORE);
         }
@@ -321,7 +313,7 @@ public final class Take5Build {
             try {
                 factory.copyright(FileUtils.readFileToString(copyrightFile, "utf-8"));
             } catch (IOException e) {
-                throw new Failure("Error reading copyight file " + copyrightFile.getAbsolutePath());
+                throw new Failure("Error reading copyright file " + copyrightFile.getAbsolutePath());
             }
         }
 
@@ -377,10 +369,9 @@ public final class Take5Build {
         InputFile inputFile = new InputFile(byteOrder);
         inputFile.setSimpleKeys(spec.simpleKeys);
         inputFile.setSimplePayloads(spec.simplePayloads);
-        inputFile.setPayloads(!spec.noPayloads && !spec.emptyPayloads);
+        inputFile.setPayloads(!spec.noPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
         inputFile.setDefaultFormat(spec.defaultMode);
-        inputFile.setEmptyPayloads(spec.emptyPayloads);
 
         try {
             inputFile.read(source); // pull the whole thing into memory.

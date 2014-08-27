@@ -31,7 +31,4 @@ class InputSpecification {
     File inputFile;
     String defaultMode;
     boolean simplePayloads;
-    // this is for compatibility with C++; it means that there are,
-    // effectively, no payloads, but we make empty ones anyhow.
-    boolean emptyPayloads;
 }

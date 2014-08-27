@@ -17,9 +17,6 @@ package com.basistech.rosette.internal.take5build;
 import com.basistech.rosette.internal.take5.Take5Exception;
 import com.basistech.rosette.internal.take5.Take5Match;
 import com.basistech.rosette.internal.take5.Take5Dictionary;
-import com.basistech.rosette.internal.take5build.Engine;
-import com.basistech.rosette.internal.take5build.KeyFormat;
-import com.basistech.rosette.internal.take5build.Take5Format;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.junit.Assert;
@@ -82,6 +79,28 @@ public class CommandLineTest extends Assert {
         assertEquals(COPYRIGHT_C_2014_ELMER_FUDD, dict.getCopyright());
         assertEquals("value 1", dict.getMetadata().get("k1"));
         assertEquals("value 2", dict.getMetadata().get("k2"));
+    }
+
+    @Test
+    public void simpleFormatMissingValues() throws Exception {
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        File inputFile = new File("src/test/data/hex-keys.txt");
+        Take5Build cmd = new Take5Build();
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.commandInputFile = inputFile;
+        cmd.simplePayloads = true;
+        cmd.checkOptionConsistency();
+        cmd.build();
+
+        ByteBuffer resultT5 = Files.map(t5File);
+        Take5Dictionary dict = new Take5Dictionary(resultT5, resultT5.capacity());
+        Take5Match match = new Take5Match();
+        assertTrue(dict.matchExact("bedded".toCharArray(), 0, "bedded".length(), match));
+        int valueOffset = match.getOffsetValue();
+        CharBuffer dictAsChars = resultT5.asCharBuffer();
+        assertThat(dictAsChars.get(valueOffset / 2), equalTo((char)0));
     }
 
     @Test
@@ -196,30 +215,6 @@ public class CommandLineTest extends Assert {
         assertThat(new String(dictChars, 0, dictChars.length), is(equalTo(value)));
         assertThat(dict2.getMinimumContentVersion(), is(equalTo(1)));
         assertThat(dict2.getMaximumContentVersion(), is(equalTo(3)));
-    }
-
-    @Test
-    public void emptyPayloadTest() throws Exception {
-        File t5File = File.createTempFile("t5btest.", ".bin");
-        t5File.deleteOnExit();
-        File inputFile = new File("src/test/data/hex-keys.txt");
-        t5File.deleteOnExit();
-        Take5Build cmd = new Take5Build();
-        cmd.engine = Engine.FSA;
-        cmd.outputFile = t5File;
-        cmd.commandInputFile = inputFile;
-        cmd.emptyPayloads = true;
-        cmd.checkOptionConsistency();
-        cmd.build();
-
-        ByteBuffer resultT5 = Files.map(t5File);
-        Take5Dictionary dict = new Take5Dictionary(resultT5, resultT5.capacity());
-        assertEquals(Take5Format.ENGINE_SEARCH, dictSpyInt(dict, "fsaEngine"));
-        Take5Match match = new Take5Match();
-        assertThat(dict.matchExact("abed".toCharArray(), 0, "abed".length(), match), is(equalTo(true)));
-        int valueOffset = match.getOffsetValue();
-        resultT5.order(ByteOrder.nativeOrder());
-        assertThat(resultT5.get(valueOffset), equalTo((byte) 0));
     }
 
     private int dictSpyInt(Take5Dictionary dict, String fieldName) {
