@@ -139,7 +139,7 @@ public class InputFileTest extends Assert {
     }
 
     @Test
-    public void testSimpleKeysAndPayloads() throws Exception {
+    public void simpleKeysAndPayloads() throws Exception {
         URL url = Resources.getResource(PayloadLexerTest.class, "simple-keys-and-payloads.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
@@ -169,7 +169,7 @@ public class InputFileTest extends Assert {
     }
 
     @Test
-    public void testKeysWithEscapes() throws Exception {
+    public void keysWithEscapes() throws Exception {
         URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
@@ -189,5 +189,34 @@ public class InputFileTest extends Assert {
         assertArrayEquals("2h\tello".toCharArray(), resultPairs.get(1).key);
         assertArrayEquals("3h\u2e00ello".toCharArray(), resultPairs.get(2).key);
         assertArrayEquals("4h\u0000ello".toCharArray(), resultPairs.get(3).key);
+    }
+
+    @Test
+    public void empties() throws Exception {
+        // test empty keys and values in non-simple format.
+        URL url = Resources.getResource(PayloadLexerTest.class, "empties.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimpleKeys(true);
+        inputFile.read(source);
+
+        Iterator<Take5Pair> pairs = inputFile.getPairs().iterator();
+        Take5Pair pair = pairs.next();
+        assertArrayEquals("".toCharArray(), pair.getKey());
+        pair = pairs.next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
+        assertEquals(1, pair.getValue().length);
+        pairs.next(); // skip key1
+        pair = pairs.next();
+        assertArrayEquals("key2".toCharArray(), pair.getKey());
+        assertEquals(1, pair.getValue().length);
+        pairs.next(); // skip one
+        pair = pairs.next();
+        assertArrayEquals("key4".toCharArray(), pair.getKey());
+        assertEquals(1, pair.getValue().length);
+
+
     }
 }
