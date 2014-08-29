@@ -376,7 +376,7 @@ public final class Take5Build {
         try {
             inputFile.read(source); // pull the whole thing into memory.
         } catch (IOException e) {
-            throw new Failure("IO error reading " + (spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath()));
+            throw new Failure(String.format("IO error reading %s: %s", spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath(), e.getMessage()));
         } catch (InputFileException e) {
             Throwable rootException = Throwables.getRootCause(e);
             throw new Failure(String.format("Format error reading %s: %s",
