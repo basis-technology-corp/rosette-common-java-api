@@ -32,7 +32,7 @@ import java.util.TimeZone;
  * @deprecated
  */
 // CHECKSTYLE:OFF
-@SuppressWarnings("PMD")
+@SuppressWarnings({"PMD", "deprecation"})
 @Deprecated
 public class Take5Dictionary {
     /* Binary format version numbers. */

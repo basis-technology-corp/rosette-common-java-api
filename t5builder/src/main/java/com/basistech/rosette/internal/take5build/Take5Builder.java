@@ -111,7 +111,10 @@ import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_LIMI
 
 /**
  * Builder for Take5 binaries. Use {@link Take5BuilderFactory}
- * as a factory to obtain these classes.
+ * as a factory to obtain these classes. Call {@link #newEntryPoint(String)}
+ * for each entrypoint, and then one of {@link #buildArray()},
+ * {@link #buildBuffer()}, or {@link #buildToSink(com.google.common.io.ByteSink)}
+ * to write the output file.
  */
 public class Take5Builder {
     // Currently this builder is up to version 5.6:
@@ -245,10 +248,13 @@ public class Take5Builder {
     }
 
     /**
-     * Create a new entry point.  Every entry point you create must be
-     * loaded with content before you can build a Take5 binary.  The name
-     * must consist of only ASCII characters. (why?)
-     * <P>
+     * Create a new entry point. All the entrypoints that you create must be
+     * loaded with content before you call {@link #buildArray()},
+     * {@link #buildBuffer()}, or {@link #buildToSink(com.google.common.io.ByteSink)}.
+     * <p/>
+     * Call {@link com.basistech.rosette.internal.take5build.Take5EntryPoint#loadContent(java.util.Iterator)}
+     * to load the entrypoint with keys and values.
+     * <P/>
      * Note that creating a single entry point Take5 binary whose entry
      * point is named <CODE>"main"</CODE> will result in a binary that can
      * be interpreted by older Take5 runtimes.
@@ -350,13 +356,22 @@ public class Take5Builder {
             }
 
         }
-        // there's probably a quicker way to do this, and is the byte order right?
-        // perfhash keys are defined to be null-terminated.
-        byte[] keyBytes = new String(key, 0, keyLength).getBytes(Charsets.UTF_16LE);
-        keyBytes = Arrays.copyOf(keyBytes, keyBytes.length + 2);
-        Value keyAsValue = valueRegistry.intern(keyBytes, 0, keyBytes.length, 2, Value.KEY);
+        // there's probably a quicker way to do this.
+        // perfhash keys are defined to be null-termitated.
 
-        int keyHash = FnvHash.fnvhash(0, keyAsValue.data, 0, keyAsValue.length - 2); // don't hash that null!
+        ByteBuffer keyByteBuffer = ByteBuffer.allocate((keyLength + 1) * 2); // room for null
+        keyByteBuffer.order(byteOrder);
+        CharBuffer keyCharBuffer = keyByteBuffer.asCharBuffer();
+        keyCharBuffer.put(key, 0, keyLength);
+        keyCharBuffer.put((char)0);                   // be certain about that null
+        keyCharBuffer.position(0);
+
+        assert keyByteBuffer.position() == 0;
+        assert keyByteBuffer.limit() == keyByteBuffer.capacity();
+
+        Value keyAsValue = valueRegistry.intern(keyByteBuffer, 2, Value.KEY);
+        keyCharBuffer.limit(keyLength); // omit the trailing null.
+        int keyHash = FnvHash.fnvhash(0, keyCharBuffer);
         PerfhashKeyValuePair pair = new PerfhashKeyValuePair(keyAsValue, value, keyHash);
         allPerfhashPairs.addFirst(pair);
     }
@@ -812,12 +827,14 @@ public class Take5Builder {
     }
 
     private Value findValue(Take5Pair pair) {
-        byte[] data = pair.getValue();
-        if (data == null) {
+        if (pair.getValue() == null) {
             return null;
         }
-        int offset = pair.getOffset();
-        return valueRegistry.intern(data, offset, offset + pair.getLength(), pair.getAlignment(), Value.VALUE);
+        ByteBuffer buffer = ByteBuffer.allocate(pair.getLength());
+        buffer.order(byteOrder);
+        buffer.put(pair.getValue(), pair.getOffset(), pair.getLength());
+        buffer.position(0); // undo result of relative put.
+        return valueRegistry.intern(buffer, pair.getAlignment(), Value.VALUE);
     }
 
     /**
@@ -855,7 +872,7 @@ public class Take5Builder {
     /**
      * Write a Take5 binary into a {@link ByteSink}.
      *
-     * @param sink the sinl.
+     * @param sink the sink.
      */
     public void buildToSink(ByteSink sink) throws IOException {
         if (outputFormat == OutputFormat.NONE) {

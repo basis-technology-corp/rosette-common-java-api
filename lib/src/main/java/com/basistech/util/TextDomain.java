@@ -147,7 +147,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * @return String representation of the TextDomain.
      */
     public String toString() {
-        return "[" + theScript.code4() + "/" + theLanguage.ISO639_1() + "/" + theScheme.getName() + "]";
+        return "[" + theScript.code4() + "/" + theLanguage.ISO639_3() + "/" + theScheme.getName() + "]";
     }
 
     /**

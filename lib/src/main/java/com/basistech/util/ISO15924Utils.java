@@ -186,7 +186,8 @@ public class ISO15924Utils {
             ISO15924 bestScript = ISO15924.lookupByNumeric(bestNonLatinCode);
             int hiraCount = histogram[ISO15924.Hira.numeric()];
             int kanaCount = histogram[ISO15924.Kana.numeric()];
-            if ((hiraCount > 0 || kanaCount > 0) && bestScript == ISO15924.Hani) {
+            int haniCount = histogram[ISO15924.Hani.numeric()];
+            if ((hiraCount > 0 || kanaCount > 0) && haniCount > 0) {
                 return ISO15924.Jpan;
             } else if (hiraCount > 0 && kanaCount > 0) {
                 return ISO15924.Hrkt;

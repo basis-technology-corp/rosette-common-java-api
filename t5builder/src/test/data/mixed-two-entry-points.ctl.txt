@@ -1,0 +1,10 @@
+name = mixed1
+path = src/test/data/mixed.txt
+flags = 0xDEADBEEF
+
+name = mixed2
+path = src/test/data/mixed2.txt
+escape = backslash
+min_version = 1
+max_version = 3
+

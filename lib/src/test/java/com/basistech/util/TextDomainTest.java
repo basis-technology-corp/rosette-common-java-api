@@ -55,4 +55,12 @@ public class TextDomainTest extends TestCase {
         assertTrue(td1.hashCode() == td2.hashCode());
         assertTrue(td2.hashCode() == td3.hashCode());
     }
+
+    public void testToString() {
+        // Make sure we're using 3-letter language codes so that we can tell these apart when
+        // we're debugging:
+        TextDomain prs = new TextDomain(LanguageCode.DARI);
+        TextDomain pes = new TextDomain(LanguageCode.WESTERN_FARSI);
+        assertFalse(prs.toString().equals(pes.toString()));
+    }
 }

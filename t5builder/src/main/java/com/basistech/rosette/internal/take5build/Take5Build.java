@@ -17,6 +17,7 @@ package com.basistech.rosette.internal.take5build;
 
 import au.com.bytecode.opencsv.CSVParser;
 import com.google.common.base.Charsets;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharSource;
 import com.google.common.io.Files;
@@ -87,21 +88,26 @@ public final class Take5Build {
             usage = "File containing a copyright notice")
     File copyrightFile;
 
+    //TODO: relieve user of the need to type ENGINE_
     @Option(name = "-engine", metaVar = "ENGINE",
-            usage = "lookup engine (FSA or PERFHASH).")
+            usage = "lookup engine (ENGINE_FSA or ENGINE_PERFHASH).")
     Engine engine = Engine.FSA;
 
-    @Option(name = "-key-format", metaVar = "FORMAT", usage = "Key format; only useful with -engine PERFHASH")
+    //TODO: relieve user of the need to type HASH_
+    @Option(name = "-key-format", metaVar = "FORMAT", usage = "Key format; only useful with -engine ENGINE_PERFHASH")
     KeyFormat keyFormat;
 
     @Option(name = "-join", metaVar = "CONTROL_FILE", usage = "Combine multiple Take5's into one output.")
     File controlFile;
 
-    @Option(name = "-binaryPayloads", metaVar = "ALIGNMENT",
-            usage = "payload size/aytelignment")
+    @Option(name = "-binary-payloads",
+            aliases = {"-alignment", "-binaryPayloads" },
+            metaVar = "ALIGNMENT",
+            usage = "payload size/alignment")
     Integer alignment;
 
-    @Option(name = "-defaultMode", metaVar = "MODE",
+    @Option(name = "-default-mode", metaVar = "MODE",
+            aliases = {"-defaultMode" },
             usage = "default payload mode (e.g. #4f).")
     String defaultPayloadFormat;
 
@@ -114,17 +120,20 @@ public final class Take5Build {
     boolean noPayloads;
 
     //This is the inverse of -q.
-    @Option(name = "-simpleKeys", usage = "simple keys; no escapes")
+    @Option(name = "-simple-keys", usage = "simple keys; no escapes",
+            aliases = {"-simpleKeys" })
     boolean simpleKeys;
 
     @Option(name = "-entrypoint", metaVar = "NAME", usage = "entrypoint (default 'main')")
     String entrypointName;
 
-    @Option(name = "-contentVersion", metaVar = "VERSION",
+    @Option(name = "-content-version", metaVar = "VERSION",
+            aliases = {"-contentVersion" },
             usage = "version of content")
     int version;
 
-    @Option(name = "-indexLookup", usage = "lookups map from key to (sorted) key indices; no stored payloads.")
+    @Option(name = "-index-lookup", usage = "lookups map from key to (sorted) key indices; no stored payloads.",
+            aliases = {"-indexLookup" })
     boolean indexLookup;
 
     @Option(name = "-debug-dump-lookup", usage = "write textual lookup dump.")
@@ -136,11 +145,10 @@ public final class Take5Build {
     @Option(name = "-no-output", usage = "No output at all.")
     boolean noOutput;
 
-    @Option(name = "-byteOrder", aliases = {"-byte-order" }, usage = "byte order (LE or BE)", metaVar = "ORDER", handler = ByteOrderOptionHandler.class)
+    @Option(name = "-byte-order", aliases = {"-byteOrder" }, usage = "byte order (LE or BE)", metaVar = "ORDER", handler = ByteOrderOptionHandler.class)
     ByteOrder byteOrder = ByteOrder.nativeOrder();
 
     private List<InputSpecification> inputSpecifications;
-    private Take5Builder builder;
 
     static class Failure extends Exception {
         Failure() {
@@ -304,13 +312,12 @@ public final class Take5Build {
             }
         }
 
+        Take5Builder builder;
         try {
             builder = factory.build();
         } catch (Take5BuildException e) {
             throw new Failure(e);
         }
-
-
 
         for (InputSpecification spec : inputSpecifications) {
             String name = spec.entrypointName;
@@ -323,7 +330,11 @@ public final class Take5Build {
             } catch (Take5BuildException e) {
                 throw new Failure(e);
             }
-            oneEntrypoint(spec, entrypoint);
+            try {
+                oneEntrypoint(spec, entrypoint);
+            } catch (Take5BuildException e) {
+                throw new Failure("Problem setting up entrypoint " + spec.entrypointName, e);
+            }
         }
 
         try {
@@ -337,25 +348,33 @@ public final class Take5Build {
         }
     }
 
-    private void oneEntrypoint(InputSpecification spec, Take5EntryPoint entrypoint) throws Failure {
+    private void oneEntrypoint(InputSpecification spec, Take5EntryPoint entrypoint) throws Failure, Take5BuildException {
+
+        entrypoint.setContentFlags(spec.contentFlags);
+        if (spec.minVersion != -1 && spec.maxVersion != -1) {
+            entrypoint.setContentVersion(spec.minVersion, spec.maxVersion);
+        }
+
         CharSource source;
         if (spec.inputFile == NO_FILE) {
             source = new StdinByteSource().asCharSource(Charsets.UTF_8);
         } else {
             source = Files.asCharSource(spec.inputFile, Charsets.UTF_8);
         }
-        InputFile inputFile = new InputFile();
+        InputFile inputFile = new InputFile(byteOrder);
         inputFile.setSimpleKeys(spec.simpleKeys);
         inputFile.setPayloads(!spec.noPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
+        inputFile.setDefaultFormat(spec.defaultMode);
         try {
             inputFile.read(source); // pull the whole thing into memory.
         } catch (IOException e) {
             throw new Failure("IO error reading " + (spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath()));
         } catch (InputFileException e) {
+            Throwable rootException = Throwables.getRootCause(e);
             throw new Failure(String.format("Format error reading %s: %s",
                     spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath(),
-                    e.getCause().getMessage()));
+                    rootException.getMessage()));
         }
         try {
             entrypoint.loadContent(inputFile.getPairs().iterator());

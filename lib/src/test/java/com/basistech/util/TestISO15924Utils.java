@@ -38,6 +38,10 @@ public class TestISO15924Utils extends TestCase {
 
         String mixedHiraAndKana = "\u30e4\u20f3\u30b0 \u306e"; //3 kana 1 hira
         assertEquals(ISO15924.Hrkt, ISO15924Utils.scriptForString(mixedHiraAndKana));
+        
+        //RLPNC-3516
+        String jpan = "\u8449\u540D\u30C1\u30F3"; //equal number of hani and hrkt
+        assertEquals(ISO15924.Jpan, ISO15924Utils.scriptForString(jpan));
     }
 
 }

@@ -19,7 +19,9 @@ import com.google.common.base.Charsets;
 import java.util.Iterator;
 
 /**
- * One entry point from a {@link Take5Builder}.
+ * API to load data for a single entrypoint of a Take5 file.
+ * Obtain instances of this class from {@link com.basistech.rosette.internal.take5build.Take5Builder#newEntryPoint(String)}.
+ * Call {@link #loadContent(java.util.Iterator)} to load the content; other methods are optional.
  */
 public class Take5EntryPoint {
     Take5Builder builder;
@@ -91,15 +93,16 @@ public class Take5EntryPoint {
     }
  
     /**
-     * Load the entry point with a sequence of {@link Take5Pair}s.  The
-     * Take5Pairs must be presented in the order determined by comparing
-     * their keys.  (Fortunately Take5 and Java both compare strings
+     * Load the entry point with a sequence of {@link Take5Pair}s. For
+     * {@link Engine#FSA}, the iterator must return
+     * Take5Pairs in the order determined by comparing
+     * their keys. (Fortunately Take5 and Java both compare strings
      * lexicographically by Unicode code points!)
      * <P>
      * An entry point can only be loaded once, and every outstanding entry
      * point must be loaded before the Take5Builder can build a binary.
      *
-     * @param pairs an iterator that generates Take5Pairs.
+     * @param pairs an iterator that returns {@link com.basistech.rosette.internal.take5build.Take5Pair} objects.
      * @throws Take5BuildException
      */
     public void loadContent(Iterator<Take5Pair> pairs) throws Take5BuildException {

@@ -18,7 +18,10 @@ package com.basistech.rosette.internal.take5build;
 
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import com.google.common.collect.Lists;
@@ -32,11 +35,27 @@ import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.basistech.rosette.internal.take5.Take5Exception;
 import com.basistech.rosette.internal.take5.Take5Match;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Unit tests for Take5Builder.
  */
+@RunWith(Parameterized.class)
 public class Take5BuilderTest {
+
+    private final ByteOrder order;
+
+    public Take5BuilderTest(ByteOrder order) {
+        this.order = order;
+    }
+
+    @Parameterized.Parameters(name = "{index}: {0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {ByteOrder.BIG_ENDIAN}, {ByteOrder.LITTLE_ENDIAN}
+        });
+    }
 
     //CHECKSTYLE:OFF
     @Rule
@@ -136,7 +155,8 @@ public class Take5BuilderTest {
     }
 
     private Take5BuilderFactory testFactory() {
-        return new Take5BuilderFactory().progressWriter(new PrintWriter(new NullWriter()));
+        // Tell the builder to build in the order we're testing in.
+        return new Take5BuilderFactory().progressWriter(new PrintWriter(new NullWriter())).order(order);
     }
 
     @Test
@@ -185,7 +205,7 @@ public class Take5BuilderTest {
     public void testCanonicalExample() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         for (String s : dmwwExample) {
             keys.add(new ReusableTake5Pair(s));
         }
@@ -290,7 +310,7 @@ public class Take5BuilderTest {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.PTR).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         int i = 0;
         for (String s : hexWords) {
             keys.add(generatePayload(s, i++));
@@ -312,7 +332,7 @@ public class Take5BuilderTest {
 
     private Take5Dictionary loadGenerated(Take5Builder builder, Take5EntryPoint[] returnEntrypoint) throws Take5BuildException, Take5Exception {
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = Lists.newArrayList();
         int i = 0;
         for (String s : hexWords) {
             keys.add(generatePayload(s, i++));
