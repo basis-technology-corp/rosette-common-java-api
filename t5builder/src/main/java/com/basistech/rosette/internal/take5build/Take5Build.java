@@ -36,6 +36,7 @@ import org.kohsuke.args4j.spi.Setter;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.OutputStreamWriter;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadMXBean;
@@ -88,13 +89,13 @@ public final class Take5Build {
             usage = "File containing a copyright notice")
     File copyrightFile;
 
-    //TODO: relieve user of the need to type ENGINE_
     @Option(name = "-engine", metaVar = "ENGINE",
-            usage = "lookup engine (ENGINE_FSA or ENGINE_PERFHASH).")
+            usage = "lookup engine (FSA or PERFHASH).")
     Engine engine = Engine.FSA;
 
     //TODO: relieve user of the need to type HASH_
-    @Option(name = "-key-format", metaVar = "FORMAT", usage = "Key format; only useful with -engine ENGINE_PERFHASH")
+    @Option(name = "-key-format", metaVar = "FORMAT",
+            usage = "key format (HASH_NONE, HASH_HASH32 or HASH_STRING); only useful with -engine PERFHASH")
     KeyFormat keyFormat;
 
     @Option(name = "-join", metaVar = "CONTROL_FILE", usage = "Combine multiple Take5's into one output.")
@@ -103,7 +104,7 @@ public final class Take5Build {
     @Option(name = "-binary-payloads",
             aliases = {"-alignment", "-binaryPayloads" },
             metaVar = "ALIGNMENT",
-            usage = "payload size/alignment")
+            usage = "payload size/alignment.  If you don't use this, you probably want to use -simple-payloads.")
     Integer alignment;
 
     @Option(name = "-default-mode", metaVar = "MODE",
@@ -123,6 +124,10 @@ public final class Take5Build {
     @Option(name = "-simple-keys", usage = "simple keys; no escapes",
             aliases = {"-simpleKeys" })
     boolean simpleKeys;
+
+    @Option(name = "-simple-payloads", usage = "payloads are read as simple strings, and written as UTF-16 strings, null-terminated")
+    boolean simplePayloads;
+
 
     @Option(name = "-entrypoint", metaVar = "NAME", usage = "entrypoint (default 'main')")
     String entrypointName;
@@ -227,6 +232,8 @@ public final class Take5Build {
         if (controlFile != null) {
             try {
                 inputSpecifications = new ControlFile().read(Files.asCharSource(controlFile, Charsets.UTF_8));
+            } catch (FileNotFoundException e) {
+                throw new Failure(String.format("Control File not found: %s", controlFile.getAbsolutePath()), e);
             } catch (IOException e) {
                 throw new Failure(String.format("Failed to read control file %s.", controlFile.getAbsolutePath()), e);
             } catch (InputFileException e) {
@@ -243,6 +250,7 @@ public final class Take5Build {
             spec.entrypointName = entrypointName;
             spec.inputFile = commandInputFile;
             spec.simpleKeys = simpleKeys;
+            spec.simplePayloads = simplePayloads;
             spec.noPayloads = noPayloads;
             spec.ignorePayloads = ignorePayloads;
             inputSpecifications.add(spec);
@@ -286,9 +294,9 @@ public final class Take5Build {
             factory.outputFormat(OutputFormat.FSA);
         } else if (indexLookup) {
             factory.valueFormat(ValueFormat.INDEX);
-        } else if (alignment != null) {
+        } else if (alignment != null || simplePayloads) { // if the caller asked for simple payloads, they don't also have to give us an alignment.
             factory.valueFormat(ValueFormat.PTR);
-            if (alignment < 2) {
+            if (alignment == null || alignment < 2) {
                 alignment = 2;
             }
             factory.valueSize(alignment);
@@ -307,8 +315,10 @@ public final class Take5Build {
         if (copyrightFile != null) {
             try {
                 factory.copyright(FileUtils.readFileToString(copyrightFile, "utf-8"));
+            } catch (FileNotFoundException e) {
+                throw new Failure("Copyright file not found: " + copyrightFile.getAbsolutePath());
             } catch (IOException e) {
-                throw new Failure("Error reading copyight file " + copyrightFile.getAbsolutePath());
+                throw new Failure("Error reading copyright file " + copyrightFile.getAbsolutePath());
             }
         }
 
@@ -363,13 +373,17 @@ public final class Take5Build {
         }
         InputFile inputFile = new InputFile(byteOrder);
         inputFile.setSimpleKeys(spec.simpleKeys);
+        inputFile.setSimplePayloads(spec.simplePayloads);
         inputFile.setPayloads(!spec.noPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
         inputFile.setDefaultFormat(spec.defaultMode);
+
         try {
             inputFile.read(source); // pull the whole thing into memory.
+        } catch (FileNotFoundException e) {
+            throw new Failure(String.format("File not found: %s", spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath()));
         } catch (IOException e) {
-            throw new Failure("IO error reading " + (spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath()));
+            throw new Failure(String.format("IO error reading %s: %s", spec.inputFile == NO_FILE ? "standard input" : spec.inputFile.getAbsolutePath(), e.getMessage()));
         } catch (InputFileException e) {
             Throwable rootException = Throwables.getRootCause(e);
             throw new Failure(String.format("Format error reading %s: %s",
@@ -402,8 +416,10 @@ public final class Take5Build {
                         return null;
                     }
                 });
+            } catch (FileNotFoundException e) {
+                throw new Failure("Metadata file not found: " + metadataFile.getAbsolutePath(), e);
             } catch (IOException e) {
-                throw new Failure("Failed to read metadata" + metadataFile.getAbsolutePath(), e);
+                throw new Failure("Failed to read metadata " + metadataFile.getAbsolutePath(), e);
             }
         }
     }

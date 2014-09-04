@@ -30,4 +30,5 @@ class InputSpecification {
     String entrypointName;
     File inputFile;
     String defaultMode;
+    boolean simplePayloads;
 }

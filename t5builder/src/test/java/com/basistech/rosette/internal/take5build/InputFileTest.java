@@ -17,14 +17,18 @@ package com.basistech.rosette.internal.take5build;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import com.google.common.io.CharSource;
+import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -46,7 +50,96 @@ public class InputFileTest extends Assert {
     }
 
     @Test
-    public void testSimpleKeysAndPayloads() throws Exception {
+    public void simplePayloads() throws Exception {
+        URL url = Resources.getResource(PayloadLexerTest.class, "simple-payloads.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimplePayloads(true);
+        inputFile.setSimpleKeys(true);
+        inputFile.read(source);
+        Charset charset;
+        if (ByteOrder.nativeOrder() == ByteOrder.BIG_ENDIAN) {
+            charset = Charsets.UTF_16BE;
+        } else {
+            charset = Charsets.UTF_16LE;
+        }
+
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        Iterator<Take5Pair> it = pairs.iterator();
+        Take5Pair pair = it.next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
+        assertArrayEquals("frog\u0000".getBytes(charset), pair.getValue());
+        pair = it.next();
+        assertArrayEquals("key1".toCharArray(), pair.getKey());
+        assertArrayEquals("goo\"se\u0000".getBytes(charset), pair.getValue());
+        pair = it.next();
+        assertArrayEquals("key2".toCharArray(), pair.getKey());
+        // note: this tests that we do _not_ process escapes!
+        assertArrayEquals("helter\\u2012skelter\u0000".getBytes(charset), pair.getValue());
+    }
+
+    @Test
+    public void noPayloads() throws Exception {
+        URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(false);
+        inputFile.setSimpleKeys(false);
+        inputFile.read(source);
+
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        for (Take5Pair pair : pairs) {
+            assertNull(pair.getValue());
+        }
+    }
+
+    // test an entire file of keys with no values, each gets a value of a null-terminated zero-length string.
+    @Test
+    public void emptySimplePayloads() throws Exception {
+        URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimplePayloads(true);
+        inputFile.setSimpleKeys(false);
+        inputFile.read(source);
+
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        for (Take5Pair pair : pairs) {
+            assertArrayEquals(new byte[] { 0, 0 }, pair.getValue());
+        }
+    }
+
+    @Test
+    public void testBom() throws Exception {
+        File input = File.createTempFile("t5.", ".txt");
+        Files.write("\ufeffkey0\t\"value\"", input, Charsets.UTF_8);
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimpleKeys(false);
+        CharSource source = Files.asCharSource(input, Charsets.UTF_8);
+        inputFile.read(source);
+        Iterable<Take5Pair> pairs = inputFile.getPairs();
+        Take5Pair pair = pairs.iterator().next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
+
+        Files.write("\ufeffkey0", input, Charsets.UTF_8);
+        inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(false);
+        inputFile.setSimpleKeys(false);
+        source = Files.asCharSource(input, Charsets.UTF_8);
+        inputFile.read(source);
+        pairs = inputFile.getPairs();
+        pair = pairs.iterator().next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
+    }
+
+    @Test
+    public void simpleKeysAndPayloads() throws Exception {
         URL url = Resources.getResource(PayloadLexerTest.class, "simple-keys-and-payloads.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
@@ -76,7 +169,7 @@ public class InputFileTest extends Assert {
     }
 
     @Test
-    public void testKeysWithEscapes() throws Exception {
+    public void keysWithEscapes() throws Exception {
         URL url = Resources.getResource(PayloadLexerTest.class, "keys-with-escapes.txt");
         CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
 
@@ -96,5 +189,34 @@ public class InputFileTest extends Assert {
         assertArrayEquals("2h\tello".toCharArray(), resultPairs.get(1).key);
         assertArrayEquals("3h\u2e00ello".toCharArray(), resultPairs.get(2).key);
         assertArrayEquals("4h\u0000ello".toCharArray(), resultPairs.get(3).key);
+    }
+
+    @Test
+    public void empties() throws Exception {
+        // test empty keys and values in non-simple format.
+        URL url = Resources.getResource(PayloadLexerTest.class, "empties.txt");
+        CharSource source = Resources.asCharSource(url, Charsets.UTF_8);
+
+        InputFile inputFile = new InputFile(ByteOrder.nativeOrder());
+        inputFile.setPayloads(true);
+        inputFile.setSimpleKeys(true);
+        inputFile.read(source);
+
+        Iterator<Take5Pair> pairs = inputFile.getPairs().iterator();
+        Take5Pair pair = pairs.next();
+        assertArrayEquals("".toCharArray(), pair.getKey());
+        pair = pairs.next();
+        assertArrayEquals("key0".toCharArray(), pair.getKey());
+        assertEquals(1, pair.getValue().length);
+        pairs.next(); // skip key1
+        pair = pairs.next();
+        assertArrayEquals("key2".toCharArray(), pair.getKey());
+        assertEquals(1, pair.getValue().length);
+        pairs.next(); // skip one
+        pair = pairs.next();
+        assertArrayEquals("key4".toCharArray(), pair.getKey());
+        assertEquals(1, pair.getValue().length);
+
+
     }
 }

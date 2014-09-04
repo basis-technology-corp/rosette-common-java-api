@@ -14,6 +14,7 @@
 
 package com.basistech.rosette.internal.take5build;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
@@ -44,6 +45,8 @@ class InputFile {
     private boolean payloads;
     // if true, expect input lines to have payloads, but ignore them.
     private boolean ignorePayloads;
+    // payloads are just plain strings.
+    private boolean simplePayloads;
 
     private String defaultFormat;
     private int maximumItemPayloadSize = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES;
@@ -105,30 +108,56 @@ class InputFile {
         }
     }
 
+    InputFile(ByteOrder order) {
+        this.order = order;
+    }
+
     private class PayloadsInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
         private int lineCount = 1;
+        private boolean first = true;
 
         @Override
         public boolean processLine(String line) throws IOException {
+
+            if (first) {
+                if (line.length() > 0 && line.charAt(0) == '\ufeff') {
+                    line = line.substring(1);
+                }
+                first = false;
+            }
+
             int tabIndex = line.indexOf('\t');
+            boolean emptyPayload = false;
+            String key;
+            String payloadInput = null;
 
-            if (tabIndex == -1 || tabIndex == 0) {
-                throw Throwables.propagate(new InputFileException(String.format("No key on line %d", lineCount)));
-            }
-            if (tabIndex == line.length() - 1) {
-                throw Throwables.propagate(new InputFileException(String.format("No key on line %d", lineCount)));
+            if (tabIndex == -1) { // no tab, no payload. Perhaps empty key
+                emptyPayload = true;
+                key = parseKey(line, lineCount);
+            } else if (tabIndex == 0) { // tab at the beginning: empty key.
+                key = "";
+                payloadInput = line;
+            } else { // otherwise, key and value.
+                String keyInput = line.substring(0, tabIndex);
+                key = parseKey(keyInput, lineCount);
+                payloadInput = line.substring(tabIndex + 1);
             }
 
-            String keyInput = line.substring(0, tabIndex);
-            String key = parseKey(keyInput, lineCount);
             Payload payload = null;
 
             // for compatibility, support reading key\tpayload but ignore the payload.
             if (!ignorePayloads) {
-                String payloadInput = line.substring(tabIndex + 1);
                 try {
-                    payload = PayloadParser.newParser(defaultFormat, order).parse(payloadInput);
+                    if (simplePayloads) {
+                        payload = parseSimplePayload(payloadInput); // 'parse' is an overstatement
+                    } else {
+                        if (emptyPayload) {
+                            payload = new Payload(new byte[1], 1);  // nothing in particular.
+                        } else {
+                            payload = PayloadParser.newParser(defaultFormat, order).parse(payloadInput);
+                        }
+                    }
                 } catch (PayloadParserException e) {
                     throw Throwables.propagate(new InputFileException(String.format("Malformed payload on line %d", lineCount), e));
                 }
@@ -146,15 +175,40 @@ class InputFile {
         }
     }
 
+    private Payload parseSimplePayload(String payloadInput) {
+        if (payloadInput == null) {
+            payloadInput = "\u0000";
+        } else {
+            payloadInput = payloadInput + "\u0000";
+        }
+
+        byte[] payloadBytes;
+        if (order == ByteOrder.LITTLE_ENDIAN) {
+            payloadBytes = payloadInput.getBytes(Charsets.UTF_16LE);
+        } else {
+            payloadBytes = payloadInput.getBytes(Charsets.UTF_16BE);
+        }
+        return new Payload(payloadBytes, 2);
+    }
+
+    /**
+     * This is used for key-only files.
+     */
     private class SimpleInputLineProcessor implements LineProcessor<List<Item>> {
         private List<Item> items = Lists.newArrayList();
         private int lineCount;
+        private boolean first = true;
 
         @Override
         public boolean processLine(String line) throws IOException {
+            if (first) {
+                if (line.length() > 0 && line.charAt(0) == '\ufeff') {
+                    line = line.substring(1);
+                }
+                first = false;
+            }
             String key = parseKey(line, lineCount);
             items.add(new Item(key));
-
             lineCount++;
             return true;
         }
@@ -165,9 +219,6 @@ class InputFile {
         }
     }
 
-    InputFile(ByteOrder order) {
-        this.order = order;
-    }
 
     // this throws a runtime exception for the convenience of its callers, who have no useful checked exceptions.
     // the IOException will never happen because the IO is on strings.
@@ -189,6 +240,7 @@ class InputFile {
             if (payloads) {
                 processor = new PayloadsInputLineProcessor();
             } else {
+                // end up here for 'emptyPayloads'
                 processor = new SimpleInputLineProcessor();
             }
             items = charSource.readLines(processor);
@@ -261,4 +313,13 @@ class InputFile {
     public void setIgnorePayloads(boolean ignorePayloads) {
         this.ignorePayloads = ignorePayloads;
     }
+
+    public boolean isSimplePayloads() {
+        return simplePayloads;
+    }
+
+    public void setSimplePayloads(boolean simplePayloads) {
+        this.simplePayloads = simplePayloads;
+    }
+
 }
