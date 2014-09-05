@@ -163,7 +163,7 @@
                 <version>1.6.3</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>basis.releases</serverId>
+                    <serverId>basis.nexus</serverId>
                     <nexusUrl>http://maven.basistech.net/nexus/</nexusUrl>
                     <stagingProfileId>1dd11ca8866422</stagingProfileId>
                 </configuration>
