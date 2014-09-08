@@ -9,7 +9,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>textanalytics</artifactId>
-        <version>56.0.0-rc2</version>
+        <version>56.0.0-rc3-SNAPSHOT</version>
     </parent>
     <prerequisites>
         <maven>3.0.4</maven>
