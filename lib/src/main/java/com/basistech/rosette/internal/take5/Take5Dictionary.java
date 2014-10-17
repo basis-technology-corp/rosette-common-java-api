@@ -822,7 +822,8 @@ public class Take5Dictionary implements Cloneable {
     private void readEntryPoint(String name) throws Take5Exception {
         int i = entryPointNames.indexOf(name);
         if (i < 0) {
-            throw new Take5Exception(Take5Exception.ENTRY_POINT_NOT_FOUND);
+            throw new Take5Exception(Take5Exception.ENTRY_POINT_NOT_FOUND,
+                "Missing entry point: " + name);
         }
         currentEntryPoint = i;
         data.position(fsaData + (i * entryPointHeaderSize));

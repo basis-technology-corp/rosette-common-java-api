@@ -20,6 +20,7 @@ import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -171,6 +172,47 @@ public class CommandLineTest extends Assert {
 
         ByteBuffer resultT5 = Files.map(t5File);
         new Take5Dictionary(resultT5, resultT5.capacity());
+    }
+
+    @Test
+    public void controlFileByteOrder() throws Exception {
+        /*
+         * This test, it turns out, is a test of default-mode handling. There was a bug:
+         * if a control file does not bother to specify default-mode, the code was not
+         * using the command-line default as a fallback.
+         */
+        // we only need to test this one way.
+        Assume.assumeTrue(ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN);
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        Take5Build cmd = new Take5Build();
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.alignment = 4;
+        cmd.defaultPayloadFormat = "#2!i";
+        cmd.byteOrder = ByteOrder.BIG_ENDIAN;
+
+        cmd.controlFile = new File("src/test/data/mixed-two-entry-points.ctl.txt");
+        cmd.checkOptionConsistency();
+        cmd.build();
+
+        ByteBuffer resultT5 = Files.map(t5File);
+        Take5Dictionary dict1 = new Take5Dictionary(resultT5, resultT5.capacity(), "mixed1");
+        String key = "key9";
+        String value = "some 2-byte string";
+        Take5Match match = new Take5Match();
+        assertThat(dict1.matchExact(key.toCharArray(), 0, key.length(), match), is(equalTo(true)));
+        int valueOffset = match.getOffsetValue();
+        resultT5.order(ByteOrder.BIG_ENDIAN);
+
+        short number = resultT5.getShort(valueOffset);
+        assertEquals(9, number);
+
+        CharBuffer dictAsChars = resultT5.asCharBuffer();
+        char[] dictChars = new char[value.length()];
+        dictAsChars.position((2 + valueOffset) / 2);
+        dictAsChars.get(dictChars);
+        assertThat(new String(dictChars, 0, dictChars.length), is(equalTo(value)));
     }
 
     @Test

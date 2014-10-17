@@ -8,3 +8,4 @@ key6	#1s "hello!" #1: 5 7 7
 key7	"value contains non-BMP character 󼳱 which is U+FCCF1, dbb3 dcf1 in UTF-16BE, f3 bc b3 b1 in UTF-8"
 key8￿	"for testing order of U+00FFFF vs. U+0FCCF1 in builder"
 key8󼳱	"non-BMP U+FCCF1 in key and value: 󼳱"
+key9	9 "some 2-byte string"

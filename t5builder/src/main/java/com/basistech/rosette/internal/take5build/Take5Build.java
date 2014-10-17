@@ -376,7 +376,11 @@ public final class Take5Build {
         inputFile.setSimplePayloads(spec.simplePayloads);
         inputFile.setPayloads(!spec.noPayloads);
         inputFile.setIgnorePayloads(spec.ignorePayloads);
-        inputFile.setDefaultFormat(spec.defaultMode);
+        if (spec.defaultMode == null) {
+            inputFile.setDefaultFormat(defaultPayloadFormat);
+        } else {
+            inputFile.setDefaultFormat(spec.defaultMode);
+        }
 
         try {
             inputFile.read(source); // pull the whole thing into memory.

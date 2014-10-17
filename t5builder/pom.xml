@@ -56,7 +56,7 @@
                         <configuration>
                             <repositoryName>lib</repositoryName>
                             <repositoryLayout>flat</repositoryLayout>
-                            <useWildcardClassPath>true</useWildcardClassPath>
+                            <useWildcardClassPath>false</useWildcardClassPath>
                             <licenseHeaderFile>etc/basisLicenseHeader.txt</licenseHeaderFile>
                             <programs>
                                 <program>
