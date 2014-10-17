@@ -176,6 +176,11 @@ public class CommandLineTest extends Assert {
 
     @Test
     public void controlFileByteOrder() throws Exception {
+        /*
+         * This test, it turns out, is a test of default-mode handling. There was a bug:
+         * if a control file does not bother to specify default-mode, the code was not
+         * using the command-line default as a fallback.
+         */
         // we only need to test this one way.
         Assume.assumeTrue(ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN);
         File t5File = File.createTempFile("t5btest.", ".bin");
@@ -205,7 +210,7 @@ public class CommandLineTest extends Assert {
 
         CharBuffer dictAsChars = resultT5.asCharBuffer();
         char[] dictChars = new char[value.length()];
-        dictAsChars.position((1 + valueOffset) / 2);
+        dictAsChars.position((2 + valueOffset) / 2);
         dictAsChars.get(dictChars);
         assertThat(new String(dictChars, 0, dictChars.length), is(equalTo(value)));
     }
