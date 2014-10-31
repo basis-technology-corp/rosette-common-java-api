@@ -101,6 +101,7 @@ public final class Take5Build {
     @Option(name = "-join", metaVar = "CONTROL_FILE", usage = "Combine multiple Take5's into one output.")
     File controlFile;
 
+    // This corresponds to -p/value_size.
     @Option(name = "-binary-payloads",
             aliases = {"-alignment", "-binaryPayloads" },
             metaVar = "ALIGNMENT",

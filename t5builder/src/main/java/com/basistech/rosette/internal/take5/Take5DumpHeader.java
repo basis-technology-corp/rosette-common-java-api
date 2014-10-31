@@ -128,7 +128,7 @@ public final class Take5DumpHeader {
         pw.format("magic: %c%c%c%c\n", (char)magic[0], (char)magic[1], (char)magic[2], (char)magic[3]);
         buffer.position(0);
         int maxVersion = getNetworkInt(Take5Format.HDR_MAX_VERSION);
-        pw.format("maxVersion: 0x%X\n", maxVersion);
+        pw.format("max_version: 0x%X\n", maxVersion);
         pw.format("content_max_version: %d\n", ints.get(Take5Format.HDR_CONTENT_MAX_VERSION));
         pw.format("flags: 0x%X\n", getNetworkInt(Take5Format.HDR_FLAGS));
         pw.format("content_flags: 0x%X\n", ints.get(Take5Format.HDR_CONTENT_FLAGS));
@@ -312,15 +312,16 @@ public final class Take5DumpHeader {
     private void dumpValueFormat() {
         pw.format("value_format: (0x%X)\n", ints.get(Take5Format.HDR_VALUE_FORMAT));
         int format = ints.get(Take5Format.HDR_VALUE_FORMAT);
-        switch (format & 0xf0000000) {
+        final int maskedFormat = format & 0xff000000;
+        switch (maskedFormat) {
         case Take5Format.VALUE_FORMAT_NONE:
             pw.format("  TKB_VALUE_FORMAT_NONE\n");
             break;
         case Take5Format.VALUE_FORMAT_FIXED:
-            pw.format("  TKB_VALUE_FORMAT_FIXED(%d)", format & 0x00ffffff);
+            pw.format("  TKB_VALUE_FORMAT_FIXED(%d)\n", format & 0x00ffffff);
             break;
         case Take5Format.VALUE_FORMAT_INDIRECT:
-            pw.format("  TKB_VALUE_FORMAT_INDIRECT(%d)", format & 0x00ffffff);
+            pw.format("  TKB_VALUE_FORMAT_INDIRECT(%d)\n", format & 0x00ffffff);
             break;
         case Take5Format.VALUE_FORMAT_INDEX:
             pw.format("  TKB_VALUE_FORMAT_INDEX\n");
