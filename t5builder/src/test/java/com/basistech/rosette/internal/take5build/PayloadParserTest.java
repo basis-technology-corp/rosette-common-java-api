@@ -123,6 +123,24 @@ public class PayloadParserTest extends Assert {
         assertArrayEquals("hello\u0000".getBytes(Charsets.US_ASCII), retrievedBytes);
     }
 
+    // see COMN-139. \\ was not reduced to one \ in the lex. The PU is a red herring.
+    @Test
+    public void slashPu() throws Exception {
+        String payloadString = "3 \"\\\\\ue018\""; // a 3, an escaped \, and a PU char.
+        PayloadParser parser = PayloadParser.newParser(ByteOrder.LITTLE_ENDIAN);
+        parser.parseMode("#2!i", 0);
+        Payload payload = parser.parse(payloadString);
+        assertEquals(2, payload.alignment);
+        // what's in the bytes ... three 2-byte items.
+        assertEquals(8, payload.bytes.length); // 3 chars and a null at the end.
+        ByteBuffer wrapped = ByteBuffer.wrap(payload.bytes);
+        wrapped.order(ByteOrder.LITTLE_ENDIAN);
+        ShortBuffer shorts = wrapped.asShortBuffer();
+        assertEquals(3, shorts.get(0));
+        assertEquals('\\', (char)shorts.get(1));
+        assertEquals('\ue018', (char)shorts.get(2));
+    }
+
     @Test
     public void testStringsTempModes() throws Exception {
         // turn off null termination

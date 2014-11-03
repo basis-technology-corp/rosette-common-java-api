@@ -81,7 +81,7 @@ hexitem = [0-9a-fA-F]+
   {notbmp}                   { string.appendCodePoint(decodeCodepointEscape(yytext())); }
   \\r                        { string.append('\r'); }
   \\\"                       { string.append('\"'); }
-  \\                         { string.append('\\'); }
+  \\\\                       { string.append('\\'); }
   .                          { string.append(yytext()); } /* this does it one-at-a-time... */
   <<EOF>>                    { throw new PayloadLexerException("End of input in the midst of a quoted string", yycolumn); }
 }

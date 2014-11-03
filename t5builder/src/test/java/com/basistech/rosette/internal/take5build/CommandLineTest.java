@@ -259,6 +259,39 @@ public class CommandLineTest extends Assert {
         assertThat(dict2.getMaximumContentVersion(), is(equalTo(3)));
     }
 
+    /*
+     * See COMN-139. A payload consisting of a \ and a PU character misfires.
+     * The input file doubles the \ correctly, so this is going to spawn more
+     * tests further down.
+     */
+    @Test
+    public void slashPrivateUsePayload() throws Exception {
+        File t5File = File.createTempFile("t5btest.", ".bin");
+        t5File.deleteOnExit();
+        Take5Build cmd = new Take5Build();
+        cmd.engine = Engine.FSA;
+        cmd.outputFile = t5File;
+        cmd.alignment = 2;
+        cmd.byteOrder = ByteOrder.LITTLE_ENDIAN;
+        cmd.defaultPayloadFormat = "#2!i";
+        cmd.commandInputFile = new File("src/test/data/slash-pu.txt");
+        cmd.checkOptionConsistency();
+        cmd.build();
+        ByteBuffer resultT5 = Files.map(t5File);
+        Take5Dictionary dict = new Take5Dictionary(resultT5, resultT5.capacity(), "main");
+        Take5Match match = new Take5Match();
+        assertThat(dict.matchExact("\\".toCharArray(), 0, "\\".length(), match), is(equalTo(true)));
+        resultT5.order(ByteOrder.LITTLE_ENDIAN);
+        ShortBuffer dictAsShorts = resultT5.asShortBuffer();
+        int valueOffset = match.getOffsetValue(); // indicated the '3' as a short and the two chars
+        short[] dictShorts = new short[3];
+        dictAsShorts.position(valueOffset / 2);
+        dictAsShorts.get(dictShorts);
+        assertEquals(3, dictShorts[0]);
+        assertEquals('\\', (char)dictShorts[1]);
+        assertEquals('\ue018', (char)dictShorts[2]);
+    }
+
     private int dictSpyInt(Take5Dictionary dict, String fieldName) {
         try {
             Field field = Take5Dictionary.class.getDeclaredField(fieldName);
