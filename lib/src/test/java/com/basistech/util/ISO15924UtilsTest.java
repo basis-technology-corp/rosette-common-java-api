@@ -50,5 +50,35 @@ public class ISO15924UtilsTest extends Assert {
         assertSame(ISO15924.Zinh, ISO15924Utils.scriptForChar('\ufeff'));
     }
 
+    @Test
+    public void testArab() {
+        String barackObamaInArabic =
+                "\u0628\u0627\u0631\u0627\u0643 \u0627\u0648\u0628\u0627\u0645\u0627";
+        assertEquals(ISO15924.Arab, ISO15924Utils.scriptForString(barackObamaInArabic));
+    }
+
+    @Test
+    public void testHani() {
+        String barackObamaInChinese =
+                "\u5df4\u62c9\u514b \u5965\u5df4\u9a6c";
+        assertEquals(ISO15924.Hani, ISO15924Utils.scriptForString(barackObamaInChinese));
+    }
+
+    @Test
+    public void testJpananeseScripts() {
+        String mixedHaniAndHira = "\u4e09\u6761\u306e\u65b9"; //3 hani characters 1 hira
+        assertEquals(ISO15924.Jpan, ISO15924Utils.scriptForString(mixedHaniAndHira));
+
+        String mixedHaniAndKana = "\u5442\u6bd4\u9808\u30ef"; //3 hani characters 1 kana
+        assertEquals(ISO15924.Jpan, ISO15924Utils.scriptForString(mixedHaniAndKana));
+
+        String mixedHiraAndKana = "\u30e4\u20f3\u30b0 \u306e"; //3 kana 1 hira
+        assertEquals(ISO15924.Hrkt, ISO15924Utils.scriptForString(mixedHiraAndKana));
+
+        //RLPNC-3516
+        String jpan = "\u8449\u540D\u30C1\u30F3"; //equal number of hani and hrkt
+        assertEquals(ISO15924.Jpan, ISO15924Utils.scriptForString(jpan));
+    }
+
 
 }
