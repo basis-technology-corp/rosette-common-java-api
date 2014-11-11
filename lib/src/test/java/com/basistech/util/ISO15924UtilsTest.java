@@ -33,7 +33,6 @@ public class ISO15924UtilsTest extends Assert {
         assertEquals(ISO15924.Latn, script);
         script = utils.forString("\u59d0\u59d1\u59d2");
         assertEquals(ISO15924.Hani, script);
-
     }
 
 }
