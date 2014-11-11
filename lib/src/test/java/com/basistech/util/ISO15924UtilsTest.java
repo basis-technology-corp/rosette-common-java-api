@@ -35,4 +35,20 @@ public class ISO15924UtilsTest extends Assert {
         assertEquals(ISO15924.Hani, script);
     }
 
+    @Test
+    public void halfwidthKatakana() throws Exception {
+        assertSame(ISO15924.Kana, ISO15924Utils.scriptForChar('ﾆ'));
+    }
+
+    @Test
+    public void fullwidthLatin() throws Exception {
+        assertSame(ISO15924.Zinh, ISO15924Utils.scriptForChar('（'));
+    }
+
+    @Test
+    public void bom() throws Exception {
+        assertSame(ISO15924.Zinh, ISO15924Utils.scriptForChar('\ufeff'));
+    }
+
+
 }
