@@ -42,12 +42,12 @@ public class ISO15924UtilsTest extends Assert {
 
     @Test
     public void fullwidthLatin() throws Exception {
-        assertSame(ISO15924.Zinh, ISO15924Utils.scriptForChar('（'));
+        assertSame(ISO15924.Zyyy, ISO15924Utils.scriptForChar('（'));
     }
 
     @Test
     public void bom() throws Exception {
-        assertSame(ISO15924.Zinh, ISO15924Utils.scriptForChar('\ufeff'));
+        assertSame(ISO15924.Zyyy, ISO15924Utils.scriptForChar('\ufeff'));
     }
 
     @Test
@@ -55,6 +55,11 @@ public class ISO15924UtilsTest extends Assert {
         String barackObamaInArabic =
                 "\u0628\u0627\u0631\u0627\u0643 \u0627\u0648\u0628\u0627\u0645\u0627";
         assertEquals(ISO15924.Arab, ISO15924Utils.scriptForString(barackObamaInArabic));
+    }
+
+    @Test
+    public void fullWidthLatin() {
+        assertSame(ISO15924.Latn, ISO15924Utils.scriptForCodePoint('\uFF23'));
     }
 
     @Test

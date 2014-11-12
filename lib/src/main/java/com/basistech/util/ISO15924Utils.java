@@ -28,8 +28,7 @@ public class ISO15924Utils {
         ICU_TO_NUMERIC = new int[UScript.CODE_LIMIT];
         ICU_TO_ENUM = new ISO15924[UScript.CODE_LIMIT];
 
-        // Comment in UScript maps COMMON to Zyyy, but that does not seem useful to me.
-        setPair(UScript.COMMON, ISO15924.Zinh);
+        setPair(UScript.COMMON, ISO15924.Zyyy); // COMMON maps to UNKNOWN. It's the convention.
         setPair(UScript.INHERITED, ISO15924.Zinh);
         setPair(UScript.ARABIC, ISO15924.Arab);
         setPair(UScript.ARMENIAN, ISO15924.Armn);
@@ -268,7 +267,7 @@ public class ISO15924Utils {
         for (int x = 0; x < histogram.length; x++) {
             if (x == ISO15924.Latn.numeric()) {
                 latinCount = histogram[x];
-            } else if (histogram[x] > bestNonLatinCount && x != ISO15924.Zinh.numeric()) { // no counting of Zinh.
+            } else if (histogram[x] > bestNonLatinCount && x != ISO15924.Zinh.numeric() && x != ISO15924.Zyyy.numeric()) { // no counting of Zinh or Zyyy
                 bestNonLatinCount = histogram[x];
                 bestNonLatinCode = x;
             }
