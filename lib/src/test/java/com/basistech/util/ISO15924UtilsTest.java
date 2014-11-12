@@ -70,11 +70,6 @@ public class ISO15924UtilsTest extends Assert {
     }
 
     @Test
-    public void fullWidthLatin() {
-        assertSame(ISO15924.Latn, ISO15924Utils.scriptForCodePoint('\uFF23'));
-    }
-
-    @Test
     public void testHani() {
         String barackObamaInChinese =
                 "\u5df4\u62c9\u514b \u5965\u5df4\u9a6c";

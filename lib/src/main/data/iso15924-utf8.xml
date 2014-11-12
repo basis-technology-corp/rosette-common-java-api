@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<!-- Generated with iso15924-to-xml.py from iso15924-utf8.txt-->
+<!-- Generated with iso15924-to-xml.py from src/main/data/iso15924-utf8.txt-->
 <iso15924definitions>
     <code>
       <char4>Afak</char4>
