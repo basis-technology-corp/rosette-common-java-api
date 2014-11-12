@@ -41,8 +41,20 @@ public class ISO15924UtilsTest extends Assert {
     }
 
     @Test
-    public void fullwidthLatin() throws Exception {
+    public void fullwidthPunct() throws Exception {
         assertSame(ISO15924.Zyyy, ISO15924Utils.scriptForChar('（'));
+    }
+
+    @Test
+    public void fullwidthLatinLetter() throws Exception {
+        // U+FF21 FULLWIDTH LATIN CAPITAL LETTER A
+        assertSame(ISO15924.Latn, ISO15924Utils.scriptForChar('Ａ'));
+    }
+
+    @Test
+    public void fullwidthDigit() throws Exception {
+        // U+FF10 FULLWIDTH DIGIT ZERO
+        assertSame(ISO15924.Zyyy, ISO15924Utils.scriptForChar('０'));
     }
 
     @Test
