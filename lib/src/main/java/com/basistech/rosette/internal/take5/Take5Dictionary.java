@@ -16,11 +16,9 @@
 // This code is a bit too quirky to clean up.
 package com.basistech.rosette.internal.take5;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
-import java.nio.IntBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,14 +38,14 @@ import java.util.TimeZone;
 // CHECKSTYLE:OFF
 public class Take5Dictionary implements Cloneable {
     /* Binary format version numbers. */
-    private static final int VERSION_5_0 = 0x00000500;
-    private static final int VERSION_5_1 = 0x00000501;
-    private static final int VERSION_5_2 = 0x00000502;
-    private static final int VERSION_5_3 = 0x00000503;
-    private static final int VERSION_5_4 = 0x00000504;
-    private static final int VERSION_5_5 = 0x00000505;
-    private static final int VERSION_5_6 = 0x00000506;
-    private static final int VERSION_MINIMUM = VERSION_5_0;
+    static final int VERSION_5_0 = 0x00000500;
+    static final int VERSION_5_1 = 0x00000501;
+    static final int VERSION_5_2 = 0x00000502;
+    static final int VERSION_5_3 = 0x00000503;
+    static final int VERSION_5_4 = 0x00000504;
+    static final int VERSION_5_5 = 0x00000505;
+    static final int VERSION_5_6 = 0x00000506;
+    static final int VERSION_MINIMUM = VERSION_5_0;
     private static final Charset UTF8 = Charset.forName("utf-8");
 
     /* Versions supported by runtime. */
@@ -55,17 +53,19 @@ public class Take5Dictionary implements Cloneable {
     /**
      * Deprecated as public.
      */
+    @Deprecated
     public static final int RT_MIN_VERSION = VERSION_5_0;
     /**
      * Deprecated as public.
      */
+    @Deprecated
     public static final int RT_MAX_VERSION = VERSION_5_6;
 
     /* constant used to convert byte index to a char index */
-    public static final int BYTES_PER_CHAR = Character.SIZE/Byte.SIZE;
+    static final int BYTES_PER_CHAR = Character.SIZE/Byte.SIZE;
 
     ByteBuffer data; /* Binary dictionary data. */
-    char[] charData; /* Binary dictionary data in the heap.  */
+    private FsaGuts fsaGuts;
     long dataSize; /* Size of dictionary data. */
     byte[] skipBits; /* Characters to skip. */
     boolean squeezeSpaces;      /* Should we squeeze spaces? */
@@ -128,6 +128,7 @@ public class Take5Dictionary implements Cloneable {
      * @param fileSize length of the Take5 binary
      * @throws Take5Exception if there is a problem with the given input.
      */
+    @Deprecated
     public Take5Dictionary(ByteBuffer fileData, long fileSize) throws Take5Exception {
         this(fileData, fileSize, "main");
     }
@@ -139,49 +140,68 @@ public class Take5Dictionary implements Cloneable {
      * @param fileData ByteBuffer containing a Take5 binary
      * @param fileSize length of the Take5 binary
      * @param entryPoint name of the initial entry point to select
+     * @throws com.basistech.rosette.internal.take5.Take5Exception if there is a problem with the given input.
+     */
+    @Deprecated
+    public Take5Dictionary(ByteBuffer fileData, long fileSize, String entryPoint) throws Take5Exception {
+        this(fileData, fileSize, entryPoint, false);
+    }
+
+    /**
+     * Initialize a Take5Dictionary object to match against the dictionary
+     * stored in the given ByteBuffer with the named entry point.
+     *
+     * @param fileData ByteBuffer containing a Take5 binary
+     * @param fileSize length of the Take5 binary
+     * @param entryPoint name of the initial entry point to select
+     * @param copyFsaToHeap
      * @throws Take5Exception if there is a problem with the given input.
      */
-    public Take5Dictionary(ByteBuffer fileData, long fileSize, String entryPoint) throws Take5Exception {
+    Take5Dictionary(ByteBuffer fileData, long fileSize, String entryPoint, boolean copyFsaToHeap) throws Take5Exception {
         data = fileData.asReadOnlyBuffer();
         dataSize = fileSize;
         skipBits = null;
         squeezeSpaces = false;
         metadata = new HashMap<String, String>();
         readHeader();
+        perhapsCopyFsaToHeap(copyFsaToHeap);
+        readEntryPoint(entryPoint);
+    }
 
+    private void perhapsCopyFsaToHeap(boolean copyFsaToHeap) throws Take5Exception {
         // Initialize per-file engine data.
         switch (fsaEngine) {
 
-        case ENGINE_SEARCH:
-            // Do not insist that (keyCheckFormat == KEYCHECK_FORMAT_NONE) here.  By keeping
-            // our options open for what that might mean, we allow for potential backwards
-            // compatibility.
+            case ENGINE_SEARCH:
+                // Do not insist that (keyCheckFormat == KEYCHECK_FORMAT_NONE) here.  By keeping
+                // our options open for what that might mean, we allow for potential backwards
+                // compatibility.
 
-            // AAARRRGGGHHH!!!  This is horrible!  When valueData is used (for binaries before
-            // VERSION_5_6), this reads in <EM>way more</EM> than just the state machine!
+                /* Never, ever, do the into-memory copy for the FSA case. */
 
-            int charDataSize = (fsaLimit > 0 ? fsaLimit :
-                                valueData > 0 ? valueData :
-                                (int)dataSize);
-            charData = new char[(charDataSize+1)/BYTES_PER_CHAR];
-            data.rewind();
-            data.asCharBuffer().get(charData);
-            break;
+                if (fsaLimit > 0 && copyFsaToHeap) {
+                    char[] charData = new char[(fsaLimit + 1) / BYTES_PER_CHAR];
+                    data.rewind();
+                    data.asCharBuffer().get(charData);
+                    fsaGuts = new CopyingFsaEngine(data, charData, guardIndexDelta);
+                } else {
+                    fsaGuts = new NoncopyingFsaEngine(data, guardIndexDelta);
+                }
+                break;
 
-        case ENGINE_PERFHASH:
-            break;
+            case ENGINE_PERFHASH:
+                break;
 
-        default:
-            throw new Take5Exception(Take5Exception.UNSUPPORTED_ENGINE);
+            default:
+                throw new Take5Exception(Take5Exception.UNSUPPORTED_ENGINE);
         }
-
-        readEntryPoint(entryPoint);
     }
 
     /**
      * Creates and returns a copy of this dictionary, which shares the same
      * underlying data.
      */
+    @Deprecated
     @Override
     public Take5Dictionary clone() throws CloneNotSupportedException {
         Take5Dictionary clone = (Take5Dictionary) super.clone();
@@ -481,7 +501,7 @@ public class Take5Dictionary implements Cloneable {
         switch (fsaEngine) {
 
         case ENGINE_SEARCH:
-            return take5SearchInternal(data, offset, length, result, null, stateStart, indexStart);
+            return fsaGuts.take5SearchInternal(this, data, offset, length, result, null, stateStart, indexStart);
 
         case ENGINE_PERFHASH:
             return perfectHashLookup(data, offset, length, result);
@@ -503,8 +523,8 @@ public class Take5Dictionary implements Cloneable {
      */
     public Take5Match matchLongest(String data) {
         Take5Match match = new Take5Match();
-        int c = take5SearchInternal(data.toCharArray(), 0, data.length(), match, null,
-                                    stateStart, indexStart);
+        int c = fsaGuts.take5SearchInternal(this, data.toCharArray(), 0, data.length(), match, null,
+                stateStart, indexStart);
         if (c == 0) {
             return null;
         }
@@ -523,8 +543,8 @@ public class Take5Dictionary implements Cloneable {
      */
     public Take5Match matchLongest(char[] data, int offset, int length) {
         Take5Match match = new Take5Match();
-        int c = take5SearchInternal(data, offset, length, match, null,
-                                    stateStart, indexStart);
+        int c = fsaGuts.take5SearchInternal(this, data, offset, length, match, null,
+                stateStart, indexStart);
         if (c == 0) {
             return null;
         }
@@ -541,8 +561,8 @@ public class Take5Dictionary implements Cloneable {
      * @throws UnsupportedOperationException if the dictionary is not a state machine.
      */
     public int matchMultiple(String data, Take5Match[] matches) {
-        int c = take5SearchInternal(data.toCharArray(), 0, data.length(), null, matches,
-                                    stateStart, indexStart);
+        int c = fsaGuts.take5SearchInternal(this, data.toCharArray(), 0, data.length(), null, matches,
+                stateStart, indexStart);
         return c > matches.length ? matches.length : c;
     }
 
@@ -559,8 +579,8 @@ public class Take5Dictionary implements Cloneable {
      * @throws UnsupportedOperationException if the dictionary is not a state machine.
      */
     public int matchMultiple(char[] data, int offset, int length, Take5Match[] matches) {
-        int c = take5SearchInternal(data, offset, length, null, matches,
-                                    stateStart, indexStart);
+        int c = fsaGuts.take5SearchInternal(this, data, offset, length, null, matches,
+                stateStart, indexStart);
         return c > matches.length ? matches.length : c;
     }
 
@@ -576,7 +596,7 @@ public class Take5Dictionary implements Cloneable {
 
     @SuppressWarnings("unused")
     private static final int ENGINE_TAKE3 = 0x00000001;
-    private static final int ENGINE_SEARCH = 0x00000002;
+    static final int ENGINE_SEARCH = 0x00000002;
     private static final int ENGINE_PERFHASH = 0x00000003;
 
     private static final int KEYCHECK_FORMAT_NONE = 0x00000000;
@@ -874,127 +894,21 @@ public class Take5Dictionary implements Cloneable {
         }
     }
 
-    private static final int SEARCH_TYPE_BINARY = 0;
-    private static final int SEARCH_TYPE_BINARY_END = 17;
-    private static final int SEARCH_TYPE_LINEAR = 17;
-    private static final int SEARCH_TYPE_LINEAR_END = 34;
-    private static final int SEARCH_TYPE_CHOICE = 34;
-    private static final int SEARCH_TYPE_CHOICE_END = 51;
+    static final int SEARCH_TYPE_BINARY = 0;
+    static final int SEARCH_TYPE_BINARY_END = 17;
+    static final int SEARCH_TYPE_LINEAR = 17;
+    static final int SEARCH_TYPE_LINEAR_END = 34;
+    static final int SEARCH_TYPE_CHOICE = 34;
+    static final int SEARCH_TYPE_CHOICE_END = 51;
     @SuppressWarnings("unused")
-    private static final int SEARCH_TYPE_DISPATCH = 51;
-    private static final int SEARCH_TYPE_LINEAR_MANY = 68;
+    static final int SEARCH_TYPE_DISPATCH = 51;
+    static final int SEARCH_TYPE_LINEAR_MANY = 68;
 
     /**
      * Does the given state have <EM>no</EM> transitions?
      */
-    private boolean terminalState(int state) {
+    boolean terminalState(int state) {
         return data.getShort(state & -2) == SEARCH_TYPE_LINEAR + 0;
-    }
-
-    /**
-     * Count the number of transitons out of the given state.
-     */
-    private int edgeCount(int state) {
-        state &= -2;            // clear accept bit
-        int ptr = state;
-        int type = data.getShort(ptr);
-        if (type < 0) {
-            throw new Take5RuntimeException(Take5Exception.UNSUPPORTED_STATE_TYPE);
-        } else if (type == SEARCH_TYPE_BINARY + 0) {
-            return 1;
-        } else if (type == SEARCH_TYPE_BINARY + 1) {
-            return 2;
-        } else if (type < SEARCH_TYPE_BINARY_END) {
-            assert(SEARCH_TYPE_BINARY == 0);
-            // Skip searching the bottom half of the space since we know
-            // the final character must be in the top half.
-            ptr += (1 << (type - SEARCH_TYPE_BINARY));
-            switch (type) {
-            case SEARCH_TYPE_BINARY + 16:
-                if (charData[(ptr + (1 << 15)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 15);
-                }
-            case SEARCH_TYPE_BINARY + 15:
-                if (charData[(ptr + (1 << 14)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 14);
-                }
-            case SEARCH_TYPE_BINARY + 14:
-                if (charData[(ptr + (1 << 13)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 13);
-                }
-            case SEARCH_TYPE_BINARY + 13:
-                if (charData[(ptr + (1 << 12)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 12);
-                }
-            case SEARCH_TYPE_BINARY + 12:
-                if (charData[(ptr + (1 << 11)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 11);
-                }
-            case SEARCH_TYPE_BINARY + 11:
-                if (charData[(ptr + (1 << 10)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 10);
-                }
-            case SEARCH_TYPE_BINARY + 10:
-                if (charData[(ptr + (1 << 9)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 9);
-                }
-            case SEARCH_TYPE_BINARY + 9:
-                if (charData[(ptr + (1 << 8)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 8);
-                }
-            case SEARCH_TYPE_BINARY + 8:
-                if (charData[(ptr + (1 << 7)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 7);
-                }
-            case SEARCH_TYPE_BINARY + 7:
-                if (charData[(ptr + (1 << 6)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 6);
-                }
-            case SEARCH_TYPE_BINARY + 6:
-                if (charData[(ptr + (1 << 5)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 5);
-                }
-            case SEARCH_TYPE_BINARY + 5:
-                if (charData[(ptr + (1 << 4)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 4);
-                }
-            case SEARCH_TYPE_BINARY + 4:
-                if (charData[(ptr + (1 << 3)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 3);
-                }
-            case SEARCH_TYPE_BINARY + 3:
-                if (charData[(ptr + (1 << 2)) >> 1] != '\uFFFF') {
-                    ptr += (1 << 2);
-                }
-            case SEARCH_TYPE_BINARY + 2:
-                if (charData[(ptr + 2) >> 1] == '\uFFFF') {
-                    ptr += 2;
-                } else {
-                    ptr += 4;
-                }
-                break;
-            }
-        } else if (type < SEARCH_TYPE_LINEAR_END) {
-            assert(SEARCH_TYPE_LINEAR == SEARCH_TYPE_BINARY_END);
-            return type - SEARCH_TYPE_LINEAR;
-        } else if (type < SEARCH_TYPE_CHOICE_END) {
-            assert(SEARCH_TYPE_CHOICE == SEARCH_TYPE_LINEAR_END);
-            return type - SEARCH_TYPE_CHOICE;
-        } else if (type == SEARCH_TYPE_LINEAR_MANY) {
-            while (charData[(ptr += 2) >> 1] != '\uFFFF') {
-                ;
-            }
-        } else {
-            throw new Take5RuntimeException(Take5Exception.UNSUPPORTED_STATE_TYPE);
-        }
-        /* If we get here, ptr points to the last character, but that may,
-           or may not, be a guard edge. */
-        int i = (ptr - state) >> 1;
-        if (data.getInt(state - (8 * i) + 4) == guardIndexDelta) {
-            return i - 1;
-        } else {
-            return i;
-        }
     }
 
     /**
@@ -1013,7 +927,7 @@ public class Take5Dictionary implements Cloneable {
      */
     public Take5Match[] nextLetters(Take5Match start)
         throws Take5Exception {
-        return nextLettersInternal(start.state, start.index, start.length + 1);
+        return fsaGuts.nextLettersInternal(this, start.state, start.index, start.length + 1);
     }
 
     /**
@@ -1038,30 +952,7 @@ public class Take5Dictionary implements Cloneable {
     @Deprecated
     public Take5Match[] nextLetters(int state, int index)
         throws Take5Exception {
-        return nextLettersInternal(state, index, 0);
-    }
-
-    private Take5Match[] nextLettersInternal(int state, int index, int length)
-        throws Take5Exception {
-        if (fsaEngine != ENGINE_SEARCH) {
-            throw new UnsupportedOperationException("This Take5Dictionary is not a state machine.");
-        }
-        state &= -2;        // clear accept bit
-        int edges = edgeCount(state);
-        Take5Match[] rv = new Take5Match[edges];
-        int edge = state;
-        int ptr = state;
-        Take5Match match;
-        for (int i = 0; i < edges; ++i) {
-            edge -= 8;
-            ptr += 2;
-            match = new Take5Match(this, length,
-                                   index + data.getInt(edge + 4),
-                                   state + data.getInt(edge));
-            match.c = charData[ptr >> 1];
-            rv[i] = match;
-        }
-        return rv;
+        return fsaGuts.nextLettersInternal(this, state, index, 0);
     }
 
     // Is anybody using this?  How can it possibly be useful?  XXX
@@ -1078,7 +969,7 @@ public class Take5Dictionary implements Cloneable {
         char[] cA = new char[1];
         cA[0] = c;
         Take5Match ret = new Take5Match();
-        take5SearchInternal(cA, 0, 1, ret, null, m.state, m.index);
+        fsaGuts.take5SearchInternal(this, cA, 0, 1, ret, null, m.state, m.index);
         if (ret.length == 0) {
             return null;
         }
@@ -1106,8 +997,8 @@ public class Take5Dictionary implements Cloneable {
      */
     public int take5Search(char[] input, int offset, int length,
                            Take5Match match, Take5Match[] matches) {
-        return take5SearchInternal(input, offset, length, match, matches,
-                                   stateStart, indexStart);
+        return fsaGuts.take5SearchInternal(this, input, offset, length, match, matches,
+                stateStart, indexStart);
     }
 
     /**
@@ -1130,8 +1021,8 @@ public class Take5Dictionary implements Cloneable {
     public int take5Search(char[] input, int offset, int length,
                            Take5Match match, Take5Match[] matches,
                            Take5Match start) {
-        return take5SearchInternal(input, offset, length, match, matches,
-                                   start.state, start.index);
+        return fsaGuts.take5SearchInternal(this, input, offset, length, match, matches,
+                start.state, start.index);
     }
 
     /**
@@ -1164,544 +1055,11 @@ public class Take5Dictionary implements Cloneable {
                            Take5Match match, Take5Match[] matches,
                            int startState, int startIndex)
         throws Take5Exception {
-        return take5SearchInternal(input, offset, length, match, matches, startState, startIndex);
+        return fsaGuts.take5SearchInternal(this, input, offset, length, match, matches, startState, startIndex);
     }
 
-    private int take5SearchInternal(char[] input, int offset, int length,
-                                    Take5Match match, Take5Match[] matches,
-                                    int startState, int startIndex) {
-        int state = startState;
-        int index = startIndex;
-        int out_cnt = 0;
-        int ptr;
-        int cnt;
-        char c;
-        boolean squeezing = false;
-
-        if (fsaEngine != ENGINE_SEARCH) {
-            throw new UnsupportedOperationException("This Take5Dictionary is not a state machine.");
-        }
-
-        if (input == null) {
-            throw new IllegalArgumentException("'input' must not be null");
-        }
-        if ((match == null) == (matches == null)) {
-            throw new IllegalArgumentException("'match' and 'matches' are mutually exclusive");
-        }
-
-        if (match != null) {
-            match.dict = this;
-        }
-
-        int limit = offset + length;
-        loop: for (cnt = offset; cnt < limit; cnt++) {
-            c = input[cnt];
-
-            // If we're squeezing spaces, then we skip all but the first
-            // space in a run of spaces.
-            if (squeezeSpaces) {
-                if (c == 0x0020) {
-                    if (squeezing) continue;
-                    squeezing = true;
-                } else {
-                    squeezing = false;
-                }
-            }
-
-            // Check value in skipBits.
-            if (skipBits != null && (skipBits[c >> 3] & 1 << (c & 7)) != 0) {
-                continue;
-            }
-
-            // Check if we have just traversed an accept arc.
-            if ((state & 1) != 0) {
-                state &= -2;    // clear accept bit
-                if (match != null) {
-                    match.length = cnt - offset;
-                    match.index = index;
-                    match.state = state;
-                } else if (matches != null && out_cnt < matches.length) {
-                    matches[out_cnt] = new Take5Match(this, cnt - offset, index, state);
-                }
-                out_cnt++;
-            }
-
-            ptr = state;
-
-            // Switch on the type code.
-            short stateType = data.getShort(ptr);
-            switch (stateType) {
-            default:
-                throw new Take5RuntimeException(Take5Exception.UNSUPPORTED_STATE_TYPE,
-                                                "State: " + Integer.toString(stateType));
-
-                // SEARCH_TYPE_DISPATCH is depreciated.  The code to
-                // support it has been deleted from here.  The compiler
-                // <EM>never</EM> generated these type codes and enough
-                // people have come to depend on that fact that we have
-                // declared them to be depreciated.  It is therefore
-                // officially safe to depend on never encountering them.
-
-                // Empty state: In fact the compiler has always generated
-                // ..._LINEAR+0 for an empty state, and that fact is now
-                // <EM>guaranteed</EM>, so we <EM>could</EM> signal an
-                // error if we see ..._CHOICE+0.
-            case SEARCH_TYPE_LINEAR + 0:
-            case SEARCH_TYPE_CHOICE + 0:
-                break loop;
-
-                // Extended linear search:
-            case SEARCH_TYPE_LINEAR_MANY:
-                while (c > charData[(ptr += 2) >> 1]) {
-                    ;
-                }
-                break;
-
-                // Linear search:
-            case SEARCH_TYPE_LINEAR + 16:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 15:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 14:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 13:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 12:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 11:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 10:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 9:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 8:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 7:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 6:
-            case SEARCH_TYPE_CHOICE + 6:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 5:
-            case SEARCH_TYPE_CHOICE + 5:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 4:
-            case SEARCH_TYPE_CHOICE + 4:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 3:
-            case SEARCH_TYPE_CHOICE + 3:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 2:
-            case SEARCH_TYPE_CHOICE + 2:
-            case SEARCH_TYPE_BINARY + 1:
-                if (c <= charData[(ptr += 2) >> 1]) {
-                    break;
-                }
-            case SEARCH_TYPE_LINEAR + 1:
-            case SEARCH_TYPE_CHOICE + 1:
-            case SEARCH_TYPE_BINARY + 0:
-                ptr += 2;
-                break;
-
-                // Binary search:
-            case SEARCH_TYPE_BINARY + 16:
-                if (c > charData[(ptr + (1 << 16)) >> 1]) {
-                    ptr += 1 << 16;
-                }
-            case SEARCH_TYPE_BINARY + 15:
-                if (c > charData[(ptr + (1 << 15)) >> 1]) {
-                    ptr += 1 << 15;
-                }
-            case SEARCH_TYPE_BINARY + 14:
-                if (c > charData[(ptr + (1 << 14)) >> 1]) {
-                    ptr += 1 << 14;
-                }
-            case SEARCH_TYPE_BINARY + 13:
-                if (c > charData[(ptr + (1 << 13)) >> 1]) {
-                    ptr += 1 << 13;
-                }
-            case SEARCH_TYPE_BINARY + 12:
-                if (c > charData[(ptr + (1 << 12)) >> 1]) {
-                    ptr += 1 << 12;
-                }
-            case SEARCH_TYPE_BINARY + 11:
-                if (c > charData[(ptr + (1 << 11)) >> 1]) {
-                    ptr += 1 << 11;
-                }
-            case SEARCH_TYPE_BINARY + 10:
-                if (c > charData[(ptr + (1 << 10)) >> 1]) {
-                    ptr += 1 << 10;
-                }
-            case SEARCH_TYPE_BINARY + 9:
-                if (c > charData[(ptr + (1 << 9)) >> 1]) {
-                    ptr += 1 << 9;
-                }
-            case SEARCH_TYPE_BINARY + 8:
-                if (c > charData[(ptr + (1 << 8)) >> 1]) {
-                    ptr += 1 << 8;
-                }
-            case SEARCH_TYPE_BINARY + 7:
-                if (c > charData[(ptr + (1 << 7)) >> 1]) {
-                    ptr += 1 << 7;
-                }
-            case SEARCH_TYPE_BINARY + 6:
-                if (c > charData[(ptr + (1 << 6)) >> 1]) {
-                    ptr += 1 << 6;
-                }
-            case SEARCH_TYPE_BINARY + 5:
-                if (c > charData[(ptr + (1 << 5)) >> 1]) {
-                    ptr += 1 << 5;
-                }
-            case SEARCH_TYPE_CHOICE + 9:
-            case SEARCH_TYPE_CHOICE + 10:
-            case SEARCH_TYPE_CHOICE + 11:
-            case SEARCH_TYPE_CHOICE + 12:
-            case SEARCH_TYPE_CHOICE + 13:
-            case SEARCH_TYPE_CHOICE + 14:
-            case SEARCH_TYPE_CHOICE + 15:
-            case SEARCH_TYPE_CHOICE + 16:
-            case SEARCH_TYPE_BINARY + 4:
-                if (c > charData[(ptr + (1 << 4)) >> 1]) {
-                    ptr += 1 << 4;
-                }
-            case SEARCH_TYPE_CHOICE + 7:
-            case SEARCH_TYPE_CHOICE + 8:
-            case SEARCH_TYPE_BINARY + 3:
-                if (c > charData[(ptr + (1 << 3)) >> 1]) {
-                    ptr += 1 << 3;
-                }
-            case SEARCH_TYPE_BINARY + 2:
-                if (c > charData[(ptr + (1 << 2)) >> 1]) {
-                    ptr += 1 << 2;
-                }
-                if (c > charData[(ptr += 2) >> 1]) {
-                    ptr += 2;
-                }
-                break;
-            }
-
-            if (c != charData[ptr >> 1]) {
-                break loop;
-            }
-            int edge = state - 4 * (ptr - state);
-            state += data.getInt(edge);
-            index += data.getInt(edge + 4);
-        }
-
-        if ((state & 1) != 0) {
-            state &= -2; // clear accept bit
-            if (match != null) {
-                match.length = cnt - offset;
-                match.index = index;
-                match.state = state;
-            } else if (matches != null && out_cnt < matches.length) {
-                matches[out_cnt] = new Take5Match(this, cnt - offset, index, state);
-            }
-            out_cnt++;
-        }
-
-        return out_cnt;
-    }
-
-    /**
-     * Turn an index back into the word that would generate it.
-     *
-     * @param index the index of the desired word
-     * @param buffer array of chars to contain the word
-     * @return the length of the word
-     * @throws UnsupportedOperationException if the dictionary is not reversable.
-     */
     public int reverseLookup(int index, char[] buffer) throws Take5Exception {
-        if (fsaEngine != ENGINE_SEARCH) {             // XXX: but this <EM>could</EM> work!
-            throw new UnsupportedOperationException("This Take5Dictionary is not reversible.");
-        }
-        if (index < 0 || index >= indexCount) {
-            throw new Take5Exception(Take5Exception.IMPOSSIBLE_HASH);
-        }
-        if (buffer.length < maxWordLength) {
-            throw new Take5Exception(Take5Exception.BUFFER_TOO_SMALL);
-        }
-        // maxWordLength wasn't set until 5.2, so we wouldn't be on solid
-        // ground before that version:
-        if (fileVersion < VERSION_5_2) {
-            throw new Take5Exception(Take5Exception.FILE_TOO_OLD);
-        }
-        int i = 0;              // index into buffer
-        int state = stateStart;
-        /* delta is the difference between the index we're looking for and
-           the index accumulated on the path through the FSA so far: */
-        int delta = index + indexOffset - indexStart;
-        while (delta > 0) {
-            state &= -2;        // clear accept bit
-            int edge = state - 8;
-            int ptr = state;
-            int xdelta;
-            switch (data.getShort(ptr)) {
-
-            default:
-                throw new Take5Exception(Take5Exception.UNSUPPORTED_STATE_TYPE);
-
-                /* Encountering a state with <EM>no</EM> edges should be
-                   impossible during a reverse lookup. */
-            case SEARCH_TYPE_LINEAR + 0:
-            case SEARCH_TYPE_CHOICE + 0:
-                throw new Take5Exception(Take5Exception.BAD_DATA);
-
-                /*
-                 * CAUTION: Do not use '<' when you should be using
-                 * 'unsignedLess'!
-                 */
-
-            case SEARCH_TYPE_LINEAR_MANY:
-                /* Since no production release of the builder has ever
-                   generated this state code, we can safely assume that if
-                   we <EM>do</EM> encounter it, it will be properly
-                   formatted with 0xFFFFFFFF in the final index_delta. */
-                while (!unsignedLess(delta, data.getInt(edge - 8 + 4))) {
-                    edge -= 8;
-                }
-                break;
-
-            case SEARCH_TYPE_LINEAR + 16:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 15:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 14:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 13:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 12:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 11:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 10:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 9:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 8:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 7:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 6:
-            case SEARCH_TYPE_CHOICE + 6:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 5:
-            case SEARCH_TYPE_CHOICE + 5:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 4:
-            case SEARCH_TYPE_CHOICE + 4:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 3:
-            case SEARCH_TYPE_CHOICE + 3:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 2:
-            case SEARCH_TYPE_CHOICE + 2:
-            case SEARCH_TYPE_BINARY + 1:
-                if (unsignedLess(delta, data.getInt(edge - 8 + 4))) break;
-                edge -= 8;
-            case SEARCH_TYPE_LINEAR + 1:
-            case SEARCH_TYPE_CHOICE + 1:
-            case SEARCH_TYPE_BINARY + 0:
-                break;
-
-            case SEARCH_TYPE_BINARY + 16:
-                if (charData[(ptr + (1 << 16)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 16) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 16);
-                        edge -= (4 << 16);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 15:
-                if (charData[(ptr + (1 << 15)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 15) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 15);
-                        edge -= (4 << 15);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 14:
-                if (charData[(ptr + (1 << 14)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 14) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 14);
-                        edge -= (4 << 14);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 13:
-                if (charData[(ptr + (1 << 13)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 13) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 13);
-                        edge -= (4 << 13);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 12:
-                if (charData[(ptr + (1 << 12)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 12) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 12);
-                        edge -= (4 << 12);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 11:
-                if (charData[(ptr + (1 << 11)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 11) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 11);
-                        edge -= (4 << 11);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 10:
-                if (charData[(ptr + (1 << 10)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 10) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 10);
-                        edge -= (4 << 10);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 9:
-                if (charData[(ptr + (1 << 9)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 9) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 9);
-                        edge -= (4 << 9);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 8:
-                if (charData[(ptr + (1 << 8)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 8) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 8);
-                        edge -= (4 << 8);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 7:
-                if (charData[(ptr + (1 << 7)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 7) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 7);
-                        edge -= (4 << 7);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 6:
-                if (charData[(ptr + (1 << 6)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 6) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 6);
-                        edge -= (4 << 6);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 5:
-                if (charData[(ptr + (1 << 5)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 5) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 5);
-                        edge -= (4 << 5);
-                    }
-                }
-            case SEARCH_TYPE_CHOICE + 9:
-            case SEARCH_TYPE_CHOICE + 10:
-            case SEARCH_TYPE_CHOICE + 11:
-            case SEARCH_TYPE_CHOICE + 12:
-            case SEARCH_TYPE_CHOICE + 13:
-            case SEARCH_TYPE_CHOICE + 14:
-            case SEARCH_TYPE_CHOICE + 15:
-            case SEARCH_TYPE_CHOICE + 16:
-            case SEARCH_TYPE_BINARY + 4:
-                if (charData[(ptr + (1 << 4)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 4) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 4);
-                        edge -= (4 << 4);
-                    }
-                }
-            case SEARCH_TYPE_CHOICE + 7:
-            case SEARCH_TYPE_CHOICE + 8:
-            case SEARCH_TYPE_BINARY + 3:
-                if  (charData[(ptr + (1 << 3)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 3) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 3);
-                        edge -= (4 << 3);
-                    }
-                }
-            case SEARCH_TYPE_BINARY + 2:
-                if (charData[(ptr + (1 << 2)) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - (4 << 2) + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        ptr += (1 << 2);
-                        edge -= (4 << 2);
-                    }
-                }
-                if (charData[(ptr + 2) >> 1] != '\uFFFF') {
-                    xdelta = data.getInt(edge - 8 + 4);
-                    if (!unsignedLess(delta, xdelta) && xdelta != 0) {
-                        edge -= 8;
-                    }
-                }
-                break;
-            }
-            int stateDelta = data.getInt(edge);
-            int indexDelta = data.getInt(edge + 4);
-            assert(!unsignedLess(delta, indexDelta));
-            if (indexDelta == delta && (stateDelta & 1) == 0) {
-                /* It is possible (and unavoidable) that we might overshoot
-                   by just one edge when we get down to zero, but if the
-                   accept bit isn't set, we should have taken the previous
-                   edge. */
-                edge += 8;
-                stateDelta = data.getInt(edge);
-                indexDelta = data.getInt(edge + 4);
-            }
-            assert(edge < state);
-            buffer[i++] = charData[(state + (state - edge) / 4) >> 1];
-            state += stateDelta;
-            delta -= indexDelta;
-        }
-        assert((state & 1) != 0);
-        return i;
+        return fsaGuts.reverseLookup(this, index, buffer);
     }
 
     /**
@@ -1816,51 +1174,7 @@ public class Take5Dictionary implements Cloneable {
         }
         Take5Match m = new Take5Match();
         m.dict = start.dict;
-        walkInternal(walker, m, buffer, buflen, start.state, start.index, start.length);
-    }
-
-    private void walkInternal(Take5Walker w, Take5Match m, char[] buffer, int buflen,
-                              int state, int index, int i)
-        throws Take5Exception {
-        if (i < buflen) {
-            if ((state & 1) != 0) {
-                state &= -2;          // clear accept bit
-                m.state = state;
-                m.index = index;
-                m.length = i;
-                w.foundAccept(m, buffer, buflen);
-            }
-            int nedges = edgeCount(state);
-            for (int idx = 1; idx <= nedges; ++idx) {
-                int edge = state - 8 * idx;
-                buffer[i] = charData[(state + 2 * idx) >> 1];
-                walkInternal(w, m, buffer, buflen,
-                             state + data.getInt(edge),
-                             index + data.getInt(edge + 4),
-                             i + 1);
-            }
-        } else {
-            m.state = state & -2; // clear accept bit
-            m.index = index;
-            m.length = i;
-            if (terminalState(state)) {
-                if ((state & 1) != 0) {
-                    w.foundAccept(m, buffer, buflen);
-                } else {
-                    /* This shouldn't happen, given the current compiler,
-                       but it is possible that some future compiler would
-                       want to generate this case.  Thus it wouldn't be a
-                       good idea to signal an error here -- instead we just
-                       quietly do nothing. */
-                }
-            } else {
-                if ((state & 1) != 0) {
-                    w.foundBoth(m, buffer, buflen);
-                } else {
-                    w.foundLimit(m, buffer, buflen);
-                }
-            }
-        }
+        fsaGuts.walkInternal(this, walker, m, buffer, buflen, start.state, start.index, start.length);
     }
 
     /* The null lookup method, used for benchmarking.
@@ -1920,7 +1234,7 @@ public class Take5Dictionary implements Cloneable {
     // hash functions.  (Replace the link above when/if it becomes an RFC.)
     private static final int FNV32_PRIME = 0x01000193;
     private static final int FNV32_BASE = 0x811C9DC5;
-    private static int fnvHash(int fun, char[] key, int i, int end) {
+    static int fnvHash(int fun, char[] key, int i, int end) {
         int rv = (fun + 1) * FNV32_BASE;
         while (i < end) {
             rv ^= key[i++];
@@ -1934,14 +1248,14 @@ public class Take5Dictionary implements Cloneable {
      * Unsigned comparison.  It's annoying to know that the hardware almost
      * certainly has an instruction to do this, but we can't get at it.
      */
-    private static final boolean unsignedLess(int x, int y) {
+    static boolean unsignedLess(int x, int y) {
         return (x ^ 0x80000000) < (y ^ 0x80000000);
     }
 
     /**
      * Byte-swap the given integer.
      */
-    private static int reverseBytes(int i) {
+    static int reverseBytes(int i) {
         return i << 24 | i << 8 & 0xff0000 | i >> 8 & 0xff00 | i >> 24 & 0xff;
     }
 }
