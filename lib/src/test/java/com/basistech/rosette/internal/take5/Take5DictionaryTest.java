@@ -108,7 +108,7 @@ public class Take5DictionaryTest extends Assert {
         if (outData != null) {
             outData[0] = mappedDict;
         }
-        return new Take5Dictionary(mappedDict, mappedDict.capacity(), entryPoint);
+        return new Take5DictionaryBuilder(mappedDict).entrypoint(entryPoint).build();
     }
 
     @Before
@@ -663,11 +663,7 @@ public class Take5DictionaryTest extends Assert {
     @Test
     public void testCloning() throws IOException, Take5Exception, CloneNotSupportedException {
         Take5Dictionary dict1 = openDictionary("src/test/dicts/unified", "next_letters", null);
-
-        Take5Dictionary dict2 = dict1.clone();
-
-        dict2.setEntryPoint("main"); // this is the "days" dictionary
-
+        Take5Dictionary dict2 = Take5DictionaryBuilder.cloneAdditionalEntrypoint(dict1, "main");
         Take5Match match = dict1.matchExact("gab");
         assertNotNull(match);
         assertEquals(3, match.getLength());

@@ -1258,4 +1258,10 @@ public class Take5Dictionary implements Cloneable {
     static int reverseBytes(int i) {
         return i << 24 | i << 8 & 0xff0000 | i >> 8 & 0xff00 | i >> 24 & 0xff;
     }
+
+    // API used for unit tests
+    FsaGuts getFsaGuts() {
+        return fsaGuts;
+    }
+
 }
