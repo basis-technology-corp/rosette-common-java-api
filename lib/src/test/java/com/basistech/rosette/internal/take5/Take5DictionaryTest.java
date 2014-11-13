@@ -67,20 +67,23 @@ public class Take5DictionaryTest extends Assert {
     };
 
     private final ByteOrder order;
+    private final boolean copying;
     private Take5Dictionary daysDictionary;
     private ByteBuffer daysData;
     private Take5Dictionary nextLettersDictionary;
 
-    public Take5DictionaryTest(ByteOrder order) {
+    public Take5DictionaryTest(ByteOrder order, Boolean copying) {
         this.order = order;
+        this.copying = copying;
     }
 
-
-
-    @Parameterized.Parameters(name = "{index}: {0}")
+    @Parameterized.Parameters(name = "{index}: endian {0} copying {1}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {ByteOrder.BIG_ENDIAN}, {ByteOrder.LITTLE_ENDIAN}
+                {ByteOrder.BIG_ENDIAN, Boolean.FALSE},
+                {ByteOrder.BIG_ENDIAN, Boolean.TRUE},
+                {ByteOrder.LITTLE_ENDIAN, Boolean.TRUE},
+                {ByteOrder.LITTLE_ENDIAN, Boolean.FALSE}
         });
     }
 
@@ -108,7 +111,7 @@ public class Take5DictionaryTest extends Assert {
         if (outData != null) {
             outData[0] = mappedDict;
         }
-        return new Take5DictionaryBuilder(mappedDict).entrypoint(entryPoint).build();
+        return new Take5DictionaryBuilder(mappedDict).entrypoint(entryPoint).copyFsaToHeap(copying).build();
     }
 
     @Before
