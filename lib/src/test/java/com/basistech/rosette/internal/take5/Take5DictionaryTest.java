@@ -67,23 +67,19 @@ public class Take5DictionaryTest extends Assert {
     };
 
     private final ByteOrder order;
-    private final boolean copying;
     private Take5Dictionary daysDictionary;
     private ByteBuffer daysData;
     private Take5Dictionary nextLettersDictionary;
 
-    public Take5DictionaryTest(ByteOrder order, Boolean copying) {
+    public Take5DictionaryTest(ByteOrder order) {
         this.order = order;
-        this.copying = copying;
     }
 
-    @Parameterized.Parameters(name = "{index}: endian {0} copying {1}")
+    @Parameterized.Parameters(name = "{index}: endian {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {ByteOrder.BIG_ENDIAN, Boolean.FALSE},
-                {ByteOrder.BIG_ENDIAN, Boolean.TRUE},
-                {ByteOrder.LITTLE_ENDIAN, Boolean.TRUE},
-                {ByteOrder.LITTLE_ENDIAN, Boolean.FALSE}
+                {ByteOrder.BIG_ENDIAN},
+                {ByteOrder.LITTLE_ENDIAN}
         });
     }
 
@@ -111,7 +107,7 @@ public class Take5DictionaryTest extends Assert {
         if (outData != null) {
             outData[0] = mappedDict;
         }
-        return new Take5DictionaryBuilder(mappedDict).entrypoint(entryPoint).copyFsaToHeap(copying).build();
+        return new Take5DictionaryBuilder(mappedDict).entrypoint(entryPoint).build();
     }
 
     @Before
@@ -661,31 +657,6 @@ public class Take5DictionaryTest extends Assert {
         assertNull(match);
 
         // Not yet: testReverseLookupAll(dict, DAYS);
-    }
-
-    @Test
-    public void testCloning() throws IOException, Take5Exception, CloneNotSupportedException {
-        Take5Dictionary dict1 = openDictionary("src/test/dicts/unified", "next_letters", null);
-        Take5Dictionary dict2 = Take5DictionaryBuilder.cloneAdditionalEntrypoint(dict1, "main");
-        Take5Match match = dict1.matchExact("gab");
-        assertNotNull(match);
-        assertEquals(3, match.getLength());
-        assertEquals(7, match.getIndex());
-
-        match = dict1.matchExact("gad");
-        assertNull(match);
-
-        testReverseLookupAll(dict1, NEXT_LETTERS);
-
-        match = dict2.matchExact("Sundae");
-        assertNotNull(match);
-        assertEquals(6, match.getLength());
-        assertEquals(4, match.getIndex());
-
-        match = dict2.matchExact("Foobar");
-        assertNull(match);
-
-        testReverseLookupAll(dict2, DAYS);
     }
 
     /**

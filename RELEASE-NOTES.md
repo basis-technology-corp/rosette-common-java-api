@@ -29,9 +29,4 @@ Here are some examples of how this is different:
 *  This version deprecates the existing constructors for
    `Take5Dictionary` and provides a fluent `Take5DictionaryBuilder` in
    their place. 
-* This version allows applications to control the questionable
-  optimization of reading the memory of the FSA into the heap. By
-  default, the data is not copied. `Take5DictionaryBuilder` provides a
-  method to request the copy; the request is only respected for
-  'version 56' and above dictionaries, to avoid problem of reading
-  unreasonable amounts of data.
+* This version removes the questionable optimization of reading the memory of the FSA into the heap.
