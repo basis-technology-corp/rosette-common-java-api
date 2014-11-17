@@ -23,3 +23,10 @@ Here are some examples of how this is different:
 
 * Miscellaneous characters, such as the BOM, are correctly
   characterized regardless of their block
+  
+## Changes to Take5Dictionary  ([COMN-136](http://jira.basistech.net/browse/COMN-136)) ##
+  
+*  This version deprecates the existing constructors for
+   `Take5Dictionary` and provides a fluent `Take5DictionaryBuilder` in
+   their place. 
+* This version removes the questionable optimization of reading the memory of the FSA into the heap.

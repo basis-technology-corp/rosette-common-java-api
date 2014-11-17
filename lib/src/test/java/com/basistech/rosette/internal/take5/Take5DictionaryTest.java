@@ -75,12 +75,11 @@ public class Take5DictionaryTest extends Assert {
         this.order = order;
     }
 
-
-
-    @Parameterized.Parameters(name = "{index}: {0}")
+    @Parameterized.Parameters(name = "{index}: endian {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {ByteOrder.BIG_ENDIAN}, {ByteOrder.LITTLE_ENDIAN}
+                {ByteOrder.BIG_ENDIAN},
+                {ByteOrder.LITTLE_ENDIAN}
         });
     }
 
@@ -108,7 +107,7 @@ public class Take5DictionaryTest extends Assert {
         if (outData != null) {
             outData[0] = mappedDict;
         }
-        return new Take5Dictionary(mappedDict, mappedDict.capacity(), entryPoint);
+        return new Take5DictionaryBuilder(mappedDict).entrypoint(entryPoint).build();
     }
 
     @Before
@@ -658,35 +657,6 @@ public class Take5DictionaryTest extends Assert {
         assertNull(match);
 
         // Not yet: testReverseLookupAll(dict, DAYS);
-    }
-
-    @Test
-    public void testCloning() throws IOException, Take5Exception, CloneNotSupportedException {
-        Take5Dictionary dict1 = openDictionary("src/test/dicts/unified", "next_letters", null);
-
-        Take5Dictionary dict2 = dict1.clone();
-
-        dict2.setEntryPoint("main"); // this is the "days" dictionary
-
-        Take5Match match = dict1.matchExact("gab");
-        assertNotNull(match);
-        assertEquals(3, match.getLength());
-        assertEquals(7, match.getIndex());
-
-        match = dict1.matchExact("gad");
-        assertNull(match);
-
-        testReverseLookupAll(dict1, NEXT_LETTERS);
-
-        match = dict2.matchExact("Sundae");
-        assertNotNull(match);
-        assertEquals(6, match.getLength());
-        assertEquals(4, match.getIndex());
-
-        match = dict2.matchExact("Foobar");
-        assertNull(match);
-
-        testReverseLookupAll(dict2, DAYS);
     }
 
     /**
