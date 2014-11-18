@@ -14,12 +14,12 @@
 
 package com.basistech.common.osgi.itests;
 
+import com.basistech.internal.util.InterruptibleCharSequence;
+import com.basistech.internal.util.bitvector.BitVector;
 import com.basistech.rosette.RosetteException;
 import com.basistech.rosette.internal.take5.Take5DictionaryBuilder;
-import com.basistech.rosette.util.InterruptibleCharSequence;
 import com.basistech.util.EncodingCode;
 import com.basistech.util.LanguageCode;
-import com.basistech.util.internal.bitvector.BitVector;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
