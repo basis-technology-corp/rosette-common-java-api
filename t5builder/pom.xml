@@ -106,7 +106,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>com.basistech.rosette.internal.take5build</Export-Package>
-                        <Embed-Dependency>commons-io,opencsv,commons-lang,fastutil,args4j</Embed-Dependency>
+                        <Embed-Dependency>commons-io,opencsv,commons-lang,fastutil</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                     </instructions>
                 </configuration>
