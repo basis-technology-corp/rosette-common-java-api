@@ -11,12 +11,12 @@
  ** with `restricted rights' as those terms are defined in DAR and ASPR
  ** 7-104.9(a).
  ******************************************************************************/
-package com.basistech.rosette.internal.util;
+package com.basistech.util;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.basistech.rosette.util.EncodingCode;
+import com.basistech.util.EncodingCode;
 
 public class TestEncodingCode {
 
