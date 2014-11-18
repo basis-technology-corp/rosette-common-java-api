@@ -12,7 +12,7 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.rosette.util;
+package com.basistech.internal.util;
 
 import java.io.IOException;
 import java.io.Reader;

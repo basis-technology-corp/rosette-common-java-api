@@ -23,9 +23,10 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
+import com.basistech.internal.util.TabReader;
 import junit.framework.TestCase;
 
-import com.basistech.rosette.util.TabReader.Line;
+import com.basistech.internal.util.TabReader.Line;
 
 public class TabReaderTest extends TestCase {
 
