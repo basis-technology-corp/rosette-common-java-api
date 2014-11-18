@@ -16,6 +16,7 @@ package com.basistech.rosette.util;
 
 import java.util.regex.Pattern;
 
+import com.basistech.internal.util.DataFileConfiguration;
 import junit.framework.TestCase;
 
 public class DataFileConfigurationTest extends TestCase {

@@ -14,6 +14,7 @@
 
 package com.basistech.rosette.util;
 
+import com.basistech.internal.util.InterruptibleCharSequence;
 import com.basistech.rosette.RosetteInterruptedException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,7 +22,7 @@ import org.junit.Test;
 import java.util.regex.Pattern;
 
 /**
- * Tests for {@link com.basistech.rosette.util.InterruptibleCharSequence}.
+ * Tests for {@link com.basistech.internal.util.InterruptibleCharSequence}.
  */
 public class InterruptibleCharSequenceTest extends Assert {
 

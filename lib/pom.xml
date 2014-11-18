@@ -42,7 +42,6 @@
         </resources>
         <pluginManagement>
             <plugins>
-
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
@@ -69,7 +68,10 @@
                 <!-- This bundle publishes internal Basis stuff for use by other internal basis stuff.-->
                 <configuration>
                     <instructions>
-                        <Export-Package>com.basistech.rosette.*,com.basistech.rosette.internal.take5</Export-Package>
+                        <Export-Package>com.basistech.internal.util.bitvector,
+                                        com.basistech.internal.util,
+                                        com.basistech.rosette.internal.misc,
+                                        com.basistech.rosette.internal.take5</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

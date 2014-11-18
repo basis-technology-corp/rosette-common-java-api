@@ -12,7 +12,7 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.rosette.util;
+package com.basistech.internal.util;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,8 +30,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.basistech.internal.util.Endian;
 
 /**
  * A DataFileConfiguration specifies the locations of a set of data files.  The configuration
