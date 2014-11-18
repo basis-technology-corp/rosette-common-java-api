@@ -69,7 +69,7 @@
                 <!-- This bundle publishes internal Basis stuff for use by other internal basis stuff.-->
                 <configuration>
                     <instructions>
-                        <Export-Package>com.basistech.internal.take5.*,com.basistech.rosette.*</Export-Package>
+                        <Export-Package>com.basistech.rosette.*</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
