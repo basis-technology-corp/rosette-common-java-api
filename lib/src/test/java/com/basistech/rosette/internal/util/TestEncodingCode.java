@@ -16,7 +16,7 @@ package com.basistech.rosette.internal.util;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.basistech.rosette.util.EncodingCode;
+import com.basistech.util.EncodingCode;
 
 public class TestEncodingCode {
 

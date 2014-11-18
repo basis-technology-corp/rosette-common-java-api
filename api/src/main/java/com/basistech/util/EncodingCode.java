@@ -16,7 +16,7 @@
  * RLI (binary) searches will rely on it.
  */
 
-package com.basistech.rosette.util;
+package com.basistech.util;
 
 /**
  * This is a list of many encoding names in mime name alphabetical order.
