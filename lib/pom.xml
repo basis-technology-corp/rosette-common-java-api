@@ -1,21 +1,23 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>common</artifactId>
-    <name>common-java-lib</name>
+    <artifactId>common-lib</artifactId>
+    <name>common-lib</name>
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>common-java</artifactId>
         <version>33.1.1-SNAPSHOT</version>
     </parent>
+    <packaging>bundle</packaging>
     <properties>
-      <spring.version>2.5.4</spring.version>
+        <spring.version>2.5.4</spring.version>
     </properties>
     <dependencies>
         <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>common-api</artifactId>
-          <version>${project.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common-api</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.ibm.icu</groupId>
@@ -67,6 +69,7 @@
         </resources>
         <pluginManagement>
             <plugins>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
@@ -77,13 +80,26 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                  <artifactId>maven-checkstyle-plugin</artifactId>
-                  <version>2.9.1</version>
-                  <configuration>
-                    <excludes>**/bitvector/*</excludes>
-                  </configuration>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>2.9.1</version>
+                    <configuration>
+                        <excludes>**/bitvector/*</excludes>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <!-- This bundle publishes internal Basis stuff for use by other internal basis stuff.-->
+                <configuration>
+                    <instructions>
+                        <Export-Package>com.basistech.internal.take5.*,com.basistech.rosette.*</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

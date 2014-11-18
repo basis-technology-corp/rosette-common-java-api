@@ -12,8 +12,12 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.rosette.internal.take5;
+package com.basistech.rosette.internal.take5cmds;
 
+import com.basistech.rosette.internal.take5.Take5Dictionary;
+import com.basistech.rosette.internal.take5.Take5Exception;
+import com.basistech.rosette.internal.take5.Take5Match;
+import com.basistech.rosette.internal.take5.Take5Walker;
 import com.basistech.rosette.internal.take5build.ByteOrderOptionHandler;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;

@@ -12,7 +12,7 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.rosette.internal.take5;
+package com.basistech.rosette.internal.take5cmds;
 
 import com.basistech.rosette.internal.take5build.ByteOrderOptionHandler;
 import com.basistech.rosette.internal.take5build.Take5Format;
