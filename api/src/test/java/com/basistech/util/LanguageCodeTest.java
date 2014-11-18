@@ -13,14 +13,16 @@
  ******************************************************************************/
 package com.basistech.util;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class LanguageCodeTest extends TestCase {
+public class LanguageCodeTest extends Assert {
     static final int SIZE_OF_ENUM = 83;
     static final int DONT_TEST_ID = -1;
     /**
      * Checks that different lookup paths are consistent with each other.
      */
+    @Test
     public void testValidLookups() {
         for (LanguageCode code : LanguageCode.values()) {
             if (!code.ISO639_1().equals(LanguageCode.UNCODED_ISO639_1)) {
@@ -49,6 +51,7 @@ public class LanguageCodeTest extends TestCase {
     }
 
     @SuppressWarnings("unused")
+    @Test
     public void testInvalidLookups() {
         LanguageCode code;
 
@@ -101,6 +104,7 @@ public class LanguageCodeTest extends TestCase {
      * Spot-checks the actual data. Alternatively it would be reasonable to duplicate _all_ of the data in a
      * different format and check all the data instead of just a sample, but this way is cheaper.
      */
+    @Test
     public void testDataSpotCheck() {
         // Spot-check the first, the last, 3 other important ones, and
         // the total size. This is meant to catch errors where the
@@ -150,6 +154,52 @@ public class LanguageCodeTest extends TestCase {
             }
             assertEquals(testSet[i].getDefaultScript(), scriptResults[i]);
         }
+    }
+
+    @Test
+    public void testLanguageID() {
+        LanguageCode lc = LanguageCode.ENGLISH;
+        Assert.assertEquals(11, lc.languageID());
+    }
+
+    @Test
+    public void testISO639() {
+        LanguageCode lc = LanguageCode.ENGLISH;
+        int rc = lc.ISO639_1().compareToIgnoreCase("En");
+        Assert.assertEquals(0, rc);
+    }
+
+    @Test
+    public void testGetDefaultScript() {
+        LanguageCode lc = LanguageCode.ENGLISH;
+        ISO15924 iso = lc.getDefaultScript();
+        Assert.assertEquals(215, iso.numeric());
+    }
+
+    @Test
+    public void testLanguageName() {
+        LanguageCode lc = LanguageCode.ENGLISH;
+        int rc = lc.name().compareToIgnoreCase("English");
+        Assert.assertEquals(0, rc);
+    }
+
+    @Test
+    public void testGetNativeCode() {
+        LanguageCode lc = LanguageCode.ENGLISH;
+        Assert.assertEquals(11, lc.languageID());
+    }
+
+    @Test
+    public void testLookupByLanguageID() {
+        LanguageCode lc = LanguageCode.lookupByLanguageID(11);
+        int rc = lc.name().compareToIgnoreCase("English");
+        Assert.assertEquals(0, rc);
+    }
+
+    @Test
+    public void testLookupByISO639() {
+        int language = LanguageCode.lookupByISO639("en").languageID();
+        Assert.assertEquals(11, language);
     }
 
 }
