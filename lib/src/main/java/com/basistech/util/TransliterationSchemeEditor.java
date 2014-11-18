@@ -20,7 +20,7 @@ import java.beans.PropertyEditorSupport;
  * that participates in the java.beans property editor discipline. JavaBeans automatically discovers
  * PropertyEditor classes if they are in the same package as the class they handle, and have the same name but
  * with an 'Editor' suffix. This class turns a String value into a valid value for a property of type
- * {@link TransliterationScheme}. Case is not significant; the string is mapped to upper case and then
+ * {@link com.basistech.util.TransliterationScheme}. Case is not significant; the string is mapped to upper case and then
  * converted.
  */
 public class TransliterationSchemeEditor extends PropertyEditorSupport {

@@ -12,7 +12,7 @@
  ** 7-104.9(a).
  ******************************************************************************/
 //CHECKSTYLE:OFF
-package com.basistech.util.internal;
+package com.basistech.internal.util;
 
 /*
  * Constants for Arabic characters, to make it easier to express code that uses them.

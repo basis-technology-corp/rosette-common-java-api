@@ -13,6 +13,7 @@
  ******************************************************************************/
 package com.basistech.util;
 
+import com.basistech.internal.util.ISO15924Utils;
 import org.junit.Assert;
 import org.junit.Test;
 

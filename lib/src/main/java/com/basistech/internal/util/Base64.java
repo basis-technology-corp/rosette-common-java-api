@@ -1,5 +1,5 @@
 //CHECKSTYLE:OFF
-package com.basistech.util.internal;
+package com.basistech.internal.util;
 
 /**
  * Encodes and decodes to and from Base64 notation.

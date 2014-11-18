@@ -31,6 +31,7 @@
         </site>
     </distributionManagement>
     <modules>
+        <module>api</module>
         <module>lib</module>
         <module>t5builder</module>
     </modules>

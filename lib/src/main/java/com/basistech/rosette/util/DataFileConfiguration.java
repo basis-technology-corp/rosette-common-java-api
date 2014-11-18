@@ -31,7 +31,7 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.basistech.util.internal.Endian;
+import com.basistech.internal.util.Endian;
 
 /**
  * A DataFileConfiguration specifies the locations of a set of data files.  The configuration

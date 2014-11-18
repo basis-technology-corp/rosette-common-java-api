@@ -20,7 +20,7 @@ import java.beans.PropertyEditorSupport;
  * that participates in the java.beans property editor discipline. JavaBeans automatically discovers
  * PropertyEditor classes if they are in the same package as the class they handle, and have the same name but
  * with an 'Editor' suffix. This class turns a String value into a valid value for a property of type
- * {@link ISO15924}. The string is converted via the function {@link ISO15924#lookupByCode4}.
+ * {@link com.basistech.util.ISO15924}. The string is converted via the function {@link com.basistech.util.ISO15924#lookupByCode4}.
  */
 public class ISO15924Editor extends PropertyEditorSupport {
 

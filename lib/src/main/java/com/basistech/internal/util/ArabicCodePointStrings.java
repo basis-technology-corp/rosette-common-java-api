@@ -12,7 +12,7 @@
  ** with `restricted rights' as those terms are defined in DAR and ASPR
  ** 7-104.9(a).
  ******************************************************************************/
-package com.basistech.util.internal;
+package com.basistech.internal.util;
 
 
 /*
