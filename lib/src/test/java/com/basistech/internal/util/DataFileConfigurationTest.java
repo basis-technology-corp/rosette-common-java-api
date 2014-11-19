@@ -12,11 +12,10 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.rosette.util;
+package com.basistech.internal.util;
 
 import java.util.regex.Pattern;
 
-import com.basistech.internal.util.DataFileConfiguration;
 import junit.framework.TestCase;
 
 public class DataFileConfigurationTest extends TestCase {

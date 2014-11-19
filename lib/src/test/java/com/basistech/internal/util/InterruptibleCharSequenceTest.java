@@ -12,9 +12,8 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.rosette.util;
+package com.basistech.internal.util;
 
-import com.basistech.internal.util.InterruptibleCharSequence;
 import com.basistech.rosette.RosetteInterruptedException;
 import org.junit.Assert;
 import org.junit.Test;

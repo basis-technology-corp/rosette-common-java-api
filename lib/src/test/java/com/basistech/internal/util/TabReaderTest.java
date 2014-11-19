@@ -12,7 +12,7 @@
  ** 7-104.9(a).
  ******************************************************************************/
 
-package com.basistech.rosette.util;
+package com.basistech.internal.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,12 +23,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
-import com.basistech.internal.util.TabReader;
-import junit.framework.TestCase;
-
 import com.basistech.internal.util.TabReader.Line;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class TabReaderTest extends TestCase {
+public class TabReaderTest extends Assert {
 
     /** Get a File handle for a path from the resource directory. 
      * @throws FileNotFoundException 
@@ -40,7 +39,8 @@ public class TabReaderTest extends TestCase {
         }
         return new File(resource.toURI());
     }
-    
+
+    @Test
     public void testMissing() throws Exception {
         boolean fnf = false;
         try {
@@ -56,6 +56,7 @@ public class TabReaderTest extends TestCase {
         }
     }
 
+    @Test
     public void testLoading() throws Exception {
         List<Line> actual = TabReader.getAll(getFile("3-token.txt"), 3, "#");
         assertEquals(2, actual.size());
@@ -70,7 +71,8 @@ public class TabReaderTest extends TestCase {
         assertEquals(3, l4.getData().length);
         assertEquals("d - e - fff ff", String.format("%s - %s - %s", (Object[]) l4.getData()));
     }
-    
+
+    @Test
     public void testReader() throws IOException {
         Reader r = new StringReader(" a \t b  \n  c \t d ");
         assertEquals(2, TabReader.getAll(r, 2, "#").size());
@@ -84,13 +86,15 @@ public class TabReaderTest extends TestCase {
         assertEquals(2, count);
         r.reset();
     }
-    
+
+    @Test
     public void testNoComments() throws Exception {
         List<Line> actual = TabReader.getAll(getFile("3-token.txt"), 3, null);
         assertEquals(3, actual.size());
         assertNotSame(-1, actual.get(0).getData()[2].indexOf("#"));
     }
-    
+
+    @Test
     public void testVariableColumns() throws Exception {
         List<Line> actual = TabReader.getAll(getFile("variable-column.txt"), -1, "#");
         assertEquals(3, actual.size());
@@ -115,20 +119,18 @@ public class TabReaderTest extends TestCase {
      * Error cases *
      *=============*/
     
-    private void expectError(String description, int cols, String commentStart, String msgMatch) {
-        try {
-            TabReader.getAll(getFile("3-token.txt"), cols, commentStart);
-            fail("Failed to catch an exception");
-        } catch (Exception e) {
-            String msg = e.getClass().getSimpleName() + ": " + e.getMessage();
-            assertTrue(String.format("Caught wrong exception for: %s\n%s", description, msg),
-                       msg.matches(msgMatch));
-        }
+    private void expectError(int cols, String commentStart) throws IOException, URISyntaxException {
+        TabReader.getAll(getFile("3-token.txt"), cols, commentStart);
     }
-    
-    public void testBadFormat() {
-        expectError("too few tokens", 5, "#", "ReadExc.*xpected 5.*");
-        expectError("too many tokens", 2, "#", "ReadExc.*xpected 2.*");
+
+    @Test(expected = TabReader.ReadException.class)
+    public void tooFew() throws Exception {
+        expectError( 5, "#");
+    }
+
+    @Test(expected = TabReader.ReadException.class)
+    public void tooMany() throws Exception {
+        expectError( 2, "#");
     }
 }
 
