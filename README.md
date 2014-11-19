@@ -8,6 +8,10 @@ one classpath.
 
 See RELEASE-NOTES.md for information about particular changes.
 
+```
+$ MAVEN_OPTS=-Xmx2g mvn clean install
+```
+
 # Structure #
 
 There are three modules in here: `common-api`, `common-lib` and
