@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>t5builder</artifactId>
+    <artifactId>common-java-t5builder</artifactId>
     <name>common-java-t5builder</name>
     <parent>
         <groupId>com.basistech</groupId>
@@ -9,6 +9,7 @@
         <version>34.0.0-SNAPSHOT</version>
     </parent>
     <packaging>bundle</packaging>
+    <description>Class library for building Take5 files.</description>
     <build>
         <pluginManagement>
             <plugins>
@@ -116,12 +117,12 @@
     <dependencies>
         <dependency>
             <groupId>com.basistech</groupId>
-            <artifactId>common-api</artifactId>
+            <artifactId>common-lib</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.basistech</groupId>
-            <artifactId>common-lib</artifactId>
+            <artifactId>common-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
