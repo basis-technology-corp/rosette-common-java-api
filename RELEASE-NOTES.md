@@ -12,6 +12,20 @@ Take5 runtime.
 
 The artifact names are now consistent: common-api, common-lib, common-t5builder.
 
+Note that the OSGi bundling requires some significant java heap.  If
+you see this error when building:
+
+```
+[INFO] --- maven-bundle-plugin:2.5.3:bundle (default-bundle) @ t5builder ---
+[ERROR] Java heap space -> [Help 1]
+```
+
+you will need to adjust your heap settings via MAVEN_OPTS, e.g.
+
+```
+$ MAVEN_OPTS=-Xmx2g mvn clean install
+```
+
 # 33.1.1 #
 
 ## Script guessing changes ([COMN-93](http://jira.basistech.net/browse/COMN-93)) ##
