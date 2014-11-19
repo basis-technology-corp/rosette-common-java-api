@@ -1,5 +1,14 @@
 # Cumulative Release Notes for rosette-common-java #
 
+# 34.0.0 #
+
+## Split between public API and private common classes ([COMN-148](http://jira.basistech.net/browse/COMN-148)) ##
+
+We split this library from two to three jars: common-api, common-lib, and t5builder, and added OSGi metadata.  
+See README.md for the details. To make the jar files play well as OSGi
+bundles, we changed some of the package structure of some of the older
+internal classes and removed the redundant extra implementation of the Take5 runtime.
+
 # 33.1.1 #
 
 ## Script guessing changes ([COMN-93](http://jira.basistech.net/browse/COMN-93)) ##

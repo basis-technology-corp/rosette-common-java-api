@@ -10,9 +10,15 @@ See RELEASE-NOTES.md for information about particular changes.
 
 # Structure #
 
-There are two modules in here: `lib` and `t5builder`. `lib` is the
-primary library of common classes, and the remarks about compatibility
-above primarily apply in here. `t5builder` contains the Java
+There are three modules in here: `common-api`, `common-lib` and
+`t5builder`. `common-api` contains enums and exceptions that are part
+ of the public API of just about everything that we build at
+ Basis. The compatility requirements are strongest here.
+ 
+`common-lib` is a collection of common classes, and the remarks about
+compatibility also apply in here, but we plan to use classpath
+isolation rather than guarantee perfect backwards compatibility to
+allow mixing and matching of products. `t5builder` contains the Java
 implementation of the code to build Take5 files. Each directory has
 its own README.md with more information.
 
