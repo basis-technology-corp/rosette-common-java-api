@@ -7,7 +7,10 @@
 We split this library from two to three jars: common-api, common-lib, and t5builder, and added OSGi metadata.  
 See README.md for the details. To make the jar files play well as OSGi
 bundles, we changed some of the package structure of some of the older
-internal classes and removed the redundant extra implementation of the Take5 runtime.
+internal classes and removed the redundant extra implementation of the
+Take5 runtime.
+
+The artifact names are now consistent: common-api, common-lib, common-t5builder.
 
 # 33.1.1 #
 
