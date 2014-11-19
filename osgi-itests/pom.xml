@@ -29,7 +29,7 @@
         </dependency>
         <dependency>
             <groupId>com.basistech</groupId>
-            <artifactId>t5builder</artifactId>
+            <artifactId>common-java-t5builder</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

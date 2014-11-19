@@ -48,7 +48,7 @@ public class CommonBundlesIT {
                 // we use the bundle to get Take5 and the other stuff that we don't want to treat as platform.
                 mavenBundle("com.basistech", "common-api").versionAsInProject(),
                 mavenBundle("com.basistech", "common-lib").versionAsInProject(),
-                mavenBundle("com.basistech", "t5builder").versionAsInProject(),
+                mavenBundle("com.basistech", "common-java-t5builder").versionAsInProject(),
                 mavenBundle("com.ibm.icu", "icu4j").versionAsInProject(),
                 mavenBundle("com.google.guava", "guava").versionAsInProject(),
                 junitBundles(),
