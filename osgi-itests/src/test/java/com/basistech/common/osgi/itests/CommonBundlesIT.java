@@ -18,6 +18,7 @@ import com.basistech.internal.util.InterruptibleCharSequence;
 import com.basistech.internal.util.bitvector.BitVector;
 import com.basistech.rosette.RosetteException;
 import com.basistech.rosette.internal.take5.Take5DictionaryBuilder;
+import com.basistech.rosette.internal.take5build.Take5BuilderFactory;
 import com.basistech.rosette.util.EncodingCode;
 import com.basistech.util.LanguageCode;
 import org.junit.Test;
@@ -35,6 +36,7 @@ import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemPackages;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.url;
 
 /**
  * Test that the bundles work, at least to some minimal extent.
@@ -42,13 +44,17 @@ import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class CommonBundlesIT {
+
+    private static String bundles = System.getProperty("bundles");
+    private static String version = System.getProperty("project.version");
+
     @Configuration
     public Option[] config() {
         return options(
                 // we use the bundle to get Take5 and the other stuff that we don't want to treat as platform.
-                mavenBundle("com.basistech", "common-api").versionAsInProject(),
-                mavenBundle("com.basistech", "common-lib").versionAsInProject(),
-                mavenBundle("com.basistech", "common-java-t5builder").versionAsInProject(),
+                url(String.format("file:%s/common-api-%s.jar", bundles, version)),
+                url(String.format("file:%s/common-lib-%s.jar", bundles, version)),
+                url(String.format("file:%s/common-java-t5builder-%s.jar", bundles, version)),
                 mavenBundle("com.ibm.icu", "icu4j").versionAsInProject(),
                 mavenBundle("com.google.guava", "guava").versionAsInProject(),
                 junitBundles(),
@@ -75,5 +81,10 @@ public class CommonBundlesIT {
         new Take5DictionaryBuilder(dummy);
         new InterruptibleCharSequence(new char[0], 0, 0);
         new BitVector(100);
+    }
+
+    @Test
+    public void t5build() throws Exception {
+        new Take5BuilderFactory();
     }
 }
