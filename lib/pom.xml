@@ -1,13 +1,12 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-lib</artifactId>
     <name>common-lib</name>
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>common-java</artifactId>
-        <version>34.0.0-rc1-SNAPSHOT</version>
+        <version>34.0.0-rc1</version>
     </parent>
     <packaging>bundle</packaging>
     <description>Shared internal utilities.</description>
