@@ -10,6 +10,10 @@
     </parent>
     <packaging>bundle</packaging>
     <description>Class library for building Take5 files.</description>
+    <properties>
+      <!-- work around enforcer bug -->
+      <skip-dependency-convergence>true</skip-dependency-convergence>
+    </properties>
     <build>
         <pluginManagement>
             <plugins>
