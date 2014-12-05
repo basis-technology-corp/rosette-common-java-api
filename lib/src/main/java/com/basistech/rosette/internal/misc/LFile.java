@@ -23,6 +23,7 @@ public class LFile {
     private String customer;
     private String expiration;
     private List<Entry> entries;
+    private String token;
 
     public LFile(String generator, String customer, String expiration, List<Entry> entries) {
         this.generator = generator;
@@ -30,6 +31,13 @@ public class LFile {
         this.expiration = expiration;
         this.entries = entries;
     }
+
+    public LFile(String generator, String customer, String expiration, List<Entry> entries, String token) {
+        this(generator, customer, expiration, entries);
+        this.token = token;
+
+    }
+
 
     public String getGenerator() {
         return generator;
@@ -46,5 +54,7 @@ public class LFile {
     public List<Entry> getEntries() {
         return entries;
     }
+
+    public String getToken() { return token; }
 
 }

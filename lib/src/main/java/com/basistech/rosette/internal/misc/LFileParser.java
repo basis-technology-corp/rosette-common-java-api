@@ -33,6 +33,7 @@ public class LFileParser implements ContentHandler {
     private String generator;
     private String customer;
     private String expiration;
+    private String token;
     
     private List<Entry> elist = new ArrayList<Entry>();
     
@@ -49,7 +50,7 @@ public class LFileParser implements ContentHandler {
     }
 
     public void endDocument() throws SAXException {
-        result = new LFile(generator, customer, expiration, elist);
+        result = new LFile(generator, customer, expiration, elist, token);
     }
 
     public void endElement(String uri, String name, String qname) {
@@ -95,6 +96,10 @@ public class LFileParser implements ContentHandler {
                 || "customer".equals(name)
                 || "expiration".equals(name)) {
             tag = null;
+        }
+
+        if ("s".equals(name)) {
+            token = buffer.toString();
         }
     }
 

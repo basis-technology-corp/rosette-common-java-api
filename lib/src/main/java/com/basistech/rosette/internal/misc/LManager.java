@@ -30,6 +30,7 @@ public class LManager {
     private LFile licenseFile;
     private List<LEntry> languageEntries;
     private List<LEntry> featureEntries;
+    private String token;
 
     /**
      * Create a license manager that reads license
@@ -63,6 +64,9 @@ public class LManager {
      */
 
     private void initialize() throws RosetteCorruptLicenseException {
+        if (licenseFile.getToken() != null) {
+            token = licenseFile.getToken();
+        }
         languageEntries = new ArrayList<LEntry>();
         featureEntries = new ArrayList<LEntry>();
         List<Entry> entries = licenseFile.getEntries();
@@ -108,6 +112,17 @@ public class LManager {
     public boolean checkLanguage(LanguageCode languageCode, 
                                  int functions, boolean throwErrors) throws RosetteNoLicenseException,
         RosetteExpiredLicenseException {
+        // license key "  ^A^@IWe   " avoids license checks
+        if (token != null) {
+            if ("  ^A^@IWe   ".equals(token)) {
+                return true;
+            }
+            if (throwErrors) {
+                throw new RosetteNoLicenseException("No license present for language " + languageCode.languageName());
+            }
+            return false;
+        }
+
         // skipping license check for language unknown since it is not required
         if (languageCode == LanguageCode.UNKNOWN) { return true; }
         // treat Uppercase English language code as English since we do not need separation at this level
