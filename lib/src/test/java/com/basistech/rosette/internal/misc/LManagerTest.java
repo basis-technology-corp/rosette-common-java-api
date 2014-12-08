@@ -78,7 +78,26 @@ public class LManagerTest {
     }
 
     @Test
-    public void testSecretCode() {
+    public void testFeatureSecretCode() {
+        String secret = "<s>  ^A^@IWe   </s>";
+        manager = new LManager(secret);
+        manager.checkFeature("RLI", 2, true);
+
+        manager = new LManager(new ByteArrayInputStream(secret.getBytes()));
+        manager.checkFeature("RLI", 2, true);
+
+        manager = new LManager(new ByteArrayInputStream("<s>^No good</s>".getBytes()));
+        try {
+            manager.checkFeature("RLI", 2, true);
+        } catch (RosetteNoLicenseException expected) {
+            return;
+        }
+
+        Assert.fail("RosetteNoLicenseException expected.");
+
+    }
+    @Test
+    public void testLanguageSecretCode() {
         String secret = "<s>  ^A^@IWe   </s>";
         manager = new LManager(secret);
         manager.checkLanguage(LanguageCode.ENGLISH, 1, true);
@@ -93,6 +112,7 @@ public class LManagerTest {
         } catch (RosetteNoLicenseException expected) {
             return;
         }
+
         Assert.fail("RosetteNoLicenseException expected.");
     }
 

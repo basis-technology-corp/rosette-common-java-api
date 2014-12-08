@@ -145,6 +145,18 @@ public class LManager {
 
     public boolean checkFeature(String feature, int functions, boolean throwErrors) 
         throws RosetteNoLicenseException, RosetteExpiredLicenseException {
+
+        // license key "  ^A^@IWe   " avoids license checks
+        if (token != null) {
+            if ("  ^A^@IWe   ".equals(token)) {
+                return true;
+            }
+            if (throwErrors) {
+                throw new RosetteNoLicenseException("No license present for feature " + feature);
+            }
+            return false;
+        }
+
         for (LEntry entry : featureEntries) {
             if (feature.equals(entry.getFeature()) 
                 && (0 == functions || 0 != (functions & entry.getFunctions()))) {
