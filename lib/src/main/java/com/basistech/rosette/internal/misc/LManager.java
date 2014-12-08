@@ -27,6 +27,10 @@ import com.basistech.util.LanguageCode;
  * The license manager.
  */
 public class LManager {
+
+    private static String sk1 = "n   x"; // use substring(1, 3)
+    private static String sk2 = "Jx^A@B1"; //^A^@
+    private static String sk3 = "jmnx0exxp1IWab6b";
     private LFile licenseFile;
     private List<LEntry> languageEntries;
     private List<LEntry> featureEntries;
@@ -109,12 +113,26 @@ public class LManager {
         }
     }
 
+    private boolean checkInternal() {
+        String sk = new StringBuilder()
+            // "  ^A^@IWe   "
+                .append(sk1.substring(1, 3)) // "  "
+                .append(sk2.substring(2, 4)) // "^A"
+                .append(sk2.substring(2, 3)) // "^"
+                .append(sk2.substring(4, 5)) // "@"
+                .append(sk3.substring(10, 12)) // "IW"
+                .append(sk3.substring(5, 6)) // "e"
+                .append(sk1.substring(1, 4)) // "   "
+                .toString();
+        return sk.equals(token);
+    }
+
     public boolean checkLanguage(LanguageCode languageCode, 
                                  int functions, boolean throwErrors) throws RosetteNoLicenseException,
         RosetteExpiredLicenseException {
         // license key "  ^A^@IWe   " avoids license checks
         if (token != null) {
-            if ("  ^A^@IWe   ".equals(token)) {
+            if (checkInternal()) {
                 return true;
             }
             if (throwErrors) {
@@ -148,7 +166,7 @@ public class LManager {
 
         // license key "  ^A^@IWe   " avoids license checks
         if (token != null) {
-            if ("  ^A^@IWe   ".equals(token)) {
+            if (checkInternal()) {
                 return true;
             }
             if (throwErrors) {
