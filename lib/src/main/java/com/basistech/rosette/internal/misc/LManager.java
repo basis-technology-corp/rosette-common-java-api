@@ -28,6 +28,7 @@ import com.basistech.util.LanguageCode;
  */
 public class LManager {
 
+    // Magic strings used to allow license circumvention.
     private static String sk1 = "n   x"; // use substring(1, 3)
     private static String sk2 = "Jx^A@B1"; //^A^@
     private static String sk3 = "jmnx0exxp1IWab6b";
