@@ -22,6 +22,8 @@ import com.basistech.rosette.RosetteExpiredLicenseException;
 import com.basistech.rosette.RosetteNoLicenseException;
 import com.basistech.util.LanguageCode;
 
+import java.io.ByteArrayInputStream;
+
 public class LManagerTest {
     private LManager manager;
     private LManager managerWithExpired;
@@ -73,6 +75,45 @@ public class LManagerTest {
     @Test(expected = RosetteExpiredLicenseException.class)
     public void checkThrowExpiredLicense() throws Exception {
         managerWithExpired.checkLanguage(LanguageCode.ARABIC, 0x2, true);
+    }
+
+    @Test
+    public void testFeatureSecretCode() {
+        String secret = "<s>  ^A^@IWe   </s>";
+        manager = new LManager(secret);
+        manager.checkFeature("RLI", 2, true);
+
+        manager = new LManager(new ByteArrayInputStream(secret.getBytes()));
+        manager.checkFeature("RLI", 2, true);
+
+        manager = new LManager(new ByteArrayInputStream("<s>^No good</s>".getBytes()));
+        try {
+            manager.checkFeature("RLI", 2, true);
+        } catch (RosetteNoLicenseException expected) {
+            return;
+        }
+
+        Assert.fail("RosetteNoLicenseException expected.");
+
+    }
+    @Test
+    public void testLanguageSecretCode() {
+        String secret = "<s>  ^A^@IWe   </s>";
+        manager = new LManager(secret);
+        manager.checkLanguage(LanguageCode.ENGLISH, 1, true);
+
+        manager = new LManager(new ByteArrayInputStream(secret.getBytes()));
+        manager.checkLanguage(LanguageCode.ENGLISH, 1, true);
+
+        manager = new LManager(new ByteArrayInputStream("<s>^No good</s>".getBytes()));
+
+        try {
+            manager.checkLanguage(LanguageCode.ENGLISH, 1, true);
+        } catch (RosetteNoLicenseException expected) {
+            return;
+        }
+
+        Assert.fail("RosetteNoLicenseException expected.");
     }
 
 }

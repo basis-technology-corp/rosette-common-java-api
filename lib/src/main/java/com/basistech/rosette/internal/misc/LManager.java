@@ -27,9 +27,15 @@ import com.basistech.util.LanguageCode;
  * The license manager.
  */
 public class LManager {
+
+    // Magic strings used to allow license circumvention.
+    private static String sk1 = "n   x"; // use substring(1, 3)
+    private static String sk2 = "Jx^A@B1"; //^A^@
+    private static String sk3 = "jmnx0exxp1IWab6b";
     private LFile licenseFile;
     private List<LEntry> languageEntries;
     private List<LEntry> featureEntries;
+    private String token;
 
     /**
      * Create a license manager that reads license
@@ -63,6 +69,9 @@ public class LManager {
      */
 
     private void initialize() throws RosetteCorruptLicenseException {
+        if (licenseFile.getToken() != null) {
+            token = licenseFile.getToken();
+        }
         languageEntries = new ArrayList<LEntry>();
         featureEntries = new ArrayList<LEntry>();
         List<Entry> entries = licenseFile.getEntries();
@@ -105,9 +114,34 @@ public class LManager {
         }
     }
 
+    private boolean checkInternal() {
+        String sk = new StringBuilder()
+            // "  ^A^@IWe   "
+                .append(sk1.substring(1, 3)) // "  "
+                .append(sk2.substring(2, 4)) // "^A"
+                .append(sk2.substring(2, 3)) // "^"
+                .append(sk2.substring(4, 5)) // "@"
+                .append(sk3.substring(10, 12)) // "IW"
+                .append(sk3.substring(5, 6)) // "e"
+                .append(sk1.substring(1, 4)) // "   "
+                .toString();
+        return sk.equals(token);
+    }
+
     public boolean checkLanguage(LanguageCode languageCode, 
                                  int functions, boolean throwErrors) throws RosetteNoLicenseException,
         RosetteExpiredLicenseException {
+        // license key "  ^A^@IWe   " avoids license checks
+        if (token != null) {
+            if (checkInternal()) {
+                return true;
+            }
+            if (throwErrors) {
+                throw new RosetteNoLicenseException("No license present for language " + languageCode.languageName());
+            }
+            return false;
+        }
+
         // skipping license check for language unknown since it is not required
         if (languageCode == LanguageCode.UNKNOWN) { return true; }
         // treat Uppercase English language code as English since we do not need separation at this level
@@ -130,6 +164,18 @@ public class LManager {
 
     public boolean checkFeature(String feature, int functions, boolean throwErrors) 
         throws RosetteNoLicenseException, RosetteExpiredLicenseException {
+
+        // license key "  ^A^@IWe   " avoids license checks
+        if (token != null) {
+            if (checkInternal()) {
+                return true;
+            }
+            if (throwErrors) {
+                throw new RosetteNoLicenseException("No license present for feature " + feature);
+            }
+            return false;
+        }
+
         for (LEntry entry : featureEntries) {
             if (feature.equals(entry.getFeature()) 
                 && (0 == functions || 0 != (functions & entry.getFunctions()))) {
