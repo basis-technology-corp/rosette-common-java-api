@@ -1,5 +1,12 @@
 # Cumulative Release Notes for rosette-common-java
 
+## 34.1.0
+
+
+### Turning on  [Nexus release staging](https://confluence.basistech.net/display/ENG/Nexus#Nexus-StagingRepositoryUsage)
+    
+### ([COMN-156](http://jira.basistech.net/browse/COMN-156)) license manager improvements.
+
 ## 34.0.0
 
 ### ([COMN-148](http://jira.basistech.net/browse/COMN-148)) Split between public API and private common classes
