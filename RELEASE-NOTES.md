@@ -2,14 +2,19 @@
 
 ## 34.1.0
 
+### No jira Turning on [Nexus release staging](https://confluence.basistech.net/display/ENG/Nexus#Nexus-StagingRepositoryUsage)
 
-### Turning on  [Nexus release staging](https://confluence.basistech.net/display/ENG/Nexus#Nexus-StagingRepositoryUsage)
+See [752fb8ba](https://git.basistech.net/textanalytics/rosette-common-java/commit/752fb8ba3dacce4adbe4d3136c7aa481134d4d08).
     
-### ([COMN-156](http://jira.basistech.net/browse/COMN-156)) license manager improvements.
+### [COMN-156](http://jira.basistech.net/browse/COMN-156) License manager improvements
+
+LManager can now be given a secret to enable components to bypass
+license checks when we're calling between components, e.g. REX using
+RBL without an RBL license.
 
 ## 34.0.0
 
-### ([COMN-148](http://jira.basistech.net/browse/COMN-148)) Split between public API and private common classes
+### [COMN-148](http://jira.basistech.net/browse/COMN-148) Split between public API and private common classes
 
 We split this library from two to three jars: common-api, common-lib,
 and common-t5builder.  Typical clients that used to depend on just
@@ -59,7 +64,7 @@ $ MAVEN_OPTS=-Xmx2g mvn clean install
 
 ## 33.1.1
 
-### ([COMN-93](http://jira.basistech.net/browse/COMN-93)) Script guessing changes
+### [COMN-93](http://jira.basistech.net/browse/COMN-93) Script guessing changes
 
 We changed ISO15924Utils to stop using a Unicode block-based scheme
 for mapping characters to scripts, and switched to the official
@@ -81,7 +86,7 @@ Here are some examples of how this is different:
 * Miscellaneous characters, such as the BOM, are correctly
   characterized regardless of their block
   
-### ([COMN-136](http://jira.basistech.net/browse/COMN-136)) Changes to Take5Dictionary
+### [COMN-136](http://jira.basistech.net/browse/COMN-136) Changes to Take5Dictionary
   
 *  This version deprecates the existing constructors for
    `Take5Dictionary` and provides a fluent `Take5DictionaryBuilder` in
