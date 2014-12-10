@@ -2,7 +2,7 @@
 
 ## 34.1.0
 
-### No jira Turning on [Nexus release staging](https://confluence.basistech.net/display/ENG/Nexus#Nexus-StagingRepositoryUsage)
+### No jira: Turning on [Nexus release staging](https://confluence.basistech.net/display/ENG/Nexus#Nexus-StagingRepositoryUsage)
 
 See [752fb8ba](https://git.basistech.net/textanalytics/rosette-common-java/commit/752fb8ba3dacce4adbe4d3136c7aa481134d4d08).
     
