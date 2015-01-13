@@ -1,5 +1,13 @@
 # Cumulative Release Notes for rosette-common-java
 
+## ??.?.?
+
+### No jira: Removed joda-time dependency in Take5Build command line
+
+Removed optional joda-time dependency from t5builder jar.  If you want
+to use the Take5Build command line, you no longer need to provide
+this, but you still need to provide args4j.
+
 ## 34.1.0
 
 ### No jira: Turning on [Nexus release staging](https://confluence.basistech.net/display/ENG/Nexus#Nexus-StagingRepositoryUsage)
