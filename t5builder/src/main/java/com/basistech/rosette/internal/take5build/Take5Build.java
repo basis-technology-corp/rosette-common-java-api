@@ -23,9 +23,6 @@ import com.google.common.io.CharSource;
 import com.google.common.io.Files;
 import com.google.common.io.LineProcessor;
 import org.apache.commons.io.FileUtils;
-import org.joda.time.Duration;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -38,11 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.OutputStreamWriter;
-import java.lang.management.ManagementFactory;
-import java.lang.management.ThreadMXBean;
 import java.nio.ByteOrder;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Command line interface for take5 builder.
@@ -203,26 +197,7 @@ public final class Take5Build {
         }
 
         try {
-            ThreadMXBean tm = ManagementFactory.getThreadMXBean();
-            long cpuTime = tm.getCurrentThreadCpuTime();
             that.build();
-            long endCpuTime = tm.getCurrentThreadCpuTime();
-
-            long millistart = TimeUnit.MILLISECONDS.convert(cpuTime, TimeUnit.NANOSECONDS);
-            long milliend = TimeUnit.MILLISECONDS.convert(endCpuTime, TimeUnit.NANOSECONDS);
-            Duration duration = new Duration(millistart, milliend);
-            PeriodFormatter formatter = new PeriodFormatterBuilder()
-                    .appendDays()
-                    .appendSuffix("d")
-                    .appendHours()
-                    .appendSuffix("h")
-                    .appendMinutes()
-                    .appendSuffix("m")
-                    .appendSecondsWithMillis()
-                    .appendSuffix("s")
-                    .toFormatter();
-            String formatted = formatter.print(duration.toPeriod());
-            System.out.println(formatted);
         } catch (Failure failure) {
             System.err.println(failure.getMessage());
             System.exit(1);
