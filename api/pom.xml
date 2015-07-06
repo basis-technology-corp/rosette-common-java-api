@@ -55,6 +55,19 @@
                         </excludeRoots>
                     </configuration>
                 </plugin>
+                  <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+		    <executions>
+		      <execution>
+			<id>validate</id>
+			<configuration>
+			  <excludes>target/generated-sources/**</excludes>
+			  <includeTestSourceDirectory>true</includeTestSourceDirectory>
+			</configuration>
+		      </execution>
+		    </executions>
+                  </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
