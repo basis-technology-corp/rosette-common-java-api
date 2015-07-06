@@ -62,7 +62,7 @@
 		      <execution>
 			<id>validate</id>
 			<configuration>
-			  <excludes>target/generated-sources/**</excludes>
+			  <excludes>**/generated-sources/**/*</excludes>
 			  <includeTestSourceDirectory>true</includeTestSourceDirectory>
 			</configuration>
 		      </execution>
@@ -81,6 +81,7 @@
                         <goals>
                             <goal>generate</goal>
                         </goals>
+                        <phase>generate-sources</phase>
                         <configuration>
                             <templates>
                                 <template>
