@@ -62,7 +62,8 @@
 		      <execution>
 			<id>validate</id>
 			<configuration>
-			  <excludes>**/generated-sources/**/*</excludes>
+                          <!-- http://stackoverflow.com/a/30406454/131433 -->
+                          <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
 			  <includeTestSourceDirectory>true</includeTestSourceDirectory>
 			</configuration>
 		      </execution>
