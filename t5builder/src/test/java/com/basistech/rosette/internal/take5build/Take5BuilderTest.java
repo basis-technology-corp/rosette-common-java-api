@@ -157,6 +157,7 @@ public class Take5BuilderTest {
         return new Take5BuilderFactory().progressWriter(new PrintWriter(new NullWriter())).order(order);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSubclassedPair() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
@@ -199,6 +200,7 @@ public class Take5BuilderTest {
     /**
      * Run the canonical example.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testCanonicalExample() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
@@ -303,6 +305,7 @@ public class Take5BuilderTest {
     /**
      * Test storing a bunch of random payloads.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testPayloads() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.PTR).valueSize(16).build();
@@ -328,6 +331,7 @@ public class Take5BuilderTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private Take5Dictionary loadGenerated(Take5Builder builder, Take5EntryPoint[] returnEntrypoint) throws Take5BuildException, Take5Exception {
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
@@ -382,12 +386,13 @@ public class Take5BuilderTest {
         perfhashVerify(dict, false);
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testIgnoredPayloads() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.IGNORE).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = new ArrayList<>();
         int i = 0;
         for (String s : hexWords) {
             keys.add(generatePayload(s, i++));
@@ -409,12 +414,13 @@ public class Take5BuilderTest {
         }
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testIndices() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).valueSize(16).build();
 
         Take5EntryPoint ep = builder.newEntryPoint("main");
-        List<Take5Pair> keys = new ArrayList<Take5Pair>();
+        List<Take5Pair> keys = new ArrayList<>();
         int i = 0;
         for (String s : hexWords) {
             keys.add(generatePayload(s, i++));

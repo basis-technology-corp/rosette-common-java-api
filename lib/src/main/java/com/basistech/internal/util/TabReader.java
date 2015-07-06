@@ -1,15 +1,15 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2000-2012 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2000-2012 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 
 package com.basistech.internal.util;
@@ -40,8 +40,8 @@ import java.util.regex.Pattern;
  * exception. The caller must make sure to handle this exception!
  */
 public final class TabReader {
-    
-    private TabReader() {        
+
+    private TabReader() {
     }
 
     /**
@@ -51,16 +51,16 @@ public final class TabReader {
      * @param lineCommentStart Comment-start sequence, or null to not strip comments.
      */
     public static Iterable<Line> iterate(final Reader r, final int columns, final String lineCommentStart)
-        throws IOException {
+            throws IOException {
         return iterate(r, "<character stream>", columns, lineCommentStart);
     }
-    
+
     /** Main iterator creator sequence, used by both API methods. */
     private static Iterable<Line> iterate(Reader r,
                                           final String sourceName,
                                           final int columns,
                                           final String lineCommentStart)
-        throws IOException {
+            throws IOException {
         // Checkstyle will not let you clarify the following horror with parentheses:
         final BufferedReader br = r == null ? null : new BufferedReader(r);
         if (br != null) {
@@ -75,7 +75,7 @@ public final class TabReader {
             }
         };
     }
-        
+
     /**
      * Create a line iterator for a specific file. File is assumed to be in UTF-8.
      * @param src file to read from
@@ -84,13 +84,13 @@ public final class TabReader {
      * @throws IOException if there was a problem opening the file
      */
     public static Iterable<Line> iterate(final File src, final int columns, final String lineCommentStart)
-        throws IOException {
+            throws IOException {
         return iterate(new InputStreamReader(new FileInputStream(src), "UTF-8"),
-                       src.getAbsolutePath(),
-                       columns,
-                       lineCommentStart);
+                src.getAbsolutePath(),
+                columns,
+                lineCommentStart);
     }
-    
+
     /**
      * Convenience method to return a list of all lines in a character stream, using
      * {@link #iterate(Reader, int, String)}.
@@ -103,7 +103,7 @@ public final class TabReader {
         }
         return collect;
     }
-    
+
     /**
      * Convenience method to return a list of all lines in a file, using {@link #iterate(File, int, String)}.
      * @throws IOException if there was a problem opening the file
@@ -115,7 +115,7 @@ public final class TabReader {
         }
         return collect;
     }
-    
+
     /**
      * A single data line read from an input file. 
      */
@@ -126,7 +126,7 @@ public final class TabReader {
         private final String original;
         /** Parsed fields of the line. */
         private final String[] data;
-        
+
         Line(int lineNumber, String original, String[] data) {
             this.lineNumber = lineNumber;
             this.original = original;
@@ -168,7 +168,7 @@ public final class TabReader {
         private int lineNumber;
         /** parsed value from last line (or null) */
         private Line nextLine;
-        
+
         /**
          * Open the input file for reading.
          */
@@ -180,13 +180,13 @@ public final class TabReader {
                 throw new IllegalArgumentException("Cannot use empty string as beginning of line comment.");
             }
             this.lineCommentStart = lineCommentStart;
-            
+
             if (src == null) {
                 isDone = true;
                 return;
             }
         }
-        
+
         /**
          * Parse a line of input and return a record of the parsed line, or null for a blank line.
          */
@@ -238,7 +238,7 @@ public final class TabReader {
                 String f = "Could not read line %d in %s (I/O error)";
                 throw new ReadException(String.format(f, lineNumber, sourceName), ioe);
             }
-            
+
             nextLine = result;
             if (result == null) { // reading failed
                 isDone = true;
@@ -248,7 +248,7 @@ public final class TabReader {
         /*==============*
          * Iterator API *
          *==============*/
-        
+
         /** {@inheritDoc} */
         public boolean hasNext() throws ReadException {
             readAhead();
@@ -267,16 +267,23 @@ public final class TabReader {
         public void remove() throws UnsupportedOperationException {
             throw new UnsupportedOperationException("Cannot remove lines from input file.");
         }
-        
+
     }
-    
+
     private static class ParseException extends Exception {
-        public ParseException(String message) { super(message); }
+        public ParseException(String message) {
+            super(message);
+        }
     }
-    
+
     /** Indicates a TSV reading failure. */
     public static class ReadException extends RuntimeException {
-        public ReadException(String message) { super(message); }
-        public ReadException(String message, Throwable cause) { super(message, cause); }
+        public ReadException(String message) {
+            super(message);
+        }
+
+        public ReadException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 }

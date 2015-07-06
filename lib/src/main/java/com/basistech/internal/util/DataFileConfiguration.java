@@ -1,15 +1,15 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2000-2013 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2000-2013 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 
 package com.basistech.internal.util;
@@ -59,7 +59,7 @@ public final class DataFileConfiguration {
 
     private static final String ENDIAN = Endian.getEndianString();
     private static final Map<String, DataFileConfiguration> CONFIGURATIONS =
-        new ConcurrentHashMap<String, DataFileConfiguration>();
+            new ConcurrentHashMap<String, DataFileConfiguration>();
 
     // Currently all pathnames must be relative to a root directory.  But I'm not convinced that forcing
     // users to always put their additions inside our tree is such a great idea.  So set this
@@ -127,12 +127,16 @@ public final class DataFileConfiguration {
      */
     public static DataFileConfiguration getConfiguration(String root, String path) {
         DataFileConfiguration rv = CONFIGURATIONS.get(path);
-        if (rv != null) { return rv; }
+        if (rv != null) {
+            return rv;
+        }
         synchronized (CONFIGURATIONS) {
             //CHECKSTYLE:OFF -- Yes, I'm using double-checked locking, but I'm using it in a
             // safe way, so checkstyle should just shut up.
             rv = CONFIGURATIONS.get(path);
-            if (rv != null) { return rv; }
+            if (rv != null) {
+                return rv;
+            }
             rv = new DataFileConfiguration(root, path);
             // The following write to ConcurrentHashMap ensures that the fully constructed
             // instance is now seen by everybody:
@@ -187,7 +191,9 @@ public final class DataFileConfiguration {
      */
     public Reader open(String key) throws IOException {
         Entry e = dataFileMap.get(key);
-        if (e == null) { return null; }
+        if (e == null) {
+            return null;
+        }
         return e.open();
     }
 
@@ -203,7 +209,9 @@ public final class DataFileConfiguration {
      */
     public File lookup(String key) {
         Entry e = dataFileMap.get(key);
-        if (e == null) { return null; }
+        if (e == null) {
+            return null;
+        }
         return e.getFile();
     }
 
@@ -249,7 +257,7 @@ public final class DataFileConfiguration {
         File getFile() {
             if (file == null) {
                 throw new ConfigException(String.format("in %s the data for %s does not come from a file!",
-                                                        path, key));
+                        path, key));
             }
             return file;
         }
@@ -277,23 +285,41 @@ public final class DataFileConfiguration {
      */
     public static final class Result {
         private final MatchResult match;
-        private final Entry entry; 
+        private final Entry entry;
+
         private Result(MatchResult match, Entry entry) {
             this.match = match;
             this.entry = entry;
         }
-        public MatchResult getMatch() { return match; }
-        public File getFile() { return entry.getFile(); }
-        public Reader open() throws IOException { return entry.open(); }
-        public String getName() { return entry.getName(); }
+
+        public MatchResult getMatch() {
+            return match;
+        }
+
+        public File getFile() {
+            return entry.getFile();
+        }
+
+        public Reader open() throws IOException {
+            return entry.open();
+        }
+
+        public String getName() {
+            return entry.getName();
+        }
     }
 
     /**
      * A problem occured while loading a {@link DataFileConfiguration}.
      */
     public static final class ConfigException extends RuntimeException {
-        private ConfigException(String message) { super(message); }
-        private ConfigException(String message, Throwable cause) { super(message, cause); }
+        private ConfigException(String message) {
+            super(message);
+        }
+
+        private ConfigException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 
     /**
@@ -303,7 +329,7 @@ public final class DataFileConfiguration {
     public String getPath() {
         return path;
     }
-    
+
     /**
      * Return the path to the configured root directory.
      * @return the location of the configured root directory.
@@ -319,7 +345,9 @@ public final class DataFileConfiguration {
      */
     public String getName(String key) {
         Entry e = dataFileMap.get(key);
-        if (e == null) { return "missing data for " + key; }
+        if (e == null) {
+            return "missing data for " + key;
+        }
         return e.getName();
     }
 
