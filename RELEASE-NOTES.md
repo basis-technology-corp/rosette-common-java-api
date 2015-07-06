@@ -1,6 +1,11 @@
 # Cumulative Release Notes for rosette-common-java
 
-## ??.?.?
+## 35.0.0
+
+### [COMN-196](http://jira.basistech.net/browse/COMN-196) Build with   Java 1.7
+    
+Adopt parent 57.0.0 and build to require Java 1.7.    
+    
 
 ### No jira: Removed joda-time dependency in Take5Build command line
 
