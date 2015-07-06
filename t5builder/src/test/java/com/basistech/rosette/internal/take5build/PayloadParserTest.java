@@ -1,15 +1,15 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2014 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2014 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 
 package com.basistech.rosette.internal.take5build;
@@ -39,7 +39,7 @@ public class PayloadParserTest extends Assert {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     //CHECKSTYLE:ON
-    
+
     private ByteBuffer wrap(byte[] bytes) {
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         buffer.order(ByteOrder.nativeOrder());
@@ -54,10 +54,10 @@ public class PayloadParserTest extends Assert {
 
         assertEquals(4, payload.alignment);
         assertEquals(8, buffer.limit());
-        assertEquals((byte)0x35, buffer.get(0));
-        assertEquals((byte)0x36, buffer.get(1));
+        assertEquals((byte) 0x35, buffer.get(0));
+        assertEquals((byte) 0x36, buffer.get(1));
         ShortBuffer shortView = buffer.asShortBuffer();
-        assertEquals((short)0x3435, shortView.get(1));
+        assertEquals((short) 0x3435, shortView.get(1));
         IntBuffer intView = buffer.asIntBuffer();
         assertEquals(0x34353637, intView.get(1));
 
@@ -74,10 +74,10 @@ public class PayloadParserTest extends Assert {
         buffer.order(ByteOrder.BIG_ENDIAN);
         assertEquals(4, payload.alignment);
         assertEquals(8, buffer.limit());
-        assertEquals((byte)0x35, buffer.get(0));
-        assertEquals((byte)0x36, buffer.get(1));
+        assertEquals((byte) 0x35, buffer.get(0));
+        assertEquals((byte) 0x36, buffer.get(1));
         ShortBuffer shortView = buffer.asShortBuffer();
-        assertEquals((short)0x3435, shortView.get(1));
+        assertEquals((short) 0x3435, shortView.get(1));
         IntBuffer intView = buffer.asIntBuffer();
         assertEquals(0x34353637, intView.get(1));
     }
@@ -137,8 +137,8 @@ public class PayloadParserTest extends Assert {
         wrapped.order(ByteOrder.LITTLE_ENDIAN);
         ShortBuffer shorts = wrapped.asShortBuffer();
         assertEquals(3, shorts.get(0));
-        assertEquals('\\', (char)shorts.get(1));
-        assertEquals('\ue018', (char)shorts.get(2));
+        assertEquals('\\', (char) shorts.get(1));
+        assertEquals('\ue018', (char) shorts.get(2));
     }
 
     @Test
@@ -207,8 +207,8 @@ public class PayloadParserTest extends Assert {
         assertEquals(-567, buffer.asIntBuffer().get(1));
         assertEquals(0x54, buffer.asIntBuffer().get(2));
         assertEquals(5, buffer.asIntBuffer().get(3));
-        assertEquals(- 0x45, buffer.asIntBuffer().get(4));
-        assertEquals(- 11, buffer.asIntBuffer().get(5));
+        assertEquals(-0x45, buffer.asIntBuffer().get(4));
+        assertEquals(-11, buffer.asIntBuffer().get(5));
     }
 
     @Test
@@ -220,9 +220,9 @@ public class PayloadParserTest extends Assert {
         ShortBuffer shorts = buffer.asShortBuffer();
         assertEquals(42, ints.get(0));
         // 0123 are the 42
-        assertEquals((byte)43, buffer.get(4));
-        assertEquals((byte)44, buffer.get(5));
-        assertEquals((short)0x2332, shorts.get(3));
+        assertEquals((byte) 43, buffer.get(4));
+        assertEquals((byte) 44, buffer.get(5));
+        assertEquals((short) 0x2332, shorts.get(3));
         assertEquals(0x12345678, ints.get(2));
     }
 
@@ -232,9 +232,9 @@ public class PayloadParserTest extends Assert {
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse("#!i #1: 0xf0 #1: 0xf1 #2: 0xf000 #4: 0xf0000000");
         ByteBuffer buffer = wrap(payload.bytes);
         assertEquals(8, buffer.limit());
-        assertEquals((byte)0xf0, buffer.get(0));
-        assertEquals((byte)0xf1, buffer.get(1));
-        assertEquals((char)0xf000, buffer.asCharBuffer().get(1));
+        assertEquals((byte) 0xf0, buffer.get(0));
+        assertEquals((byte) 0xf1, buffer.get(1));
+        assertEquals((char) 0xf000, buffer.asCharBuffer().get(1));
         assertTrue(UnsignedInts.compare(0xf0000000, buffer.asIntBuffer().get(1)) == 0);
     }
 
@@ -263,19 +263,19 @@ public class PayloadParserTest extends Assert {
         StringBuilder sb = new StringBuilder();
         sb.append("#8i");
         int count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 3;
-        for (int x = 0; x < count; x ++) {
+        for (int x = 0; x < count; x++) {
             sb.append(" 42");
         }
         Payload payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse(sb.toString());
         assertThat(payload.bytes.length, is(equalTo(count * 8)));
         ByteBuffer payloadBuffer = wrap(payload.bytes);
         LongBuffer longPayloadBuffer = payloadBuffer.asLongBuffer();
-        assertThat(longPayloadBuffer.get(101), is(equalTo((long)42)));
+        assertThat(longPayloadBuffer.get(101), is(equalTo((long) 42)));
 
         sb = new StringBuilder();
         sb.append("#4i");
         count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 6;
-        for (int x = 0; x < count; x ++) {
+        for (int x = 0; x < count; x++) {
             sb.append(" 42");
         }
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse(sb.toString());
@@ -284,7 +284,7 @@ public class PayloadParserTest extends Assert {
         sb = new StringBuilder();
         sb.append("#2i");
         count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 9;
-        for (int x = 0; x < count; x ++) {
+        for (int x = 0; x < count; x++) {
             sb.append(" 42");
         }
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse(sb.toString());
@@ -293,7 +293,7 @@ public class PayloadParserTest extends Assert {
         sb = new StringBuilder();
         sb.append("#1i");
         count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 12;
-        for (int x = 0; x < count; x ++) {
+        for (int x = 0; x < count; x++) {
             sb.append(" 42");
         }
         payload = PayloadParser.newParser(ByteOrder.nativeOrder()).parse(sb.toString());
@@ -302,7 +302,7 @@ public class PayloadParserTest extends Assert {
         sb = new StringBuilder();
         sb.append("#2s \"");
         count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 12;
-        for (int x = 0; x < count; x ++) {
+        for (int x = 0; x < count; x++) {
             sb.append("0");
         }
         sb.append("\"");
@@ -312,7 +312,7 @@ public class PayloadParserTest extends Assert {
         sb = new StringBuilder();
         sb.append("#1s \"");
         count = PayloadParser.DEFAULT_MAXIMUM_PAYLOAD_BYTES * 12;
-        for (int x = 0; x < count; x ++) {
+        for (int x = 0; x < count; x++) {
             sb.append("0");
         }
         sb.append("\"");

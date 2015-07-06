@@ -1,18 +1,26 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2000-2008 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2000-2008 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 
 package com.basistech.rosette.internal.take5;
+
+import com.google.common.io.Files;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,14 +38,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-
-import com.google.common.io.Files;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 /**
  * Tests of the Take5 runtime.
@@ -92,12 +92,12 @@ public class Take5DictionaryTest extends Assert {
     }
 
     Take5Dictionary openDictionary(String path, ByteBuffer[] outData)
-        throws IOException, Take5Exception {
+            throws IOException, Take5Exception {
         return openDictionary(path, "main", outData);
     }
 
     Take5Dictionary openDictionary(String path, String entryPoint, ByteBuffer[] outData)
-        throws IOException, Take5Exception {
+            throws IOException, Take5Exception {
         File dictFile = new File(endianDictionaryName(path));
         return openDictionary(entryPoint, outData, dictFile);
     }
@@ -258,7 +258,7 @@ public class Take5DictionaryTest extends Assert {
      * Test method for {@link com.basistech.rosette.internal.take5.Take5Dictionary#creationDate()}.
      */
     @Test
-    public void testCreationDate()  throws IOException, Take5Exception {
+    public void testCreationDate() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
         Date cd = dict.creationDate();
         assertNotNull(cd);
@@ -465,11 +465,11 @@ public class Take5DictionaryTest extends Assert {
     // table reverse lookup working, you'll have to test it some other way.
     private static void testReverseLookupAll(Take5Dictionary dict,
                                              String[] keys)
-        throws Take5Exception {
+            throws Take5Exception {
         char[] buffer = new char[dict.maximumWordLength()];
         for (int i = 0; i < keys.length; i++) {
             int len = dict.reverseLookup(i, buffer);
-            assertEquals(keys[i].length(), len);  
+            assertEquals(keys[i].length(), len);
             assertEquals(keys[i], new String(buffer, 0, len));
         }
     }
@@ -529,12 +529,17 @@ public class Take5DictionaryTest extends Assert {
         int countLimit;
         int countBoth;
         String[] keys;
-        TestWalker(String[] keys) { this.keys = keys; }
+
+        TestWalker(String[] keys) {
+            this.keys = keys;
+        }
+
         void reset() {
             countAccept = 0;
             countLimit = 0;
             countBoth = 0;
         }
+
         private void keyCheck(Take5Match m, char[] buf) {
             int idx = m.getIndex();
             int len = m.getLength();
@@ -542,6 +547,7 @@ public class Take5DictionaryTest extends Assert {
             assertEquals(keys[idx].length(), len);
             assertEquals(keys[idx], new String(buf, 0, len));
         }
+
         public void foundAccept(Take5Match m, char[] buf, int len) {
             // The documentation promises nothing about isAcceptState() in
             // these cases, but the code makes sure the accept bit is not
@@ -552,17 +558,20 @@ public class Take5DictionaryTest extends Assert {
             keyCheck(m, buf);
             countAccept++;
         }
+
         public void foundLimit(Take5Match m, char[] buf, int len) {
             // See above.
             assertFalse("walker match isAcceptState() should be false", m.isAcceptState());
             countLimit++;
         }
+
         public void foundBoth(Take5Match m, char[] buf, int len) {
             // See above.
             assertFalse("walker match isAcceptState() should be false", m.isAcceptState());
             keyCheck(m, buf);
             countBoth++;
         }
+
         void check(int nA, int nL, int nB) {
             assertEquals(nA, countAccept);
             assertEquals(nL, countLimit);
@@ -578,7 +587,7 @@ public class Take5DictionaryTest extends Assert {
     @Test
     public void testEntryPoints() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/unified", "next_letters", null);
-        
+
         // The last values in the entry point block are the min and max
         // character values, so checking them makes fairly sure that the
         // whole block was read correctly.
@@ -662,7 +671,7 @@ public class Take5DictionaryTest extends Assert {
     /**
      * Test method for {@link
      * com.basistech.rosette.internal.take5.Take5Dictionary#advanceByChar(
-     * com.basistech.rosette.internal.take5.Take5Match, char)}.
+     *com.basistech.rosette.internal.take5.Take5Match, char)}.
      */
     @Test
     @Ignore
@@ -672,7 +681,7 @@ public class Take5DictionaryTest extends Assert {
     }
 
     @Test
-     public void testGetComplexData() throws IOException, Take5Exception {
+    public void testGetComplexData() throws IOException, Take5Exception {
         Take5Dictionary dict = openDictionary("src/test/dicts/mixed", null);
         Take5Match match = dict.matchExact("key0");
         assertNotNull(match);

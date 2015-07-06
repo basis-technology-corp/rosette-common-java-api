@@ -1,22 +1,22 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2014 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2014 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 
 package com.basistech.rosette.internal.take5build;
 
+import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.basistech.rosette.internal.take5.Take5Exception;
 import com.basistech.rosette.internal.take5.Take5Match;
-import com.basistech.rosette.internal.take5.Take5Dictionary;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.junit.Assert;
@@ -101,7 +101,7 @@ public class CommandLineTest extends Assert {
         assertTrue(dict.matchExact("bedded".toCharArray(), 0, "bedded".length(), match));
         int valueOffset = match.getOffsetValue();
         CharBuffer dictAsChars = resultT5.asCharBuffer();
-        assertThat(dictAsChars.get(valueOffset / 2), equalTo((char)0));
+        assertThat(dictAsChars.get(valueOffset / 2), equalTo((char) 0));
     }
 
     @Test
@@ -127,7 +127,7 @@ public class CommandLineTest extends Assert {
         int valueOffset = match.getOffsetValue();
         resultT5.order(ByteOrder.nativeOrder());
         ShortBuffer dictAsShorts = resultT5.asShortBuffer();
-        assertThat(dictAsShorts.get(valueOffset / 2), equalTo((short)0x4e56));
+        assertThat(dictAsShorts.get(valueOffset / 2), equalTo((short) 0x4e56));
     }
 
     // make sure that the above test means something because the default is not #2!i
@@ -230,7 +230,7 @@ public class CommandLineTest extends Assert {
         ByteBuffer resultT5 = Files.map(t5File);
         Take5Dictionary dict1 = new Take5Dictionary(resultT5, resultT5.capacity(), "mixed1");
         assertThat(dict1.getContentFlags(), is(equalTo(0xdeadbeef)));
-        //key2	"some 2-byte string"
+        //key2 "some 2-byte string"
         String key = "key2";
         String value = "some 2-byte string";
         Take5Match match = new Take5Match();
@@ -245,7 +245,7 @@ public class CommandLineTest extends Assert {
         assertThat(new String(dictChars, 0, dictChars.length), is(equalTo(value)));
 
         Take5Dictionary dict2 = new Take5Dictionary(resultT5, resultT5.capacity(), "mixed2");
-        //@key\u4e00	"key with an escape"
+        //@key\u4e00 "key with an escape"
         key = "@key\u4e00";
         value = "key with an escape";
         assertThat(dict2.matchExact(key.toCharArray(), 0, key.length(), match), is(equalTo(true)));
@@ -288,8 +288,8 @@ public class CommandLineTest extends Assert {
         dictAsShorts.position(valueOffset / 2);
         dictAsShorts.get(dictShorts);
         assertEquals(3, dictShorts[0]);
-        assertEquals('\\', (char)dictShorts[1]);
-        assertEquals('\ue018', (char)dictShorts[2]);
+        assertEquals('\\', (char) dictShorts[1]);
+        assertEquals('\ue018', (char) dictShorts[2]);
     }
 
     private int dictSpyInt(Take5Dictionary dict, String fieldName) {

@@ -1,18 +1,29 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2010 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2010 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 
 package com.basistech.rosette.internal.take5build;
+
+import com.basistech.rosette.internal.take5.Take5Dictionary;
+import com.basistech.rosette.internal.take5.Take5Exception;
+import com.basistech.rosette.internal.take5.Take5Match;
+import com.google.common.collect.Lists;
+import org.apache.commons.io.output.NullWriter;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
@@ -22,19 +33,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.common.collect.Lists;
-import org.apache.commons.io.output.NullWriter;
-import org.junit.Rule;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
-
-import com.basistech.rosette.internal.take5.Take5Dictionary;
-import com.basistech.rosette.internal.take5.Take5Exception;
-import com.basistech.rosette.internal.take5.Take5Match;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Unit tests for Take5Builder.
@@ -42,98 +45,80 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class Take5BuilderTest {
 
-    private final ByteOrder order;
-
-    public Take5BuilderTest(ByteOrder order) {
-        this.order = order;
-    }
-
-    @Parameterized.Parameters(name = "{index}: {0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                {ByteOrder.BIG_ENDIAN}, {ByteOrder.LITTLE_ENDIAN}
-        });
-    }
-
-    //CHECKSTYLE:OFF
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
-    //CHECKSTYLE:ON
-
     // All the words in /usr/share/dict/words that match "^[a-f]+$"
-    private static String[] hexWords = {
-            "a", "abed", "accede", "acceded", "ace", "aced", "ad", "add", "added",
-            "baa", "baaed", "babe", "bad", "bade", "be", "bead", "beaded", "bed",
-            "bedded", "bee", "beef", "beefed", "cab", "cabbed", "cad", "cede",
-            "ceded", "dab", "dabbed", "dad", "dead", "deaf", "deb", "decade",
-            "decaf", "deed", "deeded", "deface", "defaced", "ebb", "ebbed",
-            "efface", "effaced", "fa", "facade", "face", "faced", "fad", "fade",
-            "faded", "fed", "fee", "feed",
+    private static final String[] HEX_WORDS = {
+        "a", "abed", "accede", "acceded", "ace", "aced", "ad", "add", "added",
+        "baa", "baaed", "babe", "bad", "bade", "be", "bead", "beaded", "bed",
+        "bedded", "bee", "beef", "beefed", "cab", "cabbed", "cad", "cede",
+        "ceded", "dab", "dabbed", "dad", "dead", "deaf", "deb", "decade",
+        "decaf", "deed", "deeded", "deface", "defaced", "ebb", "ebbed",
+        "efface", "effaced", "fa", "facade", "face", "faced", "fad", "fade",
+        "faded", "fed", "fee", "feed",
     };
 
-    private static String[] dmwwExample = {
-            "a",
-            "ai",
-            "aient",
-            "ais",
-            "ait",
-            "ant",
-            "as",
-            "asse",
-            "assent",
-            "asses",
-            "assiez",
-            "assions",
-            "e",
-            "ent",
-            "er",
-            "era",
-            "erai",
-            "eraient",
-            "erais",
-            "erait",
-            "eras",
-            "erez",
-            "eriez",
-            "erions",
-            "erons",
-            "eront",
-            "es",
-            "ez",
-            "iez",
-            "ions",
-            "ons",
-            "\u00E2mes",
-            "\u00E2t",
-            "\u00E2tes",
-            "\u00E8rent",
-            "\u00E9",
-            "\u00E9e",
-            "\u00E9es",
-            "\u00E9s",
+    private static final String[] DMWW_EXAMPLE = {
+        "a",
+        "ai",
+        "aient",
+        "ais",
+        "ait",
+        "ant",
+        "as",
+        "asse",
+        "assent",
+        "asses",
+        "assiez",
+        "assions",
+        "e",
+        "ent",
+        "er",
+        "era",
+        "erai",
+        "eraient",
+        "erais",
+        "erait",
+        "eras",
+        "erez",
+        "eriez",
+        "erions",
+        "erons",
+        "eront",
+        "es",
+        "ez",
+        "iez",
+        "ions",
+        "ons",
+        "\u00E2mes",
+        "\u00E2t",
+        "\u00E2tes",
+        "\u00E8rent",
+        "\u00E9",
+        "\u00E9e",
+        "\u00E9es",
+        "\u00E9s",
     };
 
-    private static byte[] data = {
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-            10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-            20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-            30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
-            40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
-            50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-            60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
-            70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
-            80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
-            90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
+    private static final byte[] BYTES = {
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+        10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+        30, 31, 32, 33, 34, 35, 36, 37, 38, 39,
+        40, 41, 42, 43, 44, 45, 46, 47, 48, 49,
+        50, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+        60, 61, 62, 63, 64, 65, 66, 67, 68, 69,
+        70, 71, 72, 73, 74, 75, 76, 77, 78, 79,
+        80, 81, 82, 83, 84, 85, 86, 87, 88, 89,
+        90, 91, 92, 93, 94, 95, 96, 97, 98, 99,
     };
 
     // 5 offsets...
-    private static int[] offsets = {
-            10, 20, 30, 40, 50
+    private static final int[] OFFSETS = {
+        10, 20, 30, 40, 50
     };
 
     // 9 lengths...
-    private static int[] lengths = {
-            -1, 0, 2, 8, 11, 13, 16, 17, 32
+    private static final int[] LENGTHS = {
+        -1, 0, 2, 8, 11, 13, 16, 17, 32
     };
 
     // So there are 45 (offset, length) pairs.  Since the lengths of 0 and
@@ -142,9 +127,15 @@ public class Take5BuilderTest {
     // mod 6 we get just a few payloads with more than one alignment
     // specified -- but that's enough for testing.  (All assuming we're
     // testing using the 53 element hexWords.)
-    private static int[] alignments = {
-            1, 2, 2, 4, 8, 16
+    private static final int[] ALIGNMENTS = {
+        1, 2, 2, 4, 8, 16
     };
+
+    private final ByteOrder order;
+
+    public Take5BuilderTest(ByteOrder order) {
+        this.order = order;
+    }
 
     static class LocalPair extends ReusableTake5Pair {
         LocalPair(String key) {
@@ -157,13 +148,28 @@ public class Take5BuilderTest {
         return new Take5BuilderFactory().progressWriter(new PrintWriter(new NullWriter())).order(order);
     }
 
+    //CHECKSTYLE:OFF
+    @Rule
+    public ExpectedException exception = ExpectedException.none();
+    //CHECKSTYLE:ON
+
+    @Parameterized.Parameters(name = "{index}: {0}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][]{
+                {ByteOrder.BIG_ENDIAN}, {ByteOrder.LITTLE_ENDIAN}
+        });
+    }
+
+
+
+
     @SuppressWarnings("deprecation")
     @Test
     public void testSubclassedPair() throws Exception {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
-        for (String s : dmwwExample) {
+        for (String s : DMWW_EXAMPLE) {
             keys.add(new LocalPair(s));
         }
         ep.loadContent(keys.iterator());
@@ -186,7 +192,7 @@ public class Take5BuilderTest {
         assertEquals(7, dict.maximumWordLength());
         int i = 0;
         char[] sbuf = new char[dict.maximumWordLength()];
-        for (String s : dmwwExample) {
+        for (String s : DMWW_EXAMPLE) {
             Take5Match m = dict.matchExact(s);
             assertNotNull(m);
             assertEquals(i, m.getIndex());
@@ -206,7 +212,7 @@ public class Take5BuilderTest {
         Take5Builder builder = testFactory().valueFormat(ValueFormat.INDEX).build();
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
-        for (String s : dmwwExample) {
+        for (String s : DMWW_EXAMPLE) {
             keys.add(new ReusableTake5Pair(s));
         }
         ep.loadContent(keys.iterator());
@@ -229,7 +235,7 @@ public class Take5BuilderTest {
         assertEquals(7, dict.maximumWordLength());
         int i = 0;
         char[] sbuf = new char[dict.maximumWordLength()];
-        for (String s : dmwwExample) {
+        for (String s : DMWW_EXAMPLE) {
             Take5Match m = dict.matchExact(s);
             assertNotNull(m);
             assertEquals(i, m.getIndex());
@@ -249,7 +255,7 @@ public class Take5BuilderTest {
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         keys.add(new ReusableTake5Pair(""));
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             keys.add(new ReusableTake5Pair(s));
         }
         ep.loadContent(keys.iterator());
@@ -313,7 +319,7 @@ public class Take5BuilderTest {
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         int i = 0;
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             keys.add(generatePayload(s, i++));
         }
         ep.loadContent(keys.iterator());
@@ -324,7 +330,7 @@ public class Take5BuilderTest {
         ByteBuffer t5 = builder.buildBuffer();
         Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
         int j = 0;
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             Take5Match m = dict.matchExact(s);
             assertNotNull(m);
             checkPayload(t5, m.getOffsetValue(), j++);
@@ -336,7 +342,7 @@ public class Take5BuilderTest {
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = Lists.newArrayList();
         int i = 0;
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             keys.add(generatePayload(s, i++));
         }
 
@@ -371,7 +377,7 @@ public class Take5BuilderTest {
     private void perfhashVerify(Take5Dictionary dict, boolean checkPayloads) throws Take5Exception {
         int j = 0;
         Take5Match m = new Take5Match();
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             assertTrue(String.format("Failed to find '%s'", s), dict.matchExact(s.toCharArray(), 0, s.length(), m));
             if (checkPayloads) {
                 checkPayload(dict.getData(), m.getOffsetValue(), j++);
@@ -394,7 +400,7 @@ public class Take5BuilderTest {
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<>();
         int i = 0;
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             keys.add(generatePayload(s, i++));
         }
         ep.loadContent(keys.iterator());
@@ -402,7 +408,7 @@ public class Take5BuilderTest {
         ByteBuffer t5 = builder.buildBuffer();
         Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
         int j = 0;
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             Take5Match m = dict.matchExact(s);
             assertNotNull(m);
             try {
@@ -422,7 +428,7 @@ public class Take5BuilderTest {
         Take5EntryPoint ep = builder.newEntryPoint("main");
         List<Take5Pair> keys = new ArrayList<>();
         int i = 0;
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             keys.add(generatePayload(s, i++));
         }
         ep.loadContent(keys.iterator());
@@ -430,7 +436,7 @@ public class Take5BuilderTest {
         ByteBuffer t5 = builder.buildBuffer();
         Take5Dictionary dict = new Take5Dictionary(t5, t5.limit());
         int j = 0;
-        for (String s : hexWords) {
+        for (String s : HEX_WORDS) {
             Take5Match m = dict.matchExact(s);
             assertNotNull(m);
             try {
@@ -444,30 +450,30 @@ public class Take5BuilderTest {
     }
 
     private Take5Pair generatePayload(String key, int i) {
-        int offset = offsets[i % offsets.length];
-        int length = lengths[i % lengths.length];
-        int alignment = alignments[i % alignments.length];
+        int offset = OFFSETS[i % OFFSETS.length];
+        int length = LENGTHS[i % LENGTHS.length];
+        int alignment = ALIGNMENTS[i % ALIGNMENTS.length];
         ReusableTake5Pair p = new ReusableTake5Pair(key);
         if (length >= 0) {
-            p.setValue(data, alignment, offset, length);
+            p.setValue(BYTES, alignment, offset, length);
         }
         return p;
     }
 
     private void checkPayload(ByteBuffer t5, int valOffset, int i) {
-        int length = lengths[i % lengths.length];
+        int length = LENGTHS[i % LENGTHS.length];
         if (valOffset == 0) {
             assertTrue(length < 0);
         } else {
             assertFalse(length < 0);
             assertTrue(valOffset > 0);
-            int offset = offsets[i % offsets.length];
-            int alignment = alignments[i % alignments.length];
+            int offset = OFFSETS[i % OFFSETS.length];
+            int alignment = ALIGNMENTS[i % ALIGNMENTS.length];
             assertTrue(valOffset % alignment == 0);
             byte[] val = new byte[length];
             t5.position(valOffset);
             t5.get(val);
-            assertTrue(String.format("Wrong value at idx %d", i), Utils.equalBytes(val, 0, data, offset, length));
+            assertTrue(String.format("Wrong value at idx %d", i), Utils.equalBytes(val, 0, BYTES, offset, length));
         }
     }
 }

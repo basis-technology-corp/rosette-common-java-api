@@ -125,12 +125,12 @@ public class TabReaderTest extends Assert {
 
     @Test(expected = TabReader.ReadException.class)
     public void tooFew() throws Exception {
-        expectError( 5, "#");
+        expectError(5, "#");
     }
 
     @Test(expected = TabReader.ReadException.class)
     public void tooMany() throws Exception {
-        expectError( 2, "#");
+        expectError(2, "#");
     }
 }
 

@@ -69,7 +69,7 @@ public class InterruptibleCharSequenceTest extends Assert {
         assertEquals("his", sub.toString());
     }
 
-    private static class SelfInterruptingThread extends Thread {
+    private final static class SelfInterruptingThread extends Thread {
 
         private final Runnable testCase;
         private Throwable throwable;
@@ -157,7 +157,7 @@ public class InterruptibleCharSequenceTest extends Assert {
                     try {
                         Pattern.matches("(?xi)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\(([^\\s()<>]+|(\\([^\\s()>?]+\\)))*\\)))*\\))+(?:\\(([^\\s()<>]+|(\\(([^\\s()<>]+|(\\([^\\s()>?]+\\)))*\\)))*\\)[^\\s`!()\\[\\]{};:\'\".,<>?«»“”‘’]))", seq);
                         fail(); // should never reach here
-                    } catch(RosetteInterruptedException e) {
+                    } catch (RosetteInterruptedException e) {
                         //
                     }
                 }
