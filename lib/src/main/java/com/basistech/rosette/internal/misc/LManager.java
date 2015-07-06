@@ -1,27 +1,27 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2000-2008 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2000-2008 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 package com.basistech.rosette.internal.misc;
-
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import com.basistech.rosette.RosetteCorruptLicenseException;
 import com.basistech.rosette.RosetteExpiredLicenseException;
 import com.basistech.rosette.RosetteNoLicenseException;
 import com.basistech.util.LanguageCode;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The license manager.
@@ -51,7 +51,7 @@ public class LManager {
     /**
      * Create a license manager that reads license
      * data from the specified stream.
-    * @param xmlStream Stream that contains the license in XML.
+     * @param xmlStream Stream that contains the license in XML.
      * @throws RosetteCorruptLicenseException
      */
     public LManager(InputStream xmlStream) throws RosetteCorruptLicenseException {
@@ -116,7 +116,7 @@ public class LManager {
 
     private boolean checkInternal() {
         String sk = new StringBuilder()
-            // "  ^A^@IWe   "
+                // "  ^A^@IWe   "
                 .append(sk1.substring(1, 3)) // "  "
                 .append(sk2.substring(2, 4)) // "^A"
                 .append(sk2.substring(2, 3)) // "^"
@@ -128,9 +128,9 @@ public class LManager {
         return sk.equals(token);
     }
 
-    public boolean checkLanguage(LanguageCode languageCode, 
+    public boolean checkLanguage(LanguageCode languageCode,
                                  int functions, boolean throwErrors) throws RosetteNoLicenseException,
-        RosetteExpiredLicenseException {
+            RosetteExpiredLicenseException {
         // license key "  ^A^@IWe   " avoids license checks
         if (token != null) {
             if (checkInternal()) {
@@ -143,12 +143,16 @@ public class LManager {
         }
 
         // skipping license check for language unknown since it is not required
-        if (languageCode == LanguageCode.UNKNOWN) { return true; }
+        if (languageCode == LanguageCode.UNKNOWN) {
+            return true;
+        }
         // treat Uppercase English language code as English since we do not need separation at this level
-        if (languageCode == LanguageCode.ENGLISH_UPPERCASE) { languageCode = LanguageCode.ENGLISH; }
+        if (languageCode == LanguageCode.ENGLISH_UPPERCASE) {
+            languageCode = LanguageCode.ENGLISH;
+        }
         for (LEntry entry : languageEntries) {
             if (LanguageCode.lookupByISO639(entry.getLanguage()) == languageCode
-                && (functions == 0 || 0 != (functions & entry.getFunctions()))) {
+                    && (functions == 0 || 0 != (functions & entry.getFunctions()))) {
                 /*
                  * Assume only one function bit at a time.
                  */
@@ -162,8 +166,8 @@ public class LManager {
         }
     }
 
-    public boolean checkFeature(String feature, int functions, boolean throwErrors) 
-        throws RosetteNoLicenseException, RosetteExpiredLicenseException {
+    public boolean checkFeature(String feature, int functions, boolean throwErrors)
+            throws RosetteNoLicenseException, RosetteExpiredLicenseException {
 
         // license key "  ^A^@IWe   " avoids license checks
         if (token != null) {
@@ -177,8 +181,8 @@ public class LManager {
         }
 
         for (LEntry entry : featureEntries) {
-            if (feature.equals(entry.getFeature()) 
-                && (0 == functions || 0 != (functions & entry.getFunctions()))) {
+            if (feature.equals(entry.getFeature())
+                    && (0 == functions || 0 != (functions & entry.getFunctions()))) {
                 /*
                  * Assume only one function bit at a time.
                  */
@@ -193,7 +197,7 @@ public class LManager {
     }
 
     private boolean checkExpiration(LEntry entry, boolean throwErrors, String explanation)
-        throws RosetteExpiredLicenseException {
+            throws RosetteExpiredLicenseException {
         if (entry.isExpired()) {
             if (throwErrors) {
                 throw new RosetteExpiredLicenseException("License for " + explanation + " expired.");

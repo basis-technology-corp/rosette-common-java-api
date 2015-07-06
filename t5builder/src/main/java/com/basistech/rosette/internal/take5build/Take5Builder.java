@@ -1,15 +1,15 @@
 /******************************************************************************
- ** This data and information is proprietary to, and a valuable trade secret
- ** of, Basis Technology Corp.  It is given in confidence by Basis Technology
- ** and may only be used as permitted under the license agreement under which
- ** it has been distributed, and in no other way.
- **
- ** Copyright (c) 2010-2014 Basis Technology Corporation All rights reserved.
- **
- ** The technical data and information provided herein are provided with
- ** `limited rights', and the computer software provided herein is provided
- ** with `restricted rights' as those terms are defined in DAR and ASPR
- ** 7-104.9(a).
+ * * This data and information is proprietary to, and a valuable trade secret
+ * * of, Basis Technology Corp.  It is given in confidence by Basis Technology
+ * * and may only be used as permitted under the license agreement under which
+ * * it has been distributed, and in no other way.
+ * *
+ * * Copyright (c) 2010-2014 Basis Technology Corporation All rights reserved.
+ * *
+ * * The technical data and information provided herein are provided with
+ * * `limited rights', and the computer software provided herein is provided
+ * * with `restricted rights' as those terms are defined in DAR and ASPR
+ * * 7-104.9(a).
  ******************************************************************************/
 
 package com.basistech.rosette.internal.take5build;
@@ -49,20 +49,20 @@ import static com.basistech.rosette.internal.take5build.Take5Format.EPT_CONTENT_
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_CONTENT_MAX_VERSION;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_CONTENT_MIN_VERSION;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_EDGE_COUNT;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_OFFSET;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_START;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_CHARACTER;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_HASH_FUN;
-import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MILLIONS_TESTED;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_MATCHES;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_VALUE_SIZE;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MAX_WORD_LENGTH;
+import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MILLIONS_TESTED;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_MIN_CHARACTER;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_NAME;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_STATE_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_STATE_START;
 import static com.basistech.rosette.internal.take5build.Take5Format.EPT_WORD_COUNT;
-import static com.basistech.rosette.internal.take5build.Take5Format.EPT_INDEX_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.FLAG_LITTLE_ENDIAN;
 import static com.basistech.rosette.internal.take5build.Take5Format.FLAG_LOOKUP_AUTOMATON;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDRLEN_VERSION_5_6;
@@ -81,6 +81,7 @@ import static com.basistech.rosette.internal.take5build.Take5Format.HDR_ENTRY_PO
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FLAGS;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_DATA;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_ENGINE;
+import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_LIMIT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_INDEX_COUNT;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_KEYCHECK_DATA;
 import static com.basistech.rosette.internal.take5build.Take5Format.HDR_KEYCHECK_FORMAT;
@@ -107,7 +108,6 @@ import static com.basistech.rosette.internal.take5build.Take5Format.VALUE_FORMAT
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_0;
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_4;
 import static com.basistech.rosette.internal.take5build.Take5Format.VERSION_5_6;
-import static com.basistech.rosette.internal.take5build.Take5Format.HDR_FSA_LIMIT;
 
 /**
  * Builder for Take5 binaries. Use {@link Take5BuilderFactory}
@@ -123,9 +123,9 @@ public class Take5Builder {
     static final int HDRLEN = HDRLEN_VERSION_5_6;
     static final int EPTLEN = EPTLEN_VERSION_5_6;
 
-/*
- * 1e7 is about 1 second for 100k keys on my desktop:
- */
+    /*
+     * 1e7 is about 1 second for 100k keys on my desktop:
+     */
     static final double TIME_BUDGET_SEC = 1e7;
     static final double TIME_BUDGET = 15 * TIME_BUDGET_SEC;       /* -t hash -r */
 
@@ -279,7 +279,7 @@ public class Take5Builder {
         this.varyNothing = varyNothing;
     }
 
-    void loadContent(Take5EntryPoint ep,  Iterator<? extends Take5Pair> pairs) throws Take5ParseError {
+    void loadContent(Take5EntryPoint ep, Iterator<? extends Take5Pair> pairs) throws Take5ParseError {
         Take5Pair pair;
         beginKeys(ep);
         if (storeValues) {
@@ -363,7 +363,7 @@ public class Take5Builder {
         keyByteBuffer.order(byteOrder);
         CharBuffer keyCharBuffer = keyByteBuffer.asCharBuffer();
         keyCharBuffer.put(key, 0, keyLength);
-        keyCharBuffer.put((char)0);                   // be certain about that null
+        keyCharBuffer.put((char) 0);                   // be certain about that null
         keyCharBuffer.position(0);
 
         assert keyByteBuffer.position() == 0;
@@ -454,8 +454,12 @@ public class Take5Builder {
         // Load the new suffix:
         while (fc < kl) {
             c = key[fc - 1];
-            if (c > maxCharacter) { maxCharacter = c; }
-            if (c < minCharacter) { minCharacter = c; }
+            if (c > maxCharacter) {
+                maxCharacter = c;
+            }
+            if (c < minCharacter) {
+                minCharacter = c;
+            }
             edgeChar[top] = c;
             edgeState[top] = terminalState;
             edgeIsAccept[top] = false;
@@ -464,8 +468,12 @@ public class Take5Builder {
             fc++;
         }
         c = key[fc - 1];
-        if (c > maxCharacter) { maxCharacter = c; }
-        if (c < minCharacter) { minCharacter = c; }
+        if (c > maxCharacter) {
+            maxCharacter = c;
+        }
+        if (c < minCharacter) {
+            minCharacter = c;
+        }
         edgeChar[top] = c;
         edgeState[top] = terminalState;
         edgeIsAccept[top] = true; // last new edge is an accept edge
@@ -498,9 +506,13 @@ public class Take5Builder {
         }
 
         ep.minCharacter = minCharacter;
-        if (minCharacter < globalMinCharacter) { globalMinCharacter = minCharacter; }
+        if (minCharacter < globalMinCharacter) {
+            globalMinCharacter = minCharacter;
+        }
         ep.maxCharacter = maxCharacter;
-        if (maxCharacter > globalMaxCharacter) { globalMaxCharacter = maxCharacter; }
+        if (maxCharacter > globalMaxCharacter) {
+            globalMaxCharacter = maxCharacter;
+        }
 
         globalIndexCount += ep.indexCount;
         globalMillionsTested += ep.millionsTested;
@@ -560,7 +572,7 @@ public class Take5Builder {
     }
 
     private void perfhashEndKeys(Take5EntryPoint ep) {
-        int indexCount = (int)Math.ceil(keyCount * indexExpansion);
+        int indexCount = (int) Math.ceil(keyCount * indexExpansion);
         indexCount = primes.nextPrime(indexCount);
         int bucketCount = bestBucketCount(indexCount);
 
@@ -580,19 +592,19 @@ public class Take5Builder {
 
 
         progressWriter.format("Starting search: (%s)\n"
-                + "  expected time: %.3f\n"
-                + "  risk of failure: %.6f\n"
-                + "  words:   %9d\n"
-                + "  buckets: %9d (%.4g words/bucket)\n"
-                + "  indexes: %9d (%.6f more)\n",
+                        + "  expected time: %.3f\n"
+                        + "  risk of failure: %.6f\n"
+                        + "  words:   %9d\n"
+                        + "  buckets: %9d (%.4g words/bucket)\n"
+                        + "  indexes: %9d (%.6f more)\n",
                 ep.name,
                 bestExpectedTime / TIME_BUDGET_SEC,
                 1 - bestFinishProbability,
                 wordCount,
                 bucketCount,
-                (double)wordCount / (double)bucketCount,
+                (double) wordCount / (double) bucketCount,
                 indexCount,
-                (double)(indexCount - wordCount) / (double)wordCount);
+                (double) (indexCount - wordCount) / (double) wordCount);
 
 
         Arrays.sort(bucketTable, Collections.reverseOrder());
@@ -703,7 +715,7 @@ public class Take5Builder {
             if (counts[i] > 1) {
                 e = 1.0;
                 while (counts[i]-- > 0) {
-                    e *= (double)indexCount / (double)holes;
+                    e *= (double) indexCount / (double) holes;
                     holes--;
                 }
                 expected += e;
@@ -744,7 +756,7 @@ public class Take5Builder {
             throw new Take5BuilderException("Desired compile time is unachievable.");
         }
 
-        for (;;) {
+        while (true) {
             med = primes.nextPrime((low + high) / 2);
     /* The following makes sure we really try _all_ the prime numbers... */
             if (med >= high) {
@@ -776,7 +788,7 @@ public class Take5Builder {
         char[] ec;
         boolean[] ea;
         State[] es;
-    bucketNext:
+        bucketNext:
         for (s = firstState; s != null; s = s.next) {
             if (s.hash == hash && s.edgeChar.length == nedges) {
                 ec = s.edgeChar;
@@ -784,8 +796,8 @@ public class Take5Builder {
                 es = s.edgeState;
                 for (int i = 0; i < nedges; i++) {
                     if (!(ec[i] == edgeChar[beg + i]
-                          && ea[i] == edgeIsAccept[beg + i]
-                          && es[i] == edgeState[beg + i])) {
+                            && ea[i] == edgeIsAccept[beg + i]
+                            && es[i] == edgeState[beg + i])) {
                         continue bucketNext;
                     }
                 }
@@ -810,7 +822,9 @@ public class Take5Builder {
                 mm++;
                 acceptEdgeCount++;
             }
-            if (mm > maxMatches) { maxMatches = mm; }
+            if (mm > maxMatches) {
+                maxMatches = mm;
+            }
         }
         s.keyCount = keys;
         s.maxMatches = maxMatches;
@@ -906,7 +920,7 @@ public class Take5Builder {
         }
     }
 
-    void writeSegments(ByteBuffer buffer)  {
+    void writeSegments(ByteBuffer buffer) {
         assert segments != null && outputList != null;
         for (Segment s : outputList) {
             if (s.getSize() > 0) {
@@ -992,7 +1006,7 @@ public class Take5Builder {
         int nentries = entryPoints.size();
         header.put(HDR_ENTRY_POINT_COUNT, nentries);
         header.put(HDR_ENTRY_POINT_HEADER_SIZE, 4 * EPTLEN);
-        SimpleSegment entrySeg = new SimpleSegment(this, "Entry Points",  nentries * (4 * EPTLEN), 4);
+        SimpleSegment entrySeg = new SimpleSegment(this, "Entry Points", nentries * (4 * EPTLEN), 4);
         IntBuffer entry = entrySeg.getIntBuffer();
 
         header.put(HDR_FSA_DATA, entrySeg.getAddress());
@@ -1087,7 +1101,7 @@ public class Take5Builder {
         SimpleSegment seg = new SimpleSegment(this, "a string", chars.length + 1, 1);
         ByteBuffer buf = seg.getByteBuffer();
         buf.put(chars);
-        buf.put((byte)0);
+        buf.put((byte) 0);
         return seg.getAddress();
     }
 
@@ -1115,7 +1129,7 @@ public class Take5Builder {
             SimpleSegment seg = new SimpleSegment(this, "Metadata", (len + 1) * 2, 2);
             CharBuffer buf = seg.getCharBuffer();
             buf.put(str);
-            buf.put((char)0);   // Yes, an extra null goes at the end!
+            buf.put((char) 0);   // Yes, an extra null goes at the end!
             header.put(HDR_METADATA_STRING, seg.getAddress());
             header.put(HDR_METADATA_SIZE, len);
         } else {
@@ -1132,14 +1146,14 @@ public class Take5Builder {
             header.put(HDR_BUILD_MSEC, 86400259);
         } else {
             header.put(HDR_BUILD_DAY,
-                       31 * (12 * calendar.get(Calendar.YEAR)
-                             + calendar.get(Calendar.MONTH))
-                       + (calendar.get(Calendar.DAY_OF_MONTH) - 1));
+                    31 * (12 * calendar.get(Calendar.YEAR)
+                            + calendar.get(Calendar.MONTH))
+                            + (calendar.get(Calendar.DAY_OF_MONTH) - 1));
             header.put(HDR_BUILD_MSEC,
-                       1000 * (60 * (60 * calendar.get(Calendar.HOUR_OF_DAY)
-                                     + calendar.get(Calendar.MINUTE))
-                               + calendar.get(Calendar.SECOND))
-                       + calendar.get(Calendar.MILLISECOND));
+                    1000 * (60 * (60 * calendar.get(Calendar.HOUR_OF_DAY)
+                            + calendar.get(Calendar.MINUTE))
+                            + calendar.get(Calendar.SECOND))
+                            + calendar.get(Calendar.MILLISECOND));
         }
     }
 
@@ -1168,7 +1182,7 @@ public class Take5Builder {
         case HASH_HASH32:
             assert valueTable.size() == 0;
             keySegment = new SimpleSegment(this, "Key Hash32 Table", globalIndexCount * 4, 4);
-            Arrays.fill(keySegment.rawbuf, (byte)-1);
+            Arrays.fill(keySegment.rawbuf, (byte) -1);
             header.put(HDR_KEYCHECK_FORMAT, Take5Format.KEYCHECK_FORMAT_HASH32);
             header.put(HDR_KEYCHECK_DATA, keySegment.getAddress());
             break;
@@ -1207,7 +1221,7 @@ public class Take5Builder {
         if (valueTable.size() != 0) {
             assert keySegment == null;
             assert valueSegment != null;
-            assert  valueTable.size() == globalIndexCount : "Stored value count inconsistent";
+            assert valueTable.size() == globalIndexCount : "Stored value count inconsistent";
             TableSegment valueTableSegment = new TableSegment(this, "Value Table", valueSegment);
             header.put(HDR_VALUE_DATA, valueTableSegment.getAddress());
         } else if (storeValues || keySegment != null) {
@@ -1273,8 +1287,8 @@ public class Take5Builder {
             out.format("    max key length = %d%n", ep.maxKeyLength);
             out.format("    max value size = %d%n", ep.maxValueSize);
             out.format("    characters = [%s, %s]%n",
-                       Utils.charString(ep.minCharacter),
-                       Utils.charString(ep.maxCharacter));
+                    Utils.charString(ep.minCharacter),
+                    Utils.charString(ep.maxCharacter));
             if (ep.acceptEmpty) {
                 out.format("    start = *!%d%+d%n", ep.startState.id, ep.indexOffset);
             } else {
@@ -1290,8 +1304,8 @@ public class Take5Builder {
         out.format("  max key length = %d%n", globalMaxKeyLength);
         out.format("  max value size = %d%n", globalMaxValueSize);
         out.format("  characters = [%s, %s]%n",
-                   Utils.charString(globalMinCharacter),
-                   Utils.charString(globalMaxCharacter));
+                Utils.charString(globalMinCharacter),
+                Utils.charString(globalMaxCharacter));
         out.format("States:%n");
         for (State st = lastState; st != null; st = st.previous) {
             out.format("%8d ", st.id);

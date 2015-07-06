@@ -9,16 +9,9 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>textanalytics</artifactId>
-        <version>56.4.1</version>
+        <version>57.0.0</version>
     </parent>
-    <prerequisites>
-        <maven>3.0.4</maven>
-    </prerequisites>
     <inceptionYear>2009</inceptionYear>
-    <properties>
-      <bt.compile.target>1.6</bt.compile.target>
-      <nexus-staging-plugin-version>1.6.5</nexus-staging-plugin-version>
-    </properties>
     <url>http://git.basistech.net/pages/textanalytics/rosette-common-java</url>
     <scm>
         <connection>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</connection>
@@ -130,7 +123,7 @@
                 <configuration>
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java16</artifactId>
+                        <artifactId>java17</artifactId>
                         <version>1.0</version>
                     </signature>
                 </configuration>
