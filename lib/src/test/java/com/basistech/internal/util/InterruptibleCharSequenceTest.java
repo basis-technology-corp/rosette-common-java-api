@@ -69,7 +69,7 @@ public class InterruptibleCharSequenceTest extends Assert {
         assertEquals("his", sub.toString());
     }
 
-    private final static class SelfInterruptingThread extends Thread {
+    private static final class SelfInterruptingThread extends Thread {
 
         private final Runnable testCase;
         private Throwable throwable;

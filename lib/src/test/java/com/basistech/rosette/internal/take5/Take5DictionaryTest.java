@@ -45,25 +45,25 @@ import java.util.TimeZone;
 @RunWith(Parameterized.class)
 public class Take5DictionaryTest extends Assert {
     private static final String[] DAYS = {
-            "Friday",
-            "Monday",
-            "Saturday",
-            "Sun",
-            "Sundae",
-            "Sundaes",
-            "Sunday",
-            "Thursday",
-            "Tuesday",
-            "Wednesday",
-            "july 4th",
+        "Friday",
+        "Monday",
+        "Saturday",
+        "Sun",
+        "Sundae",
+        "Sundaes",
+        "Sunday",
+        "Thursday",
+        "Tuesday",
+        "Wednesday",
+        "july 4th",
     };
 
     private static final String[] NEXT_LETTERS = {
-            "a", "b", "c", "d", "e", "f",
-            "gaa", "gab", "gac",
-            "gb", "gc", "gd", "ge", "gf", "gg", "gh", "gi",
-            "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
-            "r", "s", "t", "u", "v", "w", "x", "y", "z",
+        "a", "b", "c", "d", "e", "f",
+        "gaa", "gab", "gac",
+        "gb", "gc", "gd", "ge", "gf", "gg", "gh", "gi",
+        "h", "i", "j", "k", "l", "m", "n", "o", "p", "q",
+        "r", "s", "t", "u", "v", "w", "x", "y", "z",
     };
 
     private final ByteOrder order;
