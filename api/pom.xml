@@ -119,6 +119,7 @@
                     <instructions>
                         <Export-Package>com.basistech.rosette.*,com.basistech.util.*</Export-Package>
                         <Bundle-Version>${osgi-version}</Bundle-Version>
+                        <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties};{maven-resources}</Include-Resource>
                     </instructions>
                 </configuration>
             </plugin>
