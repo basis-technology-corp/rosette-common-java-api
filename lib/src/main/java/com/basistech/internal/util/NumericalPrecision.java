@@ -73,10 +73,6 @@ public final class NumericalPrecision {
             bInt = 0x80000000 - bInt;
         }
         int intDiff = Math.abs(aInt - bInt);
-        if (intDiff <= maxUlps) {
-            return true;
-        }
-        return false;
-
+        return intDiff <= maxUlps;
     }
 }
