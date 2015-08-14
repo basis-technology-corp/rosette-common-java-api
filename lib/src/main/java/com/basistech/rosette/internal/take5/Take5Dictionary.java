@@ -479,10 +479,7 @@ public class Take5Dictionary implements Cloneable {
         if (c == 0) {
             return false;
         }
-        if (result.length == length) {
-            return true;
-        }
-        return false;
+        return result.length == length;
     }
 
     // For exact matches only.  If the key was not found, this should return 0.  If the key was
