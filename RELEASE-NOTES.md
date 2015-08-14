@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java
 
+### 35.1.0
+
+### [ROS-88](http://jira.basistech.net/browse/ROS-88) Use parent 57.1.0
+
 ## 35.0.0
 
 ### [COMN-196](http://jira.basistech.net/browse/COMN-196) Build with   Java 1.7
