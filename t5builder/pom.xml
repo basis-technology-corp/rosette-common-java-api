@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>common-java</artifactId>
-        <version>35.1.1-SNAPSHOT</version>
+        <version>35.1.1</version>
     </parent>
     <packaging>bundle</packaging>
     <description>Class library for building Take5 files.</description>
