@@ -15,4 +15,5 @@
 /**
  * Common exceptions used throughout Rosette.
  */
+@RosetteSystemBundlePackage
 package com.basistech.rosette;
