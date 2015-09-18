@@ -1,6 +1,11 @@
 # Cumulative Release Notes for rosette-common-java
 
-### 35.1.0
+## 35.1.1
+
+### No jira: added an annotation class used in the OSGi system.
+    `RosetteSystemBundlePackage`
+
+## 35.1.0
 
 ### [ROS-88](http://jira.basistech.net/browse/ROS-88) Use parent 57.1.0
 
