@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>common-java</artifactId>
-        <version>35.1.2</version>
+        <version>35.1.3-SNAPSHOT</version>
     </parent>
     <packaging>bundle</packaging>
     <description>Common API classes for Rosette</description>
