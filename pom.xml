@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-java</artifactId>
     <name>common-java</name>
-    <version>35.1.3</version>
+    <version>35.1.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <description>Common Java Library and Tools</description>
     <parent>
@@ -16,7 +16,7 @@
     <scm>
         <connection>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</connection>
         <developerConnection>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</developerConnection>
-        <tag>common-java-35.1.3</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <site>
