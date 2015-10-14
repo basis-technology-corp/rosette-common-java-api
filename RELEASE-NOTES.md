@@ -1,6 +1,21 @@
 # Cumulative Release Notes for rosette-common-java
 
-## 35.1.2:
+## ??
+
+### [RD-1239](http://jira.basistech.net/browse/RD-1239) Workaround split package
+
+utilities.jar, required by RES (because RNI requires it) has files in
+the same package used in common-api.  This change is a workaround to
+enable OSGi for RES, etc. by *copying* those file from utilities.jar
+into common-api:
+
+```
+com/basistech/util/BasisRootBean.java
+com/basistech/util/NoRootDirectoryException.java
+com/basistech/util/Pathnames.java
+```
+
+## 35.1.2
 
 ### No Jira: move to parent version 57.1.2, and thus Jackson 2.6.2.
 
