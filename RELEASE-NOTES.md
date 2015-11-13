@@ -1,6 +1,6 @@
 # Cumulative Release Notes for rosette-common-java
 
-## 35.1.3
+## 35.1.4
 
 ### [RD-1239](http://jira.basistech.net/browse/RD-1239) Workaround split package
 
