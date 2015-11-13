@@ -22,9 +22,9 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 
-public class LFileParser implements ContentHandler {
+final class LFileParser implements ContentHandler {
     
-    private enum Tag { GENERATOR, CUSTOMER, EXPIRATION, LICENSE };
+    private enum Tag { GENERATOR, CUSTOMER, EXPIRATION, LICENSE, AMZ };
     
     private LFile result;
     
@@ -34,6 +34,7 @@ public class LFileParser implements ContentHandler {
     private String customer;
     private String expiration;
     private String token;
+    private boolean amz;
     
     private List<Entry> elist = new ArrayList<Entry>();
     
@@ -50,14 +51,19 @@ public class LFileParser implements ContentHandler {
     }
 
     public void endDocument() throws SAXException {
-        result = new LFile(generator, customer, expiration, elist, token);
+        if (amz) {
+            result = LFile.getAmz();
+        } else {
+            result = new LFile(generator, customer, expiration, elist, token);
+        }
     }
 
     public void endElement(String uri, String name, String qname) {
-        
-       
         if (tag != null) {
             switch (tag) {
+            case AMZ:
+                amz = true;
+                break;
             case CUSTOMER:
                 this.customer = buffer.toString();
                 break;
@@ -83,7 +89,6 @@ public class LFileParser implements ContentHandler {
             default:
             }
         }
-        
         
         if ("license".equals(name)) {
             elist.add(new Entry(product, feature, language, licenseKey));
@@ -121,8 +126,7 @@ public class LFileParser implements ContentHandler {
     public void startDocument() {
     }
 
-    public void startElement(String uri, String name, String qname,
-            Attributes arg3) {
+    public void startElement(String uri, String name, String qname, Attributes attributes) {
         
         // we are in a license tag
         
@@ -134,6 +138,8 @@ public class LFileParser implements ContentHandler {
             tag = Tag.EXPIRATION;
         } else if ("license".equals(name)) {
             tag = Tag.LICENSE;
+        } else if ("amz".equals(name)) {
+            tag = Tag.AMZ;
         }
         buffer = new StringBuilder();
 
@@ -142,7 +148,7 @@ public class LFileParser implements ContentHandler {
     public void startPrefixMapping(String arg0, String arg1) {
     }
 
-    public LFile getResult() {
+    LFile getResult() {
         return result;
     }
 

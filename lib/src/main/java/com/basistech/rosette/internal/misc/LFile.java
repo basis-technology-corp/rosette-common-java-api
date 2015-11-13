@@ -18,45 +18,57 @@ import java.util.List;
 /**
  * License file.
  */
-public class LFile {
+final class LFile {
     private String generator;
     private String customer;
     private String expiration;
     private List<Entry> entries;
     private String token;
+    private boolean amz;
 
-    public LFile(String generator, String customer, String expiration, List<Entry> entries) {
+    LFile(String generator, String customer, String expiration, List<Entry> entries) {
         this.generator = generator;
         this.customer = customer;
         this.expiration = expiration;
         this.entries = entries;
     }
 
-    public LFile(String generator, String customer, String expiration, List<Entry> entries, String token) {
+    LFile(String generator, String customer, String expiration, List<Entry> entries, String token) {
         this(generator, customer, expiration, entries);
         this.token = token;
 
     }
 
+    private LFile() {
+        amz = true;
+    }
 
-    public String getGenerator() {
+    static LFile getAmz() {
+        return new LFile();
+    }
+
+    String getGenerator() {
         return generator;
     }
 
-    public String getCustomer() {
+    String getCustomer() {
         return customer;
     }
 
-    public String getExpiration() {
+    String getExpiration() {
         return expiration;
     }
 
-    public List<Entry> getEntries() {
+    List<Entry> getEntries() {
         return entries;
     }
 
-    public String getToken() {
+    String getToken() {
         return token;
+    }
+
+    boolean isAmz() {
+        return amz;
     }
 
 }

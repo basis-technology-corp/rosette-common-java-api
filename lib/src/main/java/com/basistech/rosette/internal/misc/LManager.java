@@ -13,13 +13,33 @@
  ******************************************************************************/
 package com.basistech.rosette.internal.misc;
 
+import com.basistech.internal.util.Base64;
 import com.basistech.rosette.RosetteCorruptLicenseException;
 import com.basistech.rosette.RosetteExpiredLicenseException;
 import com.basistech.rosette.RosetteNoLicenseException;
 import com.basistech.util.LanguageCode;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.Resources;
 
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.Signature;
+import java.security.SignatureException;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
@@ -29,9 +49,11 @@ import java.util.Map;
 public class LManager {
 
     // Magic strings used to allow license circumvention.
-    private static String sk1 = "n   x"; // use substring(1, 3)
-    private static String sk2 = "Jx^A@B1"; //^A^@
-    private static String sk3 = "jmnx0exxp1IWab6b";
+    private static final String SK1 = "n   x"; // use substring(1, 3)
+    private static final String SK2 = "Jx^A@B1"; //^A^@
+    private static final String SK3 = "jmnx0exxp1IWab6b";
+    private static boolean amzChecked;
+    private static boolean amz;
     private LFile licenseFile;
     private List<LEntry> languageEntries;
     private List<LEntry> featureEntries;
@@ -69,6 +91,16 @@ public class LManager {
      */
 
     private void initialize() throws RosetteCorruptLicenseException {
+
+        if (licenseFile.isAmz()) {
+            if (amzChecked) {
+                return;
+            }
+            validateViaInstanceDocument();
+            amzChecked = true;
+            amz = true;
+        }
+
         if (licenseFile.getToken() != null) {
             token = licenseFile.getToken();
         }
@@ -115,22 +147,22 @@ public class LManager {
     }
 
     private boolean checkInternal() {
-        String sk = new StringBuilder()
-                // "  ^A^@IWe   "
-                .append(sk1.substring(1, 3)) // "  "
-                .append(sk2.substring(2, 4)) // "^A"
-                .append(sk2.substring(2, 3)) // "^"
-                .append(sk2.substring(4, 5)) // "@"
-                .append(sk3.substring(10, 12)) // "IW"
-                .append(sk3.substring(5, 6)) // "e"
-                .append(sk1.substring(1, 4)) // "   "
-                .toString();
+        String sk = SK1.substring(1, 3)
+                + SK2.substring(2, 4)
+                + SK2.substring(2, 3)
+                + SK2.substring(4, 5)
+                + SK3.substring(10, 12)
+                + SK3.substring(5, 6)
+                + SK1.substring(1, 4);
         return sk.equals(token);
     }
 
     public boolean checkLanguage(LanguageCode languageCode,
                                  int functions, boolean throwErrors) throws RosetteNoLicenseException,
             RosetteExpiredLicenseException {
+        if (amz) {
+            return true;
+        }
         // license key "  ^A^@IWe   " avoids license checks
         if (token != null) {
             if (checkInternal()) {
@@ -168,7 +200,9 @@ public class LManager {
 
     public boolean checkFeature(String feature, int functions, boolean throwErrors)
             throws RosetteNoLicenseException, RosetteExpiredLicenseException {
-
+        if (amz) {
+            return true;
+        }
         // license key "  ^A^@IWe   " avoids license checks
         if (token != null) {
             if (checkInternal()) {
@@ -206,5 +240,104 @@ public class LManager {
             }
         }
         return true;
+    }
+
+    private PublicKey getCertKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+        URL keyUrl = Resources.getResource(LManager.class, "iid.der");
+        byte[] keyBytes = Resources.toByteArray(keyUrl);
+        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+        KeyFactory kf = KeyFactory.getInstance("RSA");
+        return kf.generatePublic(spec);
+    }
+
+    private boolean validateSignature(byte[] content, byte[] signature, PublicKey key) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+        byte[] sigBytes = Base64.decode(signature, 0, signature.length);
+        Signature dsaSig = Signature.getInstance("SHA256withRSA");
+        dsaSig.initVerify(key);
+        dsaSig.update(content);
+        return dsaSig.verify(sigBytes);
+    }
+
+    private byte[] downloadMetadata(String mdPath) throws IOException {
+        //http://169.254.169.254/latest/dynamic/instance-identity/document
+        URL url = new URL(String.format("http://169.254.169.254/latest/dynamic/instance-identity/%s", mdPath));
+
+        try (InputStream content = url.openStream()) {
+            return ByteStreams.toByteArray(content);
+        }
+    }
+
+    private void validateViaInstanceDocument() throws RosetteNoLicenseException {
+        byte[] documentBytes;
+        byte[] signature;
+        try {
+            documentBytes = downloadMetadata("document");
+            signature = downloadMetadata("signature");
+        } catch (IOException e) {
+            throw new RosetteNoLicenseException("Invalid environment 1");
+        }
+
+        PublicKey publicKey;
+        try {
+            publicKey = getCertKey();
+        } catch (IOException e) {
+            throw new RosetteNoLicenseException("Invalid environment 2.1");
+        } catch (NoSuchAlgorithmException e) {
+            throw new RosetteNoLicenseException("Invalid environment 2.2");
+        } catch (InvalidKeySpecException e) {
+            throw new RosetteNoLicenseException("Invalid environment 2.3");
+        }
+
+        try {
+            if (!validateSignature(documentBytes, signature, publicKey)) {
+                throw new RosetteNoLicenseException("Invalid environment 3");
+            }
+        } catch (NoSuchAlgorithmException e) {
+            throw new RosetteNoLicenseException("Invalid environment 3.1");
+        } catch (InvalidKeyException e) {
+            throw new RosetteNoLicenseException("Invalid environment 3.2");
+        } catch (SignatureException e) {
+            throw new RosetteNoLicenseException("Invalid environment 3.3");
+        }
+
+        Enumeration<NetworkInterface> interfaceEnum;
+        try {
+            interfaceEnum = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            throw new RosetteNoLicenseException("Invalid environment 4");
+
+        }
+
+        List<InterfaceAddress> addresses = Lists.newArrayList();
+        while (interfaceEnum.hasMoreElements()) {
+            NetworkInterface networkInterface = interfaceEnum.nextElement();
+            addresses.addAll(networkInterface.getInterfaceAddresses());
+        }
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode document;
+        try {
+            document = mapper.readTree(documentBytes);
+        } catch (IOException e) {
+            throw new RosetteNoLicenseException("Invalid environment 5");
+        }
+        String docPrivateIP = document.get("privateIp").asText();
+        if (docPrivateIP == null) {
+            throw new RosetteNoLicenseException("Invalid environment 6");
+        }
+
+        boolean foundIp = false;
+        for (InterfaceAddress ia : addresses) {
+            if (ia.getAddress().getHostAddress().equals(docPrivateIP)) {
+                foundIp = true;
+                break;
+            }
+        }
+
+        if (!foundIp) {
+            throw new RosetteNoLicenseException("Invalid environment 7");
+        }
+
+        // TODO: add product code check.
     }
 }
