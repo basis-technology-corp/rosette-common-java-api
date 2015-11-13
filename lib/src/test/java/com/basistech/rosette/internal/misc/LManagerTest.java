@@ -116,4 +116,9 @@ public class LManagerTest {
         Assert.fail("RosetteNoLicenseException expected.");
     }
 
+    @Test
+    public void getCert() throws Exception {
+        LManager.getCertKey();
+    }
+
 }

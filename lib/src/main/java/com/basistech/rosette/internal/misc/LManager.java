@@ -21,6 +21,7 @@ import com.basistech.util.LanguageCode;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.Resources;
 
@@ -31,13 +32,14 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
 import java.security.InvalidKeyException;
-import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -99,6 +101,7 @@ public class LManager {
             validateViaInstanceDocument();
             amzChecked = true;
             amz = true;
+            return;
         }
 
         if (licenseFile.getToken() != null) {
@@ -242,15 +245,18 @@ public class LManager {
         return true;
     }
 
-    private PublicKey getCertKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+    static PublicKey getCertKey() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException, CertificateException {
         URL keyUrl = Resources.getResource(LManager.class, "iid.der");
-        byte[] keyBytes = Resources.toByteArray(keyUrl);
-        X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
-        KeyFactory kf = KeyFactory.getInstance("RSA");
-        return kf.generatePublic(spec);
+        ByteSource source = Resources.asByteSource(keyUrl);
+        Certificate cert;
+        try (InputStream is = source.openStream()) {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            cert = cf.generateCertificate(is);
+        }
+        return cert.getPublicKey();
     }
 
-    private boolean validateSignature(byte[] content, byte[] signature, PublicKey key) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException {
+    private boolean validateSignature(byte[] content, byte[] signature, PublicKey key) throws NoSuchAlgorithmException, SignatureException, InvalidKeyException {
         byte[] sigBytes = Base64.decode(signature, 0, signature.length);
         Signature dsaSig = Signature.getInstance("SHA256withRSA");
         dsaSig.initVerify(key);
@@ -284,8 +290,10 @@ public class LManager {
             throw new RosetteNoLicenseException("Invalid environment 2.1");
         } catch (NoSuchAlgorithmException e) {
             throw new RosetteNoLicenseException("Invalid environment 2.2");
-        } catch (InvalidKeySpecException e) {
+        } catch (CertificateException e) {
             throw new RosetteNoLicenseException("Invalid environment 2.3");
+        } catch (InvalidKeySpecException e) {
+            throw new RosetteNoLicenseException("Invalid environment 2.4");
         }
 
         try {
@@ -294,9 +302,9 @@ public class LManager {
             }
         } catch (NoSuchAlgorithmException e) {
             throw new RosetteNoLicenseException("Invalid environment 3.1");
-        } catch (InvalidKeyException e) {
-            throw new RosetteNoLicenseException("Invalid environment 3.2");
         } catch (SignatureException e) {
+            throw new RosetteNoLicenseException("Invalid environment 3.2");
+        } catch (InvalidKeyException e) {
             throw new RosetteNoLicenseException("Invalid environment 3.3");
         }
 
