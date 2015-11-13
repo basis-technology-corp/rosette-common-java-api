@@ -149,19 +149,18 @@ public class InterruptibleCharSequenceTest extends Assert {
     @Test
     public void pathologicalRegexTest() throws Exception {
         // a case when we may want to use this class: see TEJ-196
-        Thread t = new Thread(new Runnable()
-            {
-                public void run() {
-                    String input = "http://en.wikipedia.org/wiki/Athens_(access_and_identity_management_serviceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)";
-                    InterruptibleCharSequence seq = new InterruptibleCharSequence(input.toCharArray(), 0, input.length());
-                    try {
-                        Pattern.matches("(?xi)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\(([^\\s()<>]+|(\\([^\\s()>?]+\\)))*\\)))*\\))+(?:\\(([^\\s()<>]+|(\\(([^\\s()<>]+|(\\([^\\s()>?]+\\)))*\\)))*\\)[^\\s`!()\\[\\]{};:\'\".,<>?«»“”‘’]))", seq);
-                        fail(); // should never reach here
-                    } catch (RosetteInterruptedException e) {
-                        //
-                    }
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                String input = "http://en.wikipedia.org/wiki/Athens_(access_and_identity_management_serviceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa)";
+                InterruptibleCharSequence seq = new InterruptibleCharSequence(input.toCharArray(), 0, input.length());
+                try {
+                    Pattern.matches("(?xi)\\b((?:[a-z][\\w-]+:(?:/{1,3}|[a-z0-9%])|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{2,4}/)(?:[^\\s()<>]+|\\(([^\\s()<>]+|(\\(([^\\s()<>]+|(\\([^\\s()>?]+\\)))*\\)))*\\))+(?:\\(([^\\s()<>]+|(\\(([^\\s()<>]+|(\\([^\\s()>?]+\\)))*\\)))*\\)[^\\s`!()\\[\\]{};:\'\".,<>?«»“”‘’]))", seq);
+                    fail(); // should never reach here
+                } catch (RosetteInterruptedException e) {
+                    //
                 }
-            });
+            }
+        });
         t.start();
         Thread.sleep(1000);
         t.interrupt();

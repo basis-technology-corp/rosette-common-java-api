@@ -14,18 +14,25 @@
 
 package com.basistech.util;
 
-import junit.framework.TestCase;
 
-public class NEConstantsTest extends TestCase {
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class NEConstantsTest {
+    @Test
     public void testParseBuiltInType() throws Exception {
         assertEquals(NEConstants.NE_TYPE_PERSON, NEConstants.parse("PERSON"));
     }
 
+    @Test
     public void testParseBuiltInTypeWrongCase() throws Exception {
         // I wish we did not have to support this!
         assertEquals(NEConstants.NE_TYPE_PERSON, NEConstants.parse("pErSoN"));
     }
 
+    @Test
     public void testParseCustomType() throws Exception {
         // I'd rather use @Test(expected=InvalidNamedEntityTypeNameException), but
         // we'd need to convert from junit.framework to org.junit.  Later...

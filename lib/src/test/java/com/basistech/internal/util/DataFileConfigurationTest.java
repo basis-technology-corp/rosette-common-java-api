@@ -14,11 +14,15 @@
 
 package com.basistech.internal.util;
 
+import org.junit.Test;
+
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
-public class DataFileConfigurationTest extends TestCase {
+public class DataFileConfigurationTest {
 
     private static final String DIR = "src/test/resources/com/basistech/rosette/util/";
 
@@ -44,6 +48,7 @@ public class DataFileConfigurationTest extends TestCase {
         assertEquals("Wrong Error:", prefix, msg);
     }
 
+    @Test
     public void testFailures() {
         checkFailure("This file should not exist!", "Problem opening:");
         checkFailure("problem-reading.datafiles", "Problem reading:");
@@ -51,6 +56,7 @@ public class DataFileConfigurationTest extends TestCase {
         checkFailure("bad-wildcard.datafiles", "Wildcard name must contain exactly one '*':");
     }
 
+    @Test
     public void testConfig() {
         DataFileConfiguration cfg = getCfg("test.datafiles");
         assertNull("You found a VAX running Java?  Architecture check:", cfg.lookup("test"));

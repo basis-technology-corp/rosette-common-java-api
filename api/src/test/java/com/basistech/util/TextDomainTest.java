@@ -13,14 +13,20 @@
  ******************************************************************************/
 package com.basistech.util;
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TextDomainTest extends TestCase {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+public class TextDomainTest {
 
     private TextDomain td1;
     private TextDomain td2;
     private TextDomain td3;
 
+    @Before
     public void setUp() {
         // have to ref script/language by int directly because the respective classes haven't yet moved from
         // rlp
@@ -29,6 +35,7 @@ public class TextDomainTest extends TestCase {
         td3 = new TextDomain(ISO15924.Zyyy, LanguageCode.UNKNOWN, TransliterationScheme.BASIS);
     }
 
+    @Test
     public void testequals() {
         // reflexive
         assertTrue(td1.equals(td1));
@@ -42,6 +49,7 @@ public class TextDomainTest extends TestCase {
         assertNotNull(td1);
     }
 
+    @Test
     public void testNativeDomainConstructor() {
 
         TextDomain tdArabicByHand = new TextDomain(ISO15924.Arab, LanguageCode.ARABIC,
@@ -51,11 +59,13 @@ public class TextDomainTest extends TestCase {
 
     }
 
+    @Test
     public void testhashCode() {
         assertTrue(td1.hashCode() == td2.hashCode());
         assertTrue(td2.hashCode() == td3.hashCode());
     }
 
+    @Test
     public void testToString() {
         // Make sure we're using 3-letter language codes so that we can tell these apart when
         // we're debugging:

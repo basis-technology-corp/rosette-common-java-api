@@ -13,22 +13,28 @@
  ******************************************************************************/
 package com.basistech.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class TestISO15924 extends TestCase {
+import static org.junit.Assert.assertEquals;
 
+public class TestISO15924 {
+
+    @Test
     public void testNumeric() {
         assertEquals(550, ISO15924.Blis.numeric());
     }
 
+    @Test
     public void testEnglishName() {
         assertEquals("Syriac (Eastern variant)", ISO15924.Syrn.englishName());
     }
 
+    @Test
     public void testLookupByNumeric() {
         assertEquals(ISO15924.Brah, ISO15924.lookupByNumeric(300));
     }
 
+    @Test
     public void testLookupByCode4() {
         assertEquals(ISO15924.Dsrt, ISO15924.lookupByCode4("Dsrt"));
     }

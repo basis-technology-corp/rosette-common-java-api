@@ -271,7 +271,7 @@ public final class TabReader {
     }
 
     private static class ParseException extends Exception {
-        public ParseException(String message) {
+        ParseException(String message) {
             super(message);
         }
     }

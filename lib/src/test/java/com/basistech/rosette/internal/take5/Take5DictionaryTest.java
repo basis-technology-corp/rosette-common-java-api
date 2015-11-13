@@ -78,8 +78,8 @@ public class Take5DictionaryTest extends Assert {
     @Parameterized.Parameters(name = "{index}: endian {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
-                {ByteOrder.BIG_ENDIAN},
-                {ByteOrder.LITTLE_ENDIAN}
+            {ByteOrder.BIG_ENDIAN},
+            {ByteOrder.LITTLE_ENDIAN}
         });
     }
 
@@ -91,13 +91,11 @@ public class Take5DictionaryTest extends Assert {
         }
     }
 
-    Take5Dictionary openDictionary(String path, ByteBuffer[] outData)
-            throws IOException, Take5Exception {
+    Take5Dictionary openDictionary(String path, ByteBuffer[] outData) throws IOException, Take5Exception {
         return openDictionary(path, "main", outData);
     }
 
-    Take5Dictionary openDictionary(String path, String entryPoint, ByteBuffer[] outData)
-            throws IOException, Take5Exception {
+    Take5Dictionary openDictionary(String path, String entryPoint, ByteBuffer[] outData) throws IOException, Take5Exception {
         File dictFile = new File(endianDictionaryName(path));
         return openDictionary(entryPoint, outData, dictFile);
     }
@@ -463,9 +461,7 @@ public class Take5DictionaryTest extends Assert {
     // XXX: Unfortunately, the way this works wont really work as a test of
     // reverse lookup in the perfect hash table case.  When you get hash
     // table reverse lookup working, you'll have to test it some other way.
-    private static void testReverseLookupAll(Take5Dictionary dict,
-                                             String[] keys)
-            throws Take5Exception {
+    private static void testReverseLookupAll(Take5Dictionary dict, String[] keys) throws Take5Exception {
         char[] buffer = new char[dict.maximumWordLength()];
         for (int i = 0; i < keys.length; i++) {
             int len = dict.reverseLookup(i, buffer);
