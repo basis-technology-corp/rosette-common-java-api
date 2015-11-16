@@ -139,7 +139,6 @@
                     <instructions>
                         <Bundle-Version>${osgi-version}</Bundle-Version>
                         <Export-Package>com.basistech.rosette.internal.take5build</Export-Package>
-                        <Embed-Dependency>opencsv</Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties};{maven-resources}</Include-Resource>
                     </instructions>
@@ -187,11 +186,6 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>2.3</version>
         </dependency>
         <dependency>
             <groupId>commons-lang</groupId>
