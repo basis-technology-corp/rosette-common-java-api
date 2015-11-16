@@ -15,7 +15,6 @@
 
 package com.basistech.rosette.internal.take5build;
 
-import au.com.bytecode.opencsv.CSVParser;
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
@@ -382,11 +381,9 @@ public final class Take5Build {
             CharSource metaSource = Files.asCharSource(metadataFile, Charsets.UTF_8);
             try {
                 metaSource.readLines(new LineProcessor<Void>() {
-                    private final CSVParser parser = new CSVParser('\t');
-
                     @Override
                     public boolean processLine(String line) throws IOException {
-                        String[] tokens = parser.parseLine(line);
+                        String[] tokens = line.split("\t");
                         factory.putMetadata(tokens[0], tokens[1]);
                         return true;
                     }

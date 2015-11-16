@@ -13,7 +13,7 @@
  ******************************************************************************/
 package com.basistech.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
 
 public class PropertyEditorTest extends AbstractDependencyInjectionSpringContextTests {
@@ -23,10 +23,11 @@ public class PropertyEditorTest extends AbstractDependencyInjectionSpringContext
         };
     }
 
+    @Test
     public void testProperties() throws Exception {
         UtilEnumPropertiesBean bean = (UtilEnumPropertiesBean)applicationContext.getBean("test-util-enum");
-        TestCase.assertEquals(bean.getLanguage(), LanguageCode.ARABIC);
-        TestCase.assertEquals(bean.getScript(), ISO15924.Arab);
-        TestCase.assertEquals(bean.getScheme(), TransliterationScheme.IC);
+        assertEquals(bean.getLanguage(), LanguageCode.ARABIC);
+        assertEquals(bean.getScript(), ISO15924.Arab);
+        assertEquals(bean.getScheme(), TransliterationScheme.IC);
     }
 }

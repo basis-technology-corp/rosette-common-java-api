@@ -13,18 +13,22 @@
  ******************************************************************************/
 package com.basistech.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertSame;
 
 /**
  * This tests com.basistech.util.TranslationScheme <br>
  * Currently it only tests getObjectBy* methods.
  */
-public class TransliterationSchemeTest extends TestCase {
+public class TransliterationSchemeTest {
+    @Test
     public void testGetObjByName() {
         TransliterationScheme x = TransliterationScheme.getObjectByName("basis");
         assertSame(x, TransliterationScheme.BASIS);
     }
 
+    @Test
     public void testGetObjById() {
         TransliterationScheme x = TransliterationScheme.getObjectByBT_Xlit_Scheme(1);
         assertSame(x, TransliterationScheme.BGN);

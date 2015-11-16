@@ -57,6 +57,9 @@ public class CommonBundlesIT {
                 url(String.format("file:%s/common-java-t5builder-%s.jar", bundles, version)),
                 mavenBundle("com.ibm.icu", "icu4j").versionAsInProject(),
                 mavenBundle("com.google.guava", "guava").versionAsInProject(),
+                mavenBundle("it.unimi.dsi", "fastutil").versionAsInProject(),
+                mavenBundle("commons-io", "commons-io").versionAsInProject(),
+                mavenBundle("commons-lang", "commons-lang").versionAsInProject(),
                 junitBundles(),
                 systemPackages(
                         // This are needed for guava.
