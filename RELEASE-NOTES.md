@@ -1,5 +1,14 @@
 # Cumulative Release Notes for rosette-common-java
 
+## 35.2.0
+
+### [ROS-183](http://jira.basistech.net/browse/RD-1239): Remove  opencsv dependency
+    
+This picks up a new parent that uses a new version of the
+maven-bundle-plugin to avoid propagating embedded jars as
+dependencies, in addition to removing all embedded dependencies from
+the 5builder.
+
 ## 35.1.4
 
 ### [RD-1239](http://jira.basistech.net/browse/RD-1239) Workaround split package
