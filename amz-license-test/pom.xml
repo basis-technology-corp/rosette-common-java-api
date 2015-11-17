@@ -13,6 +13,14 @@
             <groupId>com.basistech</groupId>
             <artifactId>common-lib</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+              <exclusion>
+                <!-- work around an apparent Maven bug that comes up
+                     with 35.1.4 for reasons I can't explain. -->
+                <groupId>com.basistech</groupId>
+                <artifactId>common-api</artifactId>
+              </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.basistech</groupId>
