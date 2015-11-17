@@ -6,12 +6,17 @@
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>common-java</artifactId>
-        <version>35.1.5-SNAPSHOT</version>
+        <version>35.2.1-SNAPSHOT</version>
     </parent>
     <dependencies>
         <dependency>
             <groupId>com.basistech</groupId>
             <artifactId>common-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.basistech</groupId>
+            <artifactId>common-api</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -27,10 +27,12 @@ import com.google.common.io.Resources;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
@@ -267,10 +269,27 @@ public class LManager {
     private byte[] downloadMetadata(String mdPath) throws IOException {
         //http://169.254.169.254/latest/dynamic/instance-identity/document
         URL url = new URL(String.format("http://169.254.169.254/latest/dynamic/instance-identity/%s", mdPath));
+        return getSomeMetadata(url);
+    }
 
-        try (InputStream content = url.openStream()) {
-            return ByteStreams.toByteArray(content);
+    private byte[] getSomeMetadata(URL url) throws IOException {
+        HttpURLConnection connection = null;
+        try {
+            connection = (HttpURLConnection)url.openConnection();
+            if (connection.usingProxy()) {
+                throw new RosetteNoLicenseException("Invalid environment 0.1");
+            }
+            try (InputStream content = connection.getInputStream()) {
+                return ByteStreams.toByteArray(content);
+            }
+        } finally {
+            connection.disconnect();
         }
+    }
+
+    private String getProductCodes() throws IOException {
+        byte[] pcBytes = getSomeMetadata(new URL("http://169.254.169.254/latest/meta-data/product-codes"));
+        return new String(pcBytes, Charset.defaultCharset());
     }
 
     private void validateViaInstanceDocument() throws RosetteNoLicenseException {
@@ -346,6 +365,12 @@ public class LManager {
             throw new RosetteNoLicenseException("Invalid environment 7");
         }
 
-        // TODO: add product code check.
+        try {
+            // we aren't checking for _OUR_ codes yet, just for _some_ code.
+            getProductCodes();
+        } catch (IOException e) {
+            // we will get a 404 when non-marketplace.
+            throw new RosetteNoLicenseException("Invalid environment 8");
+        }
     }
 }
