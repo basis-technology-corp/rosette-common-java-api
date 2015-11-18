@@ -10,20 +10,20 @@
     </parent>
     <dependencies>
         <dependency>
-            <groupId>com.basistech</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>common-lib</artifactId>
             <version>${project.version}</version>
             <exclusions>
               <exclusion>
                 <!-- work around an apparent Maven bug that comes up
                      with 35.1.4 for reasons I can't explain. -->
-                <groupId>com.basistech</groupId>
+                <groupId>${project.groupId}</groupId>
                 <artifactId>common-api</artifactId>
               </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.basistech</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>common-api</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -55,10 +55,8 @@
                             <useWildcardClassPath>false</useWildcardClassPath>
                             <programs>
                                 <program>
-                                    <mainClass>com.basistech.test.Contemplate</mainClass>
+                                    <mainClass>com.basistech.test.CheckAmazonLicense</mainClass>
                                     <id>check</id>
-                                    <!-- To allow for gigantic -Xmx,  we don't specify at all.  appassembler is not as flexible as we might like here,
-                                            we'd like a default and an override. -->
                                 </program>
                             </programs>
                         </configuration>

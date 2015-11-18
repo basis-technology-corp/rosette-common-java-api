@@ -20,8 +20,8 @@ import com.basistech.util.LanguageCode;
 /**
  * Try out the Amazon license checking code.
  */
-public final class Contemplate {
-    private Contemplate() {
+public final class CheckAmazonLicense {
+    private CheckAmazonLicense() {
         //
     }
 
