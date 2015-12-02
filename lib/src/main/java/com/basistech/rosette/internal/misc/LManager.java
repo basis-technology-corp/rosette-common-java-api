@@ -293,6 +293,12 @@ public class LManager {
     }
 
     private void validateViaInstanceDocument() throws RosetteNoLicenseException {
+
+        if (System.getProperty("http.proxyHost") != null
+                || System.getProperty("http.proxyPort") != null) {
+            throw new RosetteNoLicenseException("Invalid environment 0.1.1");
+        }
+
         byte[] documentBytes;
         byte[] signature;
         try {

@@ -10,6 +10,9 @@
     </parent>
     <packaging>bundle</packaging>
     <description>Shared internal utilities.</description>
+    <properties>
+        <mockserver-version>3.9.17</mockserver-version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -23,6 +26,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <version>${mockserver-version}</version>
+            <scope>test</scope>
         </dependency>
         <!--
          The next two are only used if the license file has the special 'Amazon Marketplace' element.
