@@ -29,6 +29,7 @@
         <module>lib</module>
         <module>t5builder</module>
         <module>osgi-itests</module>
+        <module>amz-license-test</module>
     </modules>
     <dependencyManagement>
         <dependencies>

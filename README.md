@@ -26,6 +26,9 @@ allow mixing and matching of products. `common-t5builder` contains the Java
 implementation of the code to build Take5 files. Each directory has
 its own README.md with more information.
 
+In addition to the library modules, there is amz-license-test. See the
+README.md in there.
+
 # How to push the Maven site to gh-pages #
 
 ```

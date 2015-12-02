@@ -10,6 +10,10 @@
     </parent>
     <packaging>bundle</packaging>
     <description>Shared internal utilities.</description>
+    <properties>
+        <mockserver-version>3.9.17</mockserver-version>
+        <skip-dependency-convergence>true</skip-dependency-convergence>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -25,13 +29,34 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.mock-server</groupId>
+            <artifactId>mockserver-netty</artifactId>
+            <version>${mockserver-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!--
+         The next two are only used if the license file has the special 'Amazon Marketplace' element.
+         So they don't disturb existing SDKs. If we ever decide to support what Chris Biow calls
+         'jar on a stick' (an Amazon Marketplace instance where we encourage people to use our SDKs instead
+         of a copy of our web service), we'd need to get this stuff into the classpath there.
+        -->
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <optional>true</optional>
         </dependency>
     </dependencies>
     <build>
         <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
             <resource>
                 <directory>src/main/data</directory>
                 <filtering>false</filtering>

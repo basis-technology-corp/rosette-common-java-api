@@ -65,10 +65,8 @@ public final class LFileBuilder {
             xr.parse(content);
             
             return handler.getResult();
-        } catch (IOException e) {
+        } catch (IOException | SAXException e) {
             throw new RosetteRuntimeException(e);
-        } catch (SAXException e) {
-            throw new RosetteRuntimeException(e);
-        } 
+        }
     }
 }
