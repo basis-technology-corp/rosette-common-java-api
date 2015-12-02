@@ -12,6 +12,7 @@
     <description>Shared internal utilities.</description>
     <properties>
         <mockserver-version>3.9.17</mockserver-version>
+        <skip-dependency-convergence>true</skip-dependency-convergence>
     </properties>
     <dependencies>
         <dependency>

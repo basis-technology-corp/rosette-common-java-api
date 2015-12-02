@@ -24,7 +24,6 @@ import org.mockserver.proxy.Proxy;
 import org.mockserver.proxy.ProxyBuilder;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
@@ -44,9 +43,9 @@ public class AmzLicenseProxyTest {
                 .respond(response()
                                 .withStatusCode(200)
                                 .withHeader("x-test", "wolverine")
-                                .withBody("Hello there")
-                );
+                                .withBody("Hello there"));
         Proxy proxy = new ProxyBuilder().withLocalPort(1080).withDirect("localhost", mockServerRule.getHttpPort()).build();
+        boolean exceptional = false;
         try {
             System.setProperty("http.proxyHost", "localhost");
             System.setProperty("http.proxyPort", "1080");
@@ -56,10 +55,11 @@ public class AmzLicenseProxyTest {
             manager.checkFeature("RLI", 0, true);
         } catch (RosetteNoLicenseException rnle) {
             assertTrue(rnle.getMessage().contains("0.1.1"));
+            exceptional = true;
         } finally {
             proxy.stop();
         }
-        fail("No exception on proxy");
+        assertTrue(exceptional);
     }
 
 }
