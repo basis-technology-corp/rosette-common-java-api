@@ -188,6 +188,7 @@ public final class DataFileConfiguration {
      *
      * @param key the key for the data you are looking for.
      * @return a {@link Reader} or null.
+     * @throws IOException can't read the data.
      */
     public Reader open(String key) throws IOException {
         Entry e = dataFileMap.get(key);
@@ -354,6 +355,7 @@ public final class DataFileConfiguration {
     /**
      * For debugging purposes only.  Return the set of keys that are present because they were
      * inserted by a wild card entry:
+     * @return the wildcard keys.
      */
     public Set<String> getWildKeys() {
         return wildKeys;

@@ -208,35 +208,35 @@ public class Take5Dictionary implements Cloneable {
     }
 
     /**
-     * Get copyright notices attached to the dictionary.
+     * @return copyright notices attached to the dictionary.
      */
     public String getCopyright() {
         return copyrightString;
     }
 
     /**
-     * Get content flags set on the dictionary.
+     * @return content flags set on the dictionary.
      */
     public int getContentFlags() {
         return contentFlags;
     }
 
     /**
-     * Get the minimum version supported by the content of this dictionary.
+     * @return the minimum version supported by the content of this dictionary.
      */
     public int getMinimumContentVersion() {
         return contentMinVersion;
     }
 
     /**
-     * Get the maximum version supported by the content of this dictionary.
+     * @return the maximum version supported by the content of this dictionary.
      */
     public int getMaximumContentVersion() {
         return contentMaxVersion;
     }
 
     /**
-     * The maximum number of matches a request for multiple matches can return. If this is not known a value
+     * @return the maximum number of matches a request for multiple matches can return. If this is not known a value
      * of -1 is returned.
      */
     public int maximumMatchCount() {
@@ -244,84 +244,84 @@ public class Take5Dictionary implements Cloneable {
     }
 
     /**
-     * The maximum length of a word in the dictionary. If the language is infinite this is -1.
+     * @return the maximum length of a word in the dictionary. If the language is infinite this is -1.
      */
     public int maximumWordLength() {
         return maxWordLength;
     }
 
     /**
-     * The highest value character stored in the dictionary.
+     * @return the highest value character stored in the dictionary.
      */
     public char maximumCharacter() {
         return (char)maxCharacter;
     }
 
     /**
-     * The lowest value character stored in the dictionary.
+     * @return the lowest value character stored in the dictionary.
      */
     public char minimumCharacter() {
         return (char)minCharacter;
     }
 
     /**
-     * Maximum size of a value, zero if there are no values stored.
+     * @return maximum size of a value, zero if there are no values stored.
      */
     public int maximumValueSize() {
         return maxValueSize;
     }
 
     /**
-     * Number of words in the dictionary, -1 if the language is infinite or this value is unknown.
+     * @return the number of words in the dictionary, -1 if the language is infinite or this value is unknown.
      */
     public int wordCount() {
         return wordCount;
     }
 
     /**
-     * Number of possible index values, -1 if the language is infinite or this value is unknown.
+     * @return the number of possible index values, -1 if the language is infinite or this value is unknown.
      */
     public int indexCount() {
         return indexCount;
     }
 
     /**
-     * Number of states in the dictionary's FSA.
+     * @return the number of states in the dictionary's FSA.
      */
     public int fsaStateCount() {
         return stateCount;
     }
 
     /**
-     * Number of accept states in the dictionary's FSA.
+     * @return the number of accept states in the dictionary's FSA.
      */
     public int fsaAcceptStateCount() {
         return acceptStateCount;
     }
 
     /**
-     * Number of edges in the dictionary's FSA.
+     * @return the number of edges in the dictionary's FSA.
      */
     public int fsaEdgeCount() {
         return edgeCount;
     }
 
     /**
-     * Number of accept edges in the dictionary's FSA.
+     * @return the number of accept edges in the dictionary's FSA.
      */
     public int fsaAcceptEdgeCount() {
         return acceptEdgeCount;
     }
 
     /**
-     * Largest hash function used by a perfect hash table.
+     * @return the largest hash function used by a perfect hash table.
      */
     public int perfectHashMaxHashFun() {
         return maxHashFun;
     }
 
     /**
-     * How many million hash functions were tested in order to generate
+     * @return how many million hash functions were tested in order to generate
      * this perfect hash table.
      */
     public int perfectHashMillionsTested() {
@@ -343,9 +343,10 @@ public class Take5Dictionary implements Cloneable {
     }
 
     /**
-     * Date and time this dictionary was generated.
+     * @return the date and time this dictionary was generated.
      */
-    public Date creationDate() {
+    public Date creationDate(
+    ) {
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
         // buildDay = (YYYY * 12 + MM) * 31 + DD;
         int tmp = buildDay;
@@ -367,7 +368,7 @@ public class Take5Dictionary implements Cloneable {
     }
 
     /**
-     * Return any metadata supplied at build-time.
+     * @return any metadata supplied at build-time.
      */
     public Map<String, String> getMetadata() {
         return metadata;
@@ -376,7 +377,7 @@ public class Take5Dictionary implements Cloneable {
     /**
      * Set a list of characters to skip over when preforming a match.  This
      * takes the form of an array of exactly 8192 elements such that a
-     * character is skipped if skipBits[c >> 3] & (1 << (c & 7)) is
+     * character is skipped if {@code skipBits[c >> 3] & (1 << (c & 7))} is
      * non-zero.  Character skipping can be completely disabled by passing
      * null.
      *
@@ -414,6 +415,7 @@ public class Take5Dictionary implements Cloneable {
      * doing!
      *
      * @param name the name of the entry point to select
+     * @throws Take5Exception something went wrong
      */
     public void setEntryPoint(String name) throws Take5Exception {
         readEntryPoint(name);
@@ -909,6 +911,7 @@ public class Take5Dictionary implements Cloneable {
      * @param start a Take5Match representing the starting state
      * @return an array of matches
      * @throws UnsupportedOperationException if the dictionary is not a state machine.
+     * @throws Take5Exception something went wrong
      * @see Take5Match#isAcceptState
      * @see Take5Match#c
      */
@@ -934,6 +937,7 @@ public class Take5Dictionary implements Cloneable {
      * @param index a 32-bit internal index
      * @return an array of matches
      * @throws UnsupportedOperationException if the dictionary is not a state machine.
+     * @throws Take5Exception something went wrong
      * @deprecated Use {@link #nextLetters(Take5Match)}.
      */
     @Deprecated
@@ -951,6 +955,7 @@ public class Take5Dictionary implements Cloneable {
      * @param c a character to consider
      * @return a match or null
      * @throws UnsupportedOperationException if the dictionary is not a state machine.
+     * @throws Take5Exception something went wrong
      */
     public Take5Match advanceByChar(Take5Match m, char c) throws Take5Exception {
         char[] cA = new char[1];
@@ -1034,6 +1039,7 @@ public class Take5Dictionary implements Cloneable {
      * @param startIndex a 32-bit internal index
      * @return the number of matches found
      * @throws UnsupportedOperationException if the dictionary is not a state machine.
+     * @throws Take5Exception something went wrong.
      * @deprecated Use {@link #take5Search(char[], int, int,
      *                  Take5Match, Take5Match[], Take5Match)}.
      */
@@ -1144,6 +1150,7 @@ public class Take5Dictionary implements Cloneable {
      * @param buffer an array of characters for storing found keys
      * @param buflen the length of the array to use
      * @throws UnsupportedOperationException if the dictionary is not a state machine.
+     * @throws Take5Exception something went wrong
      */
     public void walk(Take5Walker walker,
                      Take5Match start,
@@ -1636,6 +1643,7 @@ public class Take5Dictionary implements Cloneable {
      * @param buffer array of chars to contain the word
      * @return the length of the word
      * @throws UnsupportedOperationException if the dictionary is not reversable.
+     * @throws Take5Exception something went wrong
      */
     public int reverseLookup(int index, char[] buffer) throws Take5Exception {
         if (fsaEngine != Take5Dictionary.ENGINE_SEARCH) {             // XXX: but this <EM>could</EM> work!

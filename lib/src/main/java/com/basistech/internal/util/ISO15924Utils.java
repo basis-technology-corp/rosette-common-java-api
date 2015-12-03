@@ -234,7 +234,7 @@ public class ISO15924Utils {
     /**
      * Return an ISO15924 script code for a single code point.
      *
-     * @param codePoint
+     * @param codePoint the code point
      * @return the script for this code point.
      */
     public static ISO15924 scriptForCodePoint(int codePoint) {

@@ -251,16 +251,17 @@ public class Take5Builder {
      * Create a new entry point. All the entrypoints that you create must be
      * loaded with content before you call {@link #buildArray()},
      * {@link #buildBuffer()}, or {@link #buildToSink(com.google.common.io.ByteSink)}.
-     * <p/>
+     * <br>
      * Call {@link com.basistech.rosette.internal.take5build.Take5EntryPoint#loadContent(java.util.Iterator)}
      * to load the entrypoint with keys and values.
-     * <P/>
+     * <br>
      * Note that creating a single entry point Take5 binary whose entry
      * point is named <CODE>"main"</CODE> will result in a binary that can
      * be interpreted by older Take5 runtimes.
      *
      * @param name the name for the new entry point.
      * @return a new, unloaded, entry point.
+     * @throws Take5BuildException invalid name.
      */
     public Take5EntryPoint newEntryPoint(String name) throws Take5BuildException {
         assert name != null;
@@ -854,6 +855,7 @@ public class Take5Builder {
     /**
      * Create a byte array that contains a Take5 binary.
      * @return a byte array containing a Take5 binary.
+     * @throws Take5BuildException invalid output mode.
      */
     public byte[] buildArray() throws Take5BuildException {
         if (!generateBinary) {
@@ -869,6 +871,7 @@ public class Take5Builder {
     /**
      * Create a ByteBuffer that contains a Take5 binary.
      * @return a ByteBuffer containing a Take5 binary.
+     * @throws Take5BuildException invalid output mode.
      */
     public ByteBuffer buildBuffer() throws Take5BuildException {
         if (!generateBinary) {
@@ -887,6 +890,7 @@ public class Take5Builder {
      * Write a Take5 binary into a {@link ByteSink}.
      *
      * @param sink the sink.
+     * @throws IOException can't write.
      */
     public void buildToSink(ByteSink sink) throws IOException {
         if (outputFormat == OutputFormat.NONE) {

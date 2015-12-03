@@ -15,7 +15,6 @@
 /**
  * Take5 runtime support. This package is the runtime API to reading Take5 files.
  * There are three classes to use here:
- * <p/>
  * <ul>
  *     <li>
  *         {@link com.basistech.rosette.internal.take5.Take5Dictionary} represents the Take5 file itself.
@@ -32,7 +31,7 @@
  *     in a Take5. While this class has a variety of accessors for payload data, generally applications
  *     end up calling {@link com.basistech.rosette.internal.take5.Take5Match#getOffsetValue()}. This returns
  *     an offset into the overall mapped dictionary. Applications then use the usual NIO functions to retrieve
- *     the payload. {@linkplain com.basistech.rosette.internal.take5.Take5DictionaryTest#testGetOffsetValue()}
+ *     the payload. {@code com.basistech.rosette.internal.take5.Take5DictionaryTest#testGetOffsetValue()}
  *     is an example of a lookup that examines payload.
  *     </li>
  *     <li>{@link com.basistech.rosette.internal.take5.Take5Walker} is used with
@@ -41,7 +40,7 @@
  *     PERFHASH engine only when it is configured to store keys.
  *     </li>
  * </ul>
- * <p/>
+ * <br>
  * These classes will read Take5 files in either byte order. However, it is slower to read from files in the
  * 'wrong' byte order.
  */

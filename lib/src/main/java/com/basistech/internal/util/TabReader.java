@@ -49,6 +49,8 @@ public final class TabReader {
      * @param r reader to read from (nullable)
      * @param columns exact number of tab-separated fields per non-blank well-formed line, or -1 for unchecked
      * @param lineCommentStart Comment-start sequence, or null to not strip comments.
+     * @return iterator over lines
+     * @throws IOException can't reead.
      */
     public static Iterable<Line> iterate(final Reader r, final int columns, final String lineCommentStart)
             throws IOException {
@@ -81,6 +83,7 @@ public final class TabReader {
      * @param src file to read from
      * @param columns exact number of tab-separated fields per non-blank well-formed line, or -1 for unchecked
      * @param lineCommentStart Comment-start sequence, or null to not strip comments.
+     * @return iterator over lines
      * @throws IOException if there was a problem opening the file
      */
     public static Iterable<Line> iterate(final File src, final int columns, final String lineCommentStart)
@@ -94,7 +97,11 @@ public final class TabReader {
     /**
      * Convenience method to return a list of all lines in a character stream, using
      * {@link #iterate(Reader, int, String)}.
+     * @param r reader to read
+     * @param columns how manyt columns
+     * @param lineCommentStart comment char
      * @throws IOException if there was a problem opening the file
+     * @return list of lines
      */
     public static List<Line> getAll(Reader r, int columns, String lineCommentStart) throws IOException {
         List<Line> collect = new LinkedList<Line>();
@@ -106,6 +113,10 @@ public final class TabReader {
 
     /**
      * Convenience method to return a list of all lines in a file, using {@link #iterate(File, int, String)}.
+     * @param f file to read
+     * @param columns number of columns
+     * @param lineCommentStart line comment
+     * @return the lines
      * @throws IOException if there was a problem opening the file
      */
     public static List<Line> getAll(File f, int columns, String lineCommentStart) throws IOException {

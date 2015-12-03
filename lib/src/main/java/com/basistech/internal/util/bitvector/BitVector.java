@@ -35,8 +35,8 @@ package com.basistech.internal.util.bitvector;
  * Third, operations working on all bits of a bitvector are extremely quick.
  * For example, on NT, Pentium Pro 200 Mhz, SunJDK1.2.2, java -classic, for two bitvectors A,B (both much larger than processor cache), the following results are obtained.
  * <ul>
- * <li><tt>A.and(B)</tt> i.e. A = A & B --> runs at about 35 MB/sec
- * <li><tt>A.cardinality()</tt>, i.e. determining the selectivity, the number of bits in state "true" --> runs at about 80 MB/sec
+ * <li><tt>A.and(B)</tt> i.e. A = A &amp; B {@literal --> } runs at about 35 MB/sec
+ * <li><tt>A.cardinality()</tt>, i.e. determining the selectivity, the number of bits in state "true" {@literal -->} runs at about 80 MB/sec
  * <li>Similar performance for <tt>or, xor, andNot, not, copy, replace, partFromTo, indexOf, clear</tt> etc.
  * </ul>
  * If you need extremely quick access to individual bits: Although getting and setting individual bits with methods <tt>get(...)</tt>, <tt>set(...)</tt> and <tt>put(...)</tt>is quick, it is even quicker (<b>but not safe</b>) to use <tt>getQuick(...)</tt> and <tt>putQuick(...)</tt> or even <tt>QuickBitVector</tt>.
@@ -44,7 +44,6 @@ package com.basistech.internal.util.bitvector;
  * <b>Note</b> that this implementation is not synchronized.
  *
  * @see     QuickBitVector
- * @see     BitMatrix
  * @see     java.util.BitSet
  */
 
@@ -85,6 +84,8 @@ public class BitVector {
    * holds 64 bits. The i-th bit is stored in bits[i/64] at bit position i % 64 (where bit position 0 refers to the
    * least significant bit and 63 refers to the most significant bit).
    *
+   * @param bits input bits
+   * @param size number of valid bits.
    * @throws IllegalArgumentException if <tt>size &lt; 0 || size &gt; bits.length*64</tt>.
    */
   public BitVector(long[] bits, int size) {
@@ -102,7 +103,7 @@ public class BitVector {
   }
 
   /**
-   * Performs a logical <b>AND</b> of the receiver with another bit vector (A = A & B). The receiver is modified so that
+   * Performs a logical <b>AND</b> of the receiver with another bit vector (A = A &amp; B). The receiver is modified so that
    * a bit in it has the value <code>true</code> if and only if it already had the value <code>true</code> and the
    * corresponding bit in the other bit vector argument has the value <code>true</code>.
    *
@@ -126,7 +127,7 @@ public class BitVector {
    * words, determines the difference (A=A\B) between two bitvectors.
    *
    * @param other a bitvector with which to mask the receiver.
-   * @throws IllegalArgumentException if <tt>size() &gt; other.size()</tt>.
+   * @throws IllegalArgumentException if {@code size() > other.size()};
    */
   public void andNot(BitVector other) {
     checkSize(other);
@@ -140,6 +141,7 @@ public class BitVector {
   /**
    * Returns the number of bits currently in the <tt>true</tt> state. Optimized for speed. Particularly quick if the
    * receiver is either sparse or dense.
+   * @return the cardinality.
    */
   public int cardinality() {
     int cardinality = 0;
@@ -178,7 +180,9 @@ public class BitVector {
     }
   }
 
-  /** Sanity check for operations requiring another bitvector with at least the same size. */
+  /** Sanity check for operations requiring another bitvector with at least the same size.
+   * @param other a vector to check
+   */
   protected void checkSize(BitVector other) {
     if (nbits > other.size()) {
       throw new IllegalArgumentException("Incompatible sizes: size=" + nbits + ", other.size()=" + other.size());
@@ -237,6 +241,7 @@ public class BitVector {
    * <p>A bitvector is modelled as a long array, i.e. <tt>long[] bits</tt> holds bits of a bitvector. Each long value
    * holds 64 bits. The i-th bit is stored in bits[i/64] at bit position i % 64 (where bit position 0 refers to the
    * least significant bit and 63 refers to the most significant bit).
+   * @return the elements.
    */
   public final long[] elements() {
     return bits;
@@ -322,7 +327,7 @@ public class BitVector {
    * @param procedure a procedure object taking as argument the current bit index. Stops iteration if the procedure
    *                  returns <tt>false</tt>, otherwise continues.
    * @return <tt>false</tt> if the procedure stopped before all elements where iterated over, <tt>true</tt> otherwise.
-   * @throws IndexOutOfBoundsException if (<tt>size()&gt;0 && (from&lt;0 || from&gt;to || to&gt;=size())</tt>).
+   * @throws IndexOutOfBoundsException if {@code size() > 0 && (from < 0 || from > to || to >=size())}.
    */
   public boolean forEachIndexFromToInState(int from, int to, boolean state,
                                            IntProcedure procedure) {
@@ -465,8 +470,8 @@ public class BitVector {
    * @param from index of start bit (inclusive).
    * @param to   index of end bit (inclusive).
    * @return the specified bits as long value.
-   * @throws IndexOutOfBoundsException if <tt>from&lt;0 || from&gt;=size() || to&lt;0 || to&gt;=size() || to-from+1<0 ||
-   *                                   to-from+1>64</tt>
+   * @throws IndexOutOfBoundsException if {@code from < 0 || from >=size() || to<0 || to>=size() || to-from+1<0 ||
+   *                                   to-from+1>64}
    */
   public long getLongFromTo(int from, int to) {
     int width = to - from + 1;
@@ -486,7 +491,7 @@ public class BitVector {
    *
    * <p>Provided with invalid parameters this method may return invalid values without throwing any exception. <b>You
    * should only use this method when you are absolutely sure that the index is within bounds.</b> Precondition
-   * (unchecked): <tt>bitIndex &gt;= 0 && bitIndex &lt; size()</tt>.
+   * (unchecked): {@code bitIndex >= 0 && bitIndex < size()}.
    *
    * @param bitIndex the bit index.
    * @return the value of the bit with the specified index.
@@ -500,7 +505,7 @@ public class BitVector {
    * receiver. The algorithm used to compute it may be described as follows.<p> Suppose the bits in the receiver were to
    * be stored in an array of <code>long</code> integers called, say, <code>bits</code>, in such a manner that bit
    * <code>k</code> is set in the receiver (for nonnegative values of <code>k</code>) if and only if the expression
-   * <pre>((k&gt;&gt;6) &lt; bits.length) && ((bits[k&gt;&gt;6] & (1L &lt;&lt; (bit & 0x3F))) != 0)</pre>
+   * {@code ((k>>6) < bits.length) && ((bits[k>>6] & (1L << (bit & 0x3F))) != 0)}
    * is true. Then the following definition of the <code>hashCode</code> method would be a correct implementation of the
    * actual algorithm:
    * <pre>
@@ -528,14 +533,14 @@ public class BitVector {
    * Returns the index of the first occurrence of the specified state. Returns <code>-1</code> if the receiver does not
    * contain this state. Searches between <code>from</code>, inclusive and <code>to</code>, inclusive. <p> Optimized for
    * speed. Preliminary performance (200Mhz Pentium Pro, JDK 1.2, NT): size=10^6, from=0, to=size-1, receiver contains
-   * matching state in the very end --> 0.002 seconds elapsed time.
+   * matching state in the very end {@literal -->} 0.002 seconds elapsed time.
    *
    * @param state state to search for.
    * @param from  the leftmost search position, inclusive.
    * @param to    the rightmost search position, inclusive.
    * @return the index of the first occurrence of the element in the receiver; returns <code>-1</code> if the element is
    *         not found.
-   * @throws IndexOutOfBoundsException if (<tt>size()&gt;0 && (from&lt;0 || from&gt;to || to&gt;=size())</tt>).
+   * @throws IndexOutOfBoundsException if {@code size()>0 && (from<0 || from>to || to>=size())}.
    */
   public int indexOfFromTo(int from, int to, boolean state) {
     IndexProcedure indexProcedure = new IndexProcedure();
@@ -554,12 +559,15 @@ public class BitVector {
   /**
    * Returns the number of bits used in the trailing PARTIAL unit. Returns zero if there is no such trailing partial
    * unit.
+   * @return the count
    */
   protected int numberOfBitsInPartialUnit() {
     return QuickBitVector.offset(nbits);
   }
 
-  /** Returns the number of units that are FULL (not PARTIAL). */
+  /** Returns the number of units that are FULL (not PARTIAL).
+   * @return the units
+   */
   protected int numberOfFullUnits() {
     return QuickBitVector.unit(nbits);
   }
@@ -590,7 +598,8 @@ public class BitVector {
    *
    * @param from the start index within the receiver, inclusive.
    * @param to   the end index within the receiver, inclusive.
-   * @throws IndexOutOfBoundsException if <tt>size()&gt;0 && (from&lt;0 || from&gt;to || to&gt;=size()))</tt>.
+   * @return new vector
+   * @throws IndexOutOfBoundsException if {@code size()>0 && (from<0 || from>to || to>=size())}
    */
   public BitVector partFromTo(int from, int to) {
     if (nbits == 0 || to == from - 1) {
@@ -631,8 +640,8 @@ public class BitVector {
    * @param value the value to be copied into the receiver.
    * @param from  index of start bit (inclusive).
    * @param to    index of end bit (inclusive).
-   * @throws IndexOutOfBoundsException if <tt>from&lt;0 || from&gt;=size() || to&lt;0 || to&gt;=size() || to-from+1<0 ||
-   *                                   to-from+1>64</tt>.
+   * @throws IndexOutOfBoundsException if {@code from<0 || from>=size() || to<0 || to>=size() || to-from+1<0 ||
+   *                                   to-from+1>64}.
    */
   public void putLongFromTo(long value, int from, int to) {
     int width = to - from + 1;
@@ -651,7 +660,7 @@ public class BitVector {
    *
    * <p>Provided with invalid parameters this method may set invalid values without throwing any exception. <b>You
    * should only use this method when you are absolutely sure that the index is within bounds.</b> Precondition
-   * (unchecked): <tt>bitIndex &gt;= 0 && bitIndex &lt; size()</tt>.
+   * (unchecked): {@code bitIndex >= 0 && bitIndex < size()}.
    *
    * @param bitIndex the index of the bit to be changed.
    * @param value    the value to be stored in the bit.
@@ -669,14 +678,14 @@ public class BitVector {
    * <tt>[from,to]</tt> with the contents of the range <tt>[sourceFrom,sourceFrom+to-from]</tt>, all inclusive. If
    * <tt>source==this</tt> and the source and destination range intersect in an ambiguous way, then replaces as if using
    * an intermediate auxiliary copy of the receiver. <p> Optimized for speed. Preliminary performance (200Mhz Pentium
-   * Pro, JDK 1.2, NT): replace 10^6 ill aligned bits --> 0.02 seconds elapsed time.
+   * Pro, JDK 1.2, NT): replace 10^6 ill aligned bits {@literal -->} 0.02 seconds elapsed time.
    *
    * @param from       the start index within the receiver, inclusive.
    * @param to         the end index within the receiver, inclusive.
    * @param source     the source bitvector to copy from.
    * @param sourceFrom the start index within <tt>source</tt>, inclusive.
-   * @throws IndexOutOfBoundsException if <tt>size()&gt;0 && (from&lt;0 || from&gt;to || to&gt;=size() || sourceFrom<0
-   *                                   || sourceFrom+to-from+1>source.size()))</tt>.
+   * @throws IndexOutOfBoundsException if {@code size()>0 && (from<0 || from>to || to<=size() || sourceFrom<0
+   *                                   || sourceFrom+to-from+1>source.size())}.
    */
   public void replaceFromToWith(int from, int to, BitVector source, int sourceFrom) {
     if (nbits == 0 || to == from - 1) {
@@ -725,12 +734,12 @@ public class BitVector {
 
   /**
    * Sets the bits in the given range to the state specified by <tt>value</tt>. <p> Optimized for speed. Preliminary
-   * performance (200Mhz Pentium Pro, JDK 1.2, NT): replace 10^6 ill aligned bits --> 0.002 seconds elapsed time.
+   * performance (200Mhz Pentium Pro, JDK 1.2, NT): replace 10^6 ill aligned bits {@literal--> } 0.002 seconds elapsed time.
    *
    * @param from  the start index, inclusive.
    * @param to    the end index, inclusive.
    * @param value the value to be stored in the bits of the range.
-   * @throws IndexOutOfBoundsException if <tt>size()&gt;0 && (from&lt;0 || from&gt;to || to&gt;=size())</tt>.
+   * @throws IndexOutOfBoundsException if {@code size()>0 && (from<0 || from>to || to>=size()}.
    */
   public void replaceFromToWith(int from, int to, boolean value) {
     if (nbits == 0 || to == from - 1) {
@@ -822,7 +831,8 @@ public class BitVector {
     }
   }
 
-  /** Returns the size of the receiver. */
+  /** Returns the size of the receiver.
+   * @return the size */
   public int size() {
     return nbits;
   }
