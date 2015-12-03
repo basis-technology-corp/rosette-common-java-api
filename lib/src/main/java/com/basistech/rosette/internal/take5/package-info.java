@@ -22,8 +22,8 @@
  *         looks like:
  * <pre>
  *         {@code
- * *         MappedByteBuffer mappedDict = Files.map(dictFile, MapMode.READ_ONLY);
-             dict = Take5Dictionary(mappedDict, mappedDict.capacity(), entryPoint);
+ *            MappedByteBuffer mappedDict = Files.map(dictFile, MapMode.READ_ONLY);
+ *            dict = Take5Dictionary(mappedDict, mappedDict.capacity(), entryPoint);
  *         }
  * </pre>
  *     </li>

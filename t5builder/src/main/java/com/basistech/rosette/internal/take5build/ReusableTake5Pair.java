@@ -36,7 +36,7 @@ public class ReusableTake5Pair implements Take5Pair {
 
     /**
      * Create a ReusableTake5Pair with the given key and the null value.
-     * @param key the key.
+     * @param key the key
      */
     public ReusableTake5Pair(char[] key) {
         this.key = key;
@@ -82,7 +82,7 @@ public class ReusableTake5Pair implements Take5Pair {
 
     /**
      * Set the key in a ReusableTake5Pair.
-     * @param newKey the new key.
+     * @param newKey the new key
      */
     public final void setKey(char[] newKey) {
         key = newKey;

@@ -48,9 +48,9 @@ public final class TabReader {
      * Create a line iterator for a character stream. If the reader is null, it will be treated as zero-length.
      * @param r reader to read from (nullable)
      * @param columns exact number of tab-separated fields per non-blank well-formed line, or -1 for unchecked
-     * @param lineCommentStart Comment-start sequence, or null to not strip comments.
+     * @param lineCommentStart Comment-start sequence, or null to not strip comments
      * @return iterator over lines
-     * @throws IOException can't reead.
+     * @throws IOException can't read
      */
     public static Iterable<Line> iterate(final Reader r, final int columns, final String lineCommentStart)
             throws IOException {
@@ -98,8 +98,8 @@ public final class TabReader {
      * Convenience method to return a list of all lines in a character stream, using
      * {@link #iterate(Reader, int, String)}.
      * @param r reader to read
-     * @param columns how manyt columns
-     * @param lineCommentStart comment char
+     * @param columns how many columns
+     * @param lineCommentStart Comment-start sequence, or null to not strip comments
      * @throws IOException if there was a problem opening the file
      * @return list of lines
      */
@@ -115,7 +115,7 @@ public final class TabReader {
      * Convenience method to return a list of all lines in a file, using {@link #iterate(File, int, String)}.
      * @param f file to read
      * @param columns number of columns
-     * @param lineCommentStart line comment
+     * @param lineCommentStart Comment-start sequence, or null to not strip comments
      * @return the lines
      * @throws IOException if there was a problem opening the file
      */

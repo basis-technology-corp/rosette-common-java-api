@@ -84,7 +84,7 @@ public class BitVector {
    * holds 64 bits. The i-th bit is stored in bits[i/64] at bit position i % 64 (where bit position 0 refers to the
    * least significant bit and 63 refers to the most significant bit).
    *
-   * @param bits input bits
+   * @param bits input bits.
    * @param size number of valid bits.
    * @throws IllegalArgumentException if <tt>size &lt; 0 || size &gt; bits.length*64</tt>.
    */
@@ -127,7 +127,7 @@ public class BitVector {
    * words, determines the difference (A=A\B) between two bitvectors.
    *
    * @param other a bitvector with which to mask the receiver.
-   * @throws IllegalArgumentException if {@code size() > other.size()};
+   * @throws IllegalArgumentException if {@code size() > other.size()}.
    */
   public void andNot(BitVector other) {
     checkSize(other);
@@ -181,7 +181,7 @@ public class BitVector {
   }
 
   /** Sanity check for operations requiring another bitvector with at least the same size.
-   * @param other a vector to check
+   * @param other a vector to check.
    */
   protected void checkSize(BitVector other) {
     if (nbits > other.size()) {
@@ -598,8 +598,8 @@ public class BitVector {
    *
    * @param from the start index within the receiver, inclusive.
    * @param to   the end index within the receiver, inclusive.
-   * @return new vector
-   * @throws IndexOutOfBoundsException if {@code size()>0 && (from<0 || from>to || to>=size())}
+   * @return new vector.
+   * @throws IndexOutOfBoundsException if {@code size()>0 && (from<0 || from>to || to>=size())}.
    */
   public BitVector partFromTo(int from, int to) {
     if (nbits == 0 || to == from - 1) {
@@ -618,7 +618,7 @@ public class BitVector {
    *
    * @param bitIndex the index of the bit to be changed.
    * @param value    the value to be stored in the bit.
-   * @throws IndexOutOfBoundsException if <tt>bitIndex&lt;0 || bitIndex&gt;=size()</tt>
+   * @throws IndexOutOfBoundsException if <tt>bitIndex&lt;0 || bitIndex&gt;=size()</tt>.
    */
   public void put(int bitIndex, boolean value) {
     if (bitIndex < 0 || bitIndex >= nbits) {

@@ -135,8 +135,8 @@ public class QuickBitVector {
    * 0x00000001 {@literal --> 0}
    * 0x00000000 {@literal --> 32}
    * </pre>
-   * @param value value
-   * @return lsb index
+   * @param value value.
+   * @return lsb index.
    */
   public static int leastSignificantBit(int value) {
     int i = -1;
@@ -167,8 +167,8 @@ public class QuickBitVector {
    * 0x00000001 {@literal -->} 0
    * 0x00000000 {@literal -->} -1
    * </pre>
-   * @param value value
-   * @return msb index
+   * @param value value.
+   * @return msb index.
    */
   public static int mostSignificantBit(int value) {
     int i = 32;
