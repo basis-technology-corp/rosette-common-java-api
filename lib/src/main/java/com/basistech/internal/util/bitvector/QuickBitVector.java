@@ -24,7 +24,6 @@ package com.basistech.internal.util.bitvector;
  * significant bit and 63 refers to the most significant bit).
  *
  * @see     BitVector
- * @see     BitMatrix
  * @see     java.util.BitSet
  */
 
@@ -131,11 +130,13 @@ public class QuickBitVector {
   /**
    * Returns the index of the least significant bit in state "true". Returns 32 if no bit is in state "true". Examples:
    * <pre>
-   * 0x80000000 --> 31
-   * 0x7fffffff --> 0
-   * 0x00000001 --> 0
-   * 0x00000000 --> 32
+   * 0x80000000 {@literal --> 31}
+   * 0x7fffffff {@literal --> 0}
+   * 0x00000001 {@literal --> 0}
+   * 0x00000000 {@literal --> 32}
    * </pre>
+   * @param value value.
+   * @return lsb index.
    */
   public static int leastSignificantBit(int value) {
     int i = -1;
@@ -161,11 +162,13 @@ public class QuickBitVector {
   /**
    * Returns the index of the most significant bit in state "true". Returns -1 if no bit is in state "true". Examples:
    * <pre>
-   * 0x80000000 --> 31
-   * 0x7fffffff --> 30
-   * 0x00000001 --> 0
-   * 0x00000000 --> -1
+   * 0x80000000 {@literal -->} 31
+   * 0x7fffffff {@literal -->} 30
+   * 0x00000001 {@literal -->} 0
+   * 0x00000000 {@literal -->} -1
    * </pre>
+   * @param value value.
+   * @return msb index.
    */
   public static int mostSignificantBit(int value) {
     int i = 32;
@@ -174,7 +177,10 @@ public class QuickBitVector {
     return i;
   }
 
-  /** Returns the index within the unit that contains the given bitIndex. */
+  /** Returns the index within the unit that contains the given bitIndex.
+   * @param bitIndex which bit
+   * @return index.
+   */
   protected static int offset(int bitIndex) {
     return bitIndex & BIT_INDEX_MASK;
     //equivalent to bitIndex%64
@@ -183,6 +189,7 @@ public class QuickBitVector {
   /**
    * Initializes a table with numbers having 1,2,3,...,64 bits set. pows[i] has bits [0..i-1] set. pows[64] == -1L ==
    * ~0L == has all 64 bits set --> correct. to speedup calculations in subsequent methods.
+   * @return pow bits.
    */
   private static long[] precomputePows() {
     long[] pows = new long[BITS_PER_UNIT + 1];
@@ -273,7 +280,10 @@ public class QuickBitVector {
     bits[bitIndex >> ADDRESS_BITS_PER_UNIT] |= 1L << (bitIndex & BIT_INDEX_MASK);
   }
 
-  /** Returns the index of the unit that contains the given bitIndex. */
+  /** Returns the index of the unit that contains the given bitIndex.
+   * @param bitIndex the input index.
+   * @return the unit index.
+   */
   protected static int unit(int bitIndex) {
     return bitIndex >> ADDRESS_BITS_PER_UNIT;
     //equivalent to bitIndex/64

@@ -77,6 +77,7 @@ public class Take5Match {
 
     /**
      * Initializes a new match object to be a copy of an existing match.
+     * @param old existing match object to copy.
      */
     public Take5Match(Take5Match old) {
         dict = old.dict;
@@ -102,7 +103,7 @@ public class Take5Match {
     }
 
     /**
-     * Get the length of the matching prefix string.
+     * @return the length of the matching prefix string.
      */
     public int getLength() {
         return length;
@@ -163,8 +164,9 @@ public class Take5Match {
      * #getOffsetValue()} and {@link Take5Dictionary#getData()}.  If you do
      * know the size, you should <EM>still</EM> probably be doing that.
      *
-     * @param dataLength
+     * @param dataLength how much data to package up.
      * @return a ByteBuffer
+     * @throws Take5Exception something went wrong.
      */
     // Although most callers of this probably actually want getOffsetValue
     // and getData, there is no reason to deprecate this:
@@ -182,7 +184,8 @@ public class Take5Match {
     }
 
     /**
-     * Get the single-precision float value associated with the matched prefix.
+     * @return the single-precision float value associated with the matched prefix.
+     * @throws Take5Exception something went wrong.
      */
     public float getFloatValue() throws Take5Exception {
         if (dict.valueSize != 4) {
@@ -193,7 +196,8 @@ public class Take5Match {
     }
 
     /**
-     * Get the integer value associated with the matched prefix.
+     * @return the integer value associated with the matched prefix.
+     * @throws Take5Exception something went wrong.
      */
     public int getIntValue() throws Take5Exception {
         int ptr;
@@ -224,7 +228,8 @@ public class Take5Match {
     }
 
     /**
-     * Get the double-precision float value associated with the matched prefix.
+     * @return the double-precision float value associated with the matched prefix.
+     * @throws Take5Exception something went wrong
      */
     public double getDoubleValue() throws Take5Exception {
         if (dict.valueSize != 8) {
@@ -243,6 +248,7 @@ public class Take5Match {
      *
      * @return string value assuming either UTF-8 (for data size 1) or
      * UTF-16 (for data size 2).
+     * @throws Take5Exception something went wrong
      */
     public String getStringValue() throws Take5Exception {
         int ptr = dict.data.getInt(dict.valueData + index * 4);
@@ -297,6 +303,7 @@ public class Take5Match {
      * The caller must use their own access to the underlying ByteBuffer to
      * retrieve the actual values.
      * @return the offset of the payload data in the take5;
+     * @throws Take5Exception something went wrong
      */
     public int getOffsetValue() throws Take5Exception {
         switch (dict.valueFormat & 0xFF000000) {
@@ -313,7 +320,7 @@ public class Take5Match {
     }
 
     /**
-     * String representation of a match.
+     * @return string representation of a match.
      */
     public String toString() {
         return "[Match:" +

@@ -74,6 +74,7 @@ public class Take5EntryPoint {
      * Set both the minimum and maximum content version numbers to the
      * same value.
      * @param version the minimum and maximum content version.
+     * @throws Take5BuildException bad version
      */
     public void setContentVersion(int version) throws Take5BuildException {
         setContentVersion(version, version);
@@ -83,6 +84,7 @@ public class Take5EntryPoint {
      * Set the minimum and the maximum content version numbers.
      * @param minVersion the minimum content version.
      * @param maxVersion the maximum content version.
+     * @throws Take5BuildException bad version
      */
     public void setContentVersion(int minVersion, int maxVersion) throws Take5BuildException {
         if (!(0 <= minVersion && minVersion <= maxVersion)) {
@@ -103,7 +105,7 @@ public class Take5EntryPoint {
      * point must be loaded before the Take5Builder can build a binary.
      *
      * @param pairs an iterator that returns {@link com.basistech.rosette.internal.take5build.Take5Pair} objects.
-     * @throws Take5BuildException
+     * @throws Take5BuildException redundant call.
      */
     public void loadContent(Iterator<Take5Pair> pairs) throws Take5BuildException {
         if (loaded) {

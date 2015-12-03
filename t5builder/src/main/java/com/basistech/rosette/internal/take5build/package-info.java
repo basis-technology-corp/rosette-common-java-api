@@ -27,7 +27,7 @@
  * This package can build Take5's optimized for either byte order. The Java runtime can read in either order;
  * the C++ runtime can only read in the native byte order.
  * <h1>Settings Options on the Factory</h1>
- * <p/>
+ * <br>
  * <ul>
  *  <li>{@link com.basistech.rosette.internal.take5build.Take5BuilderFactory#engine(Engine)} takes an item from
  *  {@link com.basistech.rosette.internal.take5build.Engine}. This specifies whether lookups will use
@@ -81,7 +81,7 @@
  * A Take5 can have multiple entrypoints. You load each entrypoint with key-value pairs. The builder detects sharable
  * values, even across entrypoints, so value data is not duplicated. If you are only creating one entrypoint, you should
  * name it <tt>main</tt>.
- * <p/>
+ * <br>
  * You call {@link com.basistech.rosette.internal.take5build.Take5Builder#newEntryPoint(String)} for each entrypoint.
  * You call {@link com.basistech.rosette.internal.take5build.Take5EntryPoint#loadContent(java.util.Iterator)}
  * to load the content. The content is defined as an {@link java.util.Iterator} that returns instances of

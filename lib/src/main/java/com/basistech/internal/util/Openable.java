@@ -26,6 +26,7 @@ public interface Openable {
     /**
      * Return a {@link Reader}.
      * @return a Reader
+     * @throws IOException can't read.
      */
     Reader open() throws IOException;
 }

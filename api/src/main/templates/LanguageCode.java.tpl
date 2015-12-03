@@ -112,15 +112,15 @@ if (include_aux_name):
 declaration += ")"
 
 %]
-    /** <table border="1">
-        <tr x="1">
-            <td width="100">[= language['name'] =]</td x="1">
-            <td width="100">[= language['iso639-3'] =]</td x="1">
-            <td width="100">[= iso639_1 =]</td x="1">
-            <td width="100">[= language['script'] =]</td x="1">
-            <td width="100">[= language['id'] =]</td x="1">
-        </tr x="1">
-        </table x="1">
+    /** <table border="1" summary='Language Codes'>
+        <tr >
+            <td style='width: 100;'>[= language['name'] =]</td >
+            <td style='width: 100;'>[= language['iso639-3'] =]</td >
+            <td style='width: 100;'>[= iso639_1 =]</td >
+            <td style='width: 100;'>[= language['script'] =]</td >
+            <td style='width: 100;'>[= language['id'] =]</td >
+        </tr >
+        </table >
     */
     [= declaration =][< end-for >],
     ;

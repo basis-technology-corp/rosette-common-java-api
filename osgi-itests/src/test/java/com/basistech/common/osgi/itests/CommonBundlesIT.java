@@ -62,9 +62,10 @@ public class CommonBundlesIT {
                 mavenBundle("commons-lang", "commons-lang").versionAsInProject(),
                 junitBundles(),
                 systemPackages(
-                        // This are needed for guava.
+                        // This is needed for guava.
                         "sun.misc",
                         "javax.annotation"),
+                systemProperty("pax.exam.osgi.unresolved.fail").value("true"),
                 systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("WARN")
         );
     }

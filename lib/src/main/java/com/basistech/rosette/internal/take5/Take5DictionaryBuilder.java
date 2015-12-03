@@ -46,7 +46,7 @@ public class Take5DictionaryBuilder {
     /**
      * Build the dictionary.
      * @return the new dictionary.
-     * @throws Take5Exception
+     * @throws Take5Exception something went wrong
      */
     public Take5Dictionary build() throws Take5Exception {
         //noinspection deprecation

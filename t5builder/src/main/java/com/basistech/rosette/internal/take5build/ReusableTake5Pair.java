@@ -36,6 +36,7 @@ public class ReusableTake5Pair implements Take5Pair {
 
     /**
      * Create a ReusableTake5Pair with the given key and the null value.
+     * @param key the key
      */
     public ReusableTake5Pair(char[] key) {
         this.key = key;
@@ -48,6 +49,9 @@ public class ReusableTake5Pair implements Take5Pair {
      * given array of bytes may not be modified after being passed to this
      * constructor, as the contents of the value will not be read until the
      * output is actually built!
+     * @param key the key
+     * @param value the value
+     * @param alignment value alignment
      */
     public ReusableTake5Pair(char[] key, byte[] value, int alignment) {
         this.key = key;
@@ -57,6 +61,7 @@ public class ReusableTake5Pair implements Take5Pair {
 
     /**
      * Create a ReusableTake5Pair with the given key and the null value.
+     * @param key the key
      */
     public ReusableTake5Pair(String key) {
         this(key.toCharArray());
@@ -67,6 +72,9 @@ public class ReusableTake5Pair implements Take5Pair {
      * given array of bytes may not be modified after being passed to this
      * constructor, as the contents of the value will not be read until the
      * output is actually built!
+     * @param key the key
+     * @param value the value
+     * @param alignment value alignment
      */
     public ReusableTake5Pair(String key, byte[] value, int alignment) {
         this(key.toCharArray(), value, alignment);
@@ -74,6 +82,7 @@ public class ReusableTake5Pair implements Take5Pair {
 
     /**
      * Set the key in a ReusableTake5Pair.
+     * @param newKey the new key
      */
     public final void setKey(char[] newKey) {
         key = newKey;
@@ -82,6 +91,7 @@ public class ReusableTake5Pair implements Take5Pair {
 
     /**
      * Set the key in a ReusableTake5Pair.
+     * @param newKey the new key
      */
     public final void setKey(String newKey) {
         key = newKey.toCharArray();
@@ -90,6 +100,7 @@ public class ReusableTake5Pair implements Take5Pair {
 
     /**
      * Set the length of the key in a ReusableTake5Pair.
+     * @param newKeyLength the new key length
      */
     public final void setKeyLength(int newKeyLength) {
         if (newKeyLength >= key.length) {
@@ -102,6 +113,8 @@ public class ReusableTake5Pair implements Take5Pair {
      * Set the value in a ReusableTake5Pair.  The given array of bytes may not be
      * modified after being passed to this method, as the contents of the
      * value will not be read until the output is actually built!
+     * @param newValue new value
+     * @param newAlignment new alignment
      */
     public final void setValue(byte[] newValue, int newAlignment) {
         value = newValue;
@@ -120,6 +133,10 @@ public class ReusableTake5Pair implements Take5Pair {
      * array of bytes may not be modified after being passed to this
      * method, as the contents of the value will not be read until the
      * output is actually built!
+     * @param newValue new value
+     * @param newAlignment new alignment
+     * @param newOffset replacement offset
+     * @param newLength new length
      */
     public final void setValue(byte[] newValue, int newAlignment, int newOffset, int newLength) {
         value = newValue;

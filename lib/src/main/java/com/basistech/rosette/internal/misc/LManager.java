@@ -67,7 +67,7 @@ public class LManager {
      * Create a license manager that reads license
      * data from the specified XML String.
      * @param xmlLicense License string in XML.
-     * @throws RosetteCorruptLicenseException
+     * @throws RosetteCorruptLicenseException license corrupt or invalid
      */
     public LManager(String xmlLicense) throws RosetteCorruptLicenseException {
         licenseFile = LFileBuilder.parse(xmlLicense);
@@ -78,7 +78,7 @@ public class LManager {
      * Create a license manager that reads license
      * data from the specified stream.
      * @param xmlStream Stream that contains the license in XML.
-     * @throws RosetteCorruptLicenseException
+     * @throws RosetteCorruptLicenseException license corrupt or invalid.
      */
     public LManager(InputStream xmlStream) throws RosetteCorruptLicenseException {
         licenseFile = LFileBuilder.parse(xmlStream);
@@ -93,7 +93,6 @@ public class LManager {
      * representing the set of functions licensed for the language, using the bits defined in the Type_Bits
      * enumeration in the BT_RLP_Language_Processor class declaration. (Required)
      */
-
     private void initialize() throws RosetteCorruptLicenseException {
 
         if (licenseFile.isAmz()) {
