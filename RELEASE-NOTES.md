@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java
 
+## 35.2.1
+
+### Update to current parent (57.2.9), make it build with Java8.
+
 ## 35.2.0
 
 ### [ROS-183](http://jira.basistech.net/browse/RD-1239): Remove  opencsv dependency
