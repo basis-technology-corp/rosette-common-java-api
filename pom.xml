@@ -93,7 +93,7 @@
             <plugin>
                 <groupId>com.basistech.maven.plugins</groupId>
                 <artifactId>autogen</artifactId>
-                <version>6-SNAPSHOT</version>
+                <version>6</version>
                 <executions>
                     <execution>
                         <id>generate</id>
