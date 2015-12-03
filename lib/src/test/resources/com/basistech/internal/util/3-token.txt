@@ -1,5 +1,0 @@
-﻿a		c # empty middle token (and starts with BOM)
-
-  #	comment 	and tabs (must have 2 tabs for no-comment compat)
- d	 e  	fff ff # token-stripping
-

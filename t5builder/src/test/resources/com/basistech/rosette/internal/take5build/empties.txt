@@ -1,7 +1,0 @@
-	"something"
-key0
-key1	#4f #1!i 1 0 0 0 0.11
-key2
-key3	#1s "a 1-byte string"
-key4
-key5	#1!s "a 1-byte string not null terminated"

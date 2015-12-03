@@ -1,2 +1,0 @@
-# In wildcard entries, there should be exactly one star in the path:
-*	*	src/test/resources/com/basistech/rosette/util/wildcard_*_foo_*.txt

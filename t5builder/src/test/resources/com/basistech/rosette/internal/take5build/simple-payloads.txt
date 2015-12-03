@@ -1,3 +1,0 @@
-key0	frog
-key1	goo"se
-key2	helter\u2012skelter

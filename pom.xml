@@ -1,219 +1,147 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>common-java</artifactId>
-    <name>common-java</name>
-    <version>35.2.2-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <description>Common Java Library and Tools</description>
+    <artifactId>common-api</artifactId>
+    <name>common-api</name>
     <parent>
+        <artifactId>open-source-parent</artifactId>
         <groupId>com.basistech</groupId>
-        <artifactId>textanalytics</artifactId>
-        <version>57.2.9</version>
+        <version>0.1.2</version>
     </parent>
-    <inceptionYear>2009</inceptionYear>
-    <url>http://git.basistech.net/pages/textanalytics/rosette-common-java</url>
-    <scm>
-        <connection>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</connection>
-        <developerConnection>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-    <distributionManagement>
-        <site>
-            <id>site</id>
-            <url>scm:git:git@git.basistech.net:textanalytics/rosette-common-java.git</url>
-        </site>
-    </distributionManagement>
-    <modules>
-        <module>api</module>
-        <module>lib</module>
-        <module>t5builder</module>
-        <module>osgi-itests</module>
-        <module>amz-license-test</module>
-    </modules>
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>commons-cli</groupId>
-                <artifactId>commons-cli</artifactId>
-                <version>1.2</version>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.11</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-core</artifactId>
-                <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-library</artifactId>
-                <version>1.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>jsr250-api</artifactId>
-                <version>1.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.basistech.bf</groupId>
-                <artifactId>bf-core</artifactId>
-                <version>0.8</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <packaging>bundle</packaging>
+    <description>Common Java API classes for Rosette</description>
+    <properties>
+        <spring.version>2.5.4</spring.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
     <build>
         <plugins>
             <plugin>
-                <!-- This plugin overrides deploy -->
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <version>${nexus-staging-plugin-version}</version>
-                <extensions>true</extensions>
-                <configuration>
-                    <serverId>basistech.repo</serverId>
-                    <nexusUrl>http://nexus.basistech.net:8081/nexus/</nexusUrl>
-                    <!-- ID for text-analytics staging profile -->
-                    <stagingProfileId>1dd11ca8866422</stagingProfileId>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>${maven-enforcer-plugin-version}</version>
+                <groupId>com.basistech</groupId>
+                <artifactId>bbh-maven-plugin</artifactId>
+                <version>1.0.1</version>
                 <executions>
                     <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
+                        <id>osgi-version</id>
                         <phase>validate</phase>
+                        <goals>
+                            <goal>osgi-version</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.servicemix.tooling</groupId>
+                <artifactId>depends-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>generate-depends-file</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>generate-depends-file</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.basistech.maven.plugins</groupId>
+                <artifactId>autogen</artifactId>
+                <version>4</version>
+                <executions>
+                    <execution>
+                        <id>generate</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
                         <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>3.0.4</version>
-                                </requireMavenVersion>
-                                <requireJavaVersion>
-                                    <version>[1.7.0,1.9)</version>
-                                </requireJavaVersion>
-                            </rules>
+                            <templates>
+                                <template>
+                                    <code>src/main/templates/LanguageCode.java.tpl</code>
+                                    <packageName>com.basistech.util</packageName>
+                                    <data>src/main/data/bt_language_names.xml</data>
+                                </template>
+                                <template>
+                                    <code>src/main/templates/NEConstants.java.tpl</code>
+                                    <packageName>com.basistech.util</packageName>
+                                    <data>src/main/data/bt_ne_types.xml</data>
+                                </template>
+                                <template>
+                                    <code>src/main/templates/TransliterationScheme.java.tpl</code>
+                                    <packageName>com.basistech.util</packageName>
+                                    <data>src/main/data/xlit_scheme-utf8.xml</data>
+                                </template>
+                                <template>
+                                    <code>src/main/templates/ISO15924.java.tpl</code>
+                                    <packageName>com.basistech.util</packageName>
+                                    <data>src/main/data/iso15924-utf8.xml</data>
+                                </template>
+                            </templates>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>animal-sniffer-maven-plugin</artifactId>
-                <version>1.11</version>
-                <executions>
-                    <execution>
-                        <id>animal-sniffer</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
                 <configuration>
-                    <signature>
-                        <groupId>org.codehaus.mojo.signature</groupId>
-                        <artifactId>java17</artifactId>
-                        <version>1.0</version>
-                    </signature>
+                    <instructions>
+                        <Export-Package>com.basistech.rosette.*,com.basistech.util.*</Export-Package>
+                        <Bundle-Version>${osgi-version}</Bundle-Version>
+                        <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties};{maven-resources}</Include-Resource>
+                    </instructions>
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+                <configuration>
+                    <appendAssemblyId>true</appendAssemblyId>
+                    <descriptors>
+                        <descriptor>src/main/assembly/xml-jar.xml</descriptor>
+                    </descriptors>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>attach-descriptor</id>
+                        <id>xml-jar</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>attach-descriptor</goal>
+                            <goal>single</goal>
                         </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>aggregate</id>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <phase>site</phase>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-pmd-plugin</artifactId>
-                    <configuration>
-                        <excludeRoots>
-                            <excludeRoot>target/generated-sources</excludeRoot>
-                        </excludeRoots>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>validate</id>
-                            <configuration>
-                                <!-- http://stackoverflow.com/a/30406454/131433 -->
-                                <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
-                                <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </pluginManagement>
     </build>
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>${maven-project-info-reports-plugin.version}</version>
-                <configuration>
-                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>${maven-javadoc-plugin.version}</version>
-                <reportSets>
-                    <reportSet>
-                        <id>non-aggregate</id>
-                        <reports>
-                            <report>javadoc</report>
-                        </reports>
-                    </reportSet>
-                    <reportSet>
-                        <id>aggregate</id>
-                        <reports>
-                            <report>aggregate</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>

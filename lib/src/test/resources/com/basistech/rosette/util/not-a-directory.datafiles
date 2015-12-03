@@ -1,2 +1,0 @@
-# In wildcard entries, the directory must actually exist:
-*	*	src/test/resources/com/basistech/rosette/util/no-such-directory/wildcard_*.txt
