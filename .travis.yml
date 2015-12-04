@@ -7,4 +7,6 @@ jdk:
   - openjdk7
 
 notifications:
-  slack: basistech:CmiPHtjrkssw6MO9NcQFzaEj
+  slack:
+    secure: "j6Zaxnwz/BM1NXijX6ZISpfSiEDXPT92pJ0u7PHafvyz9A3Ys8KexIBtYVgyyjaQLraZBqQH0ALq08XtJo9syznS3Wns4IPNDntZp6yVvfqVUdXaDes1Xt6zmAlLhq0RjU0TJeSeZIW6+xv0y4EoGswkFH21AoHonDvxjH/JJII="
+
