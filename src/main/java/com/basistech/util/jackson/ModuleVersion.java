@@ -17,11 +17,10 @@
 package com.basistech.util.jackson;
 
 import com.fasterxml.jackson.core.Version;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * Set up Jackson version from property.
@@ -29,27 +28,26 @@ import java.net.URL;
 final class ModuleVersion {
     static final Version VERSION;
     static {
-        URL vurl = Resources.getResource(ModuleVersion.class, "/version.properties");
         Version version;
-        try {
-            String verString = Resources.toString(vurl, Charsets.UTF_8);
-            verString = verString.trim();
-            verString = verString.substring("version=".length()); // for now, just one property.
-
-            String snapshot = "";
-            if (verString.endsWith("-SNAPSHOT")) {
-                snapshot = "-SNAPSHOT";
-                verString = verString.substring(0, verString.length() - "-SNAPSHOT".length());
-            }
-            String[] bits = verString.split("\\.");
-            version = new Version(Integer.parseInt(bits[0]),
-                    Integer.parseInt(bits[1]),
-                    Integer.parseInt(bits[2]), snapshot,
-                    "com.basistech", "common-api");
+        Properties properties = new Properties();
+        try (InputStream props = ModuleVersion.class.getResourceAsStream("/version.properties")) {
+            properties.load(props);
         } catch (IOException e) {
             // alternative: runtime exception.
-            version = new Version(0, 0, 0, "", "", "");
+            version = new Version(0, 0, 0, "", "com.basistech", "common-api");
         }
+
+        String verString = properties.getProperty("version");
+        String snapshot = "";
+        if (verString.endsWith("-SNAPSHOT")) {
+            snapshot = "-SNAPSHOT";
+            verString = verString.substring(0, verString.length() - "-SNAPSHOT".length());
+        }
+        String[] bits = verString.split("\\.");
+        version = new Version(Integer.parseInt(bits[0]),
+                Integer.parseInt(bits[1]),
+                Integer.parseInt(bits[2]), snapshot,
+                "com.basistech", "common-api");
         VERSION = version;
     }
 
