@@ -19,7 +19,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class LanguageCodeTest extends Assert {
-    static final int SIZE_OF_ENUM = 83;
+    static final int SIZE_OF_ENUM = 84;
     static final int DONT_TEST_ID = -1;
     /**
      * Checks that different lookup paths are consistent with each other.
@@ -118,7 +118,7 @@ public class LanguageCodeTest extends Assert {
 
         LanguageCode[] testSet = {
             LanguageCode.UNKNOWN, LanguageCode.ALBANIAN, LanguageCode.ENGLISH, LanguageCode.ARABIC,
-            LanguageCode.JAPANESE, LanguageCode.TSONGA
+            LanguageCode.JAPANESE, LanguageCode.STANDARD_MALAY
         };
         String[][] stringResults = {
             {
@@ -132,7 +132,7 @@ public class LanguageCodeTest extends Assert {
             }, {
                 "Japanese", "ja", "jpn"
             }, {
-                "Tsonga", "ts", "tso"
+                "Malay, Standard", "ms_sd", "zsm"
             },
         };
         int[] idResults = {
