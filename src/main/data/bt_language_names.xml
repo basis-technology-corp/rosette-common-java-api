@@ -359,6 +359,16 @@ QUESTIONS?
 <aux_name0>Malay (macrolanguage)</aux_name0>
 </language>
 <language>
+<id>83</id>
+<name>Malay, Standard</name>
+<doc>Standard Malay</doc>
+<iso639-3>zsm</iso639-3>
+<iso639-1>ms</iso639-1>
+<basis_iso639_1_suffix>_sd</basis_iso639_1_suffix>
+<script>Latn</script>
+<symbol>STANDARD_MALAY</symbol>
+</language>
+<language>
 <id>32</id>
 <name>Malayalam</name>
 <doc>Malayalam</doc>
