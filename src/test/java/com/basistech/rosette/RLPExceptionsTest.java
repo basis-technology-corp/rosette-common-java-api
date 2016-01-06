@@ -15,25 +15,18 @@
 */
 package com.basistech.rosette;
 
+import com.basistech.util.LanguageCode;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Exercises the code in the various Exceptions in the com.basistech.rlp
  * package.
- * 
- * Classes covered:
- *    RosetteException
- *    RosetteRuntimeException
- *    RosetteNoLicenseException
- *    RosetteCorruptLicenseException
- *    RosetteExpiredLicenseException
- *    RosetteUnsupportedLanguageException
  */
-public class RLPExceptionsTest extends Assert {
+public class RLPExceptionsTest {
 
     @Test
-    public void testRosetteException() throws Exception {
+    public void testRosetteException() {
         String message = "generic exception";
         
         // Use constructors
@@ -47,7 +40,7 @@ public class RLPExceptionsTest extends Assert {
     }
     
     @Test
-    public void testRosetteRuntimeException() throws Exception {
+    public void testRosetteRuntimeException() {
         String message = "runtime exception";
         
         // Use constructors
@@ -61,7 +54,7 @@ public class RLPExceptionsTest extends Assert {
     }
 
     @Test
-    public void testRosetteNoLicenseException() throws Exception {
+    public void testRosetteNoLicenseException() {
         String message = "no license found";
         
         // Use constructors
@@ -75,7 +68,7 @@ public class RLPExceptionsTest extends Assert {
     }
 
     @Test
-    public void testRosetteCorruptLicenseException() throws Exception {
+    public void testRosetteCorruptLicenseException() {
         String message = "license has been corrupted";
         
         // Use constructors
@@ -89,7 +82,7 @@ public class RLPExceptionsTest extends Assert {
     }
 
     @Test
-    public void testRosetteExpiredLicenseException() throws Exception {
+    public void testRosetteExpiredLicenseException() {
         String message = "license expired";
         
         // Use constructors
@@ -103,7 +96,7 @@ public class RLPExceptionsTest extends Assert {
     }
 
     @Test
-    public void testRosetteUnsupportedLanguageException() throws Exception {
+    public void testRosetteUnsupportedLanguageExceptionDeprecated() {
         String message = "language not supported";
         
         // Use constructors
@@ -114,5 +107,43 @@ public class RLPExceptionsTest extends Assert {
         
         // test the message
         Assert.assertEquals(message, e.getMessage());
+    }
+
+    @Test
+    public void testRosetteUnsupportedLanguageException() {
+        RosetteUnsupportedLanguageException e;
+        e = new RosetteUnsupportedLanguageException(LanguageCode.AFRIKAANS);
+        Assert.assertEquals(LanguageCode.AFRIKAANS, e.getLanguage());
+        Assert.assertEquals("AFRIKAANS (afr)", e.getMessage());
+        Assert.assertNull(e.getCause());
+        e = new RosetteUnsupportedLanguageException(LanguageCode.AFRIKAANS, "foo");
+        Assert.assertEquals(LanguageCode.AFRIKAANS, e.getLanguage());
+        Assert.assertEquals("AFRIKAANS (afr): foo", e.getMessage());
+        Assert.assertNull(e.getCause());
+        e = new RosetteUnsupportedLanguageException(LanguageCode.AFRIKAANS, new RuntimeException());
+        Assert.assertEquals(LanguageCode.AFRIKAANS, e.getLanguage());
+        Assert.assertEquals("AFRIKAANS (afr)", e.getMessage());
+        Assert.assertNotNull(e.getCause());
+        e = new RosetteUnsupportedLanguageException(LanguageCode.AFRIKAANS, "foo", new RuntimeException());
+        Assert.assertEquals(LanguageCode.AFRIKAANS, e.getLanguage());
+        Assert.assertEquals("AFRIKAANS (afr): foo", e.getMessage());
+        Assert.assertNotNull(e.getCause());
+    }
+
+    @Test
+    public void testRosetteIllegalArgumentException() {
+        RosetteIllegalArgumentException e;
+        e = new RosetteIllegalArgumentException();
+        Assert.assertNull(e.getMessage());
+        Assert.assertNull(e.getCause());
+        e = new RosetteIllegalArgumentException("foo");
+        Assert.assertEquals("foo", e.getMessage());
+        Assert.assertNull(e.getCause());
+        e = new RosetteIllegalArgumentException(new RuntimeException());
+        Assert.assertNotNull(e.getMessage());  // "java.lang.RuntimeException"
+        Assert.assertNotNull(e.getCause());
+        e = new RosetteIllegalArgumentException("foo", new RuntimeException());
+        Assert.assertEquals("foo", e.getMessage());
+        Assert.assertNotNull(e.getCause());
     }
 }
