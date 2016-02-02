@@ -16,16 +16,16 @@
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>common-api</artifactId>
-    <name>common-api</name>
+    <artifactId>rosette-common-api</artifactId>
+    <name>rosette-common-api</name>
     <version>35.6.1-SNAPSHOT</version>
     <parent>
         <artifactId>open-source-parent</artifactId>
         <groupId>com.basistech</groupId>
         <version>0.1.2</version>
     </parent>
-    <packaging>bundle</packaging>
-    <description>Common Java API classes for Rosette</description>
+    <packaging>pom</packaging>
+    <description>Common Java API class libraries for Rosette</description>
     <scm>
         <connection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</connection>
         <developerConnection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</developerConnection>
@@ -38,72 +38,11 @@
         </site>
     </distributionManagement>
     <url>http://basis-technology-corp.github.io/rosette-common-java-api</url>
-    <properties>
-        <spring.version>2.5.4</spring.version>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <!-- The jackson classes are only used by code in here that is only
-            useful with Jackson. So we don't pull it into the dependency tree of
-            other users of this library. If the user is using Jackson, it will
-            already have the necessary stuff in its dependencies. -->
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${spring.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.basistech</groupId>
-            <artifactId>pax-exam-test-composite</artifactId>
-            <version>0.0.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <modules>
+      <module>api</module>
+      <module>api-jackson</module>
+    </modules>
     <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
         <plugins>
             <plugin>
                 <groupId>com.basistech</groupId>
@@ -129,89 +68,6 @@
                         <phase>generate-resources</phase>
                         <goals>
                             <goal>generate-depends-file</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.basistech.maven.plugins</groupId>
-                <artifactId>autogen</artifactId>
-                <version>7.0.0</version>
-                <executions>
-                    <execution>
-                        <id>generate</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <templates>
-                                <template>
-                                    <code>src/main/templates/LanguageCode.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/bt_language_names.xml</data>
-                                </template>
-                                <template>
-                                    <code>src/main/templates/NEConstants.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/bt_ne_types.xml</data>
-                                </template>
-                                <template>
-                                    <code>src/main/templates/TransliterationScheme.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/xlit_scheme-utf8.xml</data>
-                                </template>
-                                <template>
-                                    <code>src/main/templates/ISO15924.java.tpl</code>
-                                    <packageName>com.basistech.util</packageName>
-                                    <data>src/main/data/iso15924-utf8.xml</data>
-                                </template>
-                            </templates>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>com.basistech.rosette.*,com.basistech.util.*</Export-Package>
-                        <Bundle-Version>${osgi-version}</Bundle-Version>
-                        <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties};{maven-resources}</Include-Resource>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <inherited>false</inherited>
-                <configuration>
-                    <appendAssemblyId>true</appendAssemblyId>
-                    <descriptors>
-                        <descriptor>src/main/assembly/xml-jar.xml</descriptor>
-                    </descriptors>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>xml-jar</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>${maven-surefire-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <id>integration-tests</id>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
                         </goals>
                     </execution>
                 </executions>

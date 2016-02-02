@@ -23,6 +23,7 @@ import org.junit.Test;
  * Exercises the code in the various Exceptions in the com.basistech.rlp
  * package.
  */
+@SuppressWarnings("deprecation")
 public class RLPExceptionsTest {
 
     @Test
