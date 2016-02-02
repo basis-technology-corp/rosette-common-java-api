@@ -1,5 +1,11 @@
 # Cumulative Release Notes for rosette-common-java
 
+# 36.0.0
+
+### ROS-209: Split this into two jars.
+
+Put the Jackson-dependent code into its own, independent, module.
+
 ## 35.6.0
 
 ### ROS-200: Add configuration marker interfaces.
