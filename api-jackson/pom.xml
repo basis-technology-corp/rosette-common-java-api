@@ -74,7 +74,7 @@
                     <instructions>
                         <Export-Package>com.basistech.util.jackson</Export-Package>
                         <Bundle-Version>${osgi-version}</Bundle-Version>
-                        <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties};{maven-resources}</Include-Resource>
+                        <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties},{maven-resources}</Include-Resource>
                     </instructions>
                 </configuration>
             </plugin>

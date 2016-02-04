@@ -30,24 +30,24 @@ final class ModuleVersion {
     static {
         Version version;
         Properties properties = new Properties();
-        try (InputStream props = ModuleVersion.class.getResourceAsStream("/version.properties")) {
+        try (InputStream props = ModuleVersion.class.getResourceAsStream("impl/version.properties")) {
             properties.load(props);
+            String verString = properties.getProperty("version");
+            String snapshot = "";
+            if (verString.endsWith("-SNAPSHOT")) {
+                snapshot = "-SNAPSHOT";
+                verString = verString.substring(0, verString.length() - "-SNAPSHOT".length());
+            }
+            String[] bits = verString.split("\\.");
+            version = new Version(Integer.parseInt(bits[0]),
+                    Integer.parseInt(bits[1]),
+                    Integer.parseInt(bits[2]), snapshot,
+                    "com.basistech", "common-api-jackson");
         } catch (IOException e) {
             // alternative: runtime exception.
-            version = new Version(0, 0, 0, "", "com.basistech", "common-api");
+            version = new Version(0, 0, 0, "", "com.basistech", "common-api-jackson");
         }
 
-        String verString = properties.getProperty("version");
-        String snapshot = "";
-        if (verString.endsWith("-SNAPSHOT")) {
-            snapshot = "-SNAPSHOT";
-            verString = verString.substring(0, verString.length() - "-SNAPSHOT".length());
-        }
-        String[] bits = verString.split("\\.");
-        version = new Version(Integer.parseInt(bits[0]),
-                Integer.parseInt(bits[1]),
-                Integer.parseInt(bits[2]), snapshot,
-                "com.basistech", "common-api");
         VERSION = version;
     }
 
