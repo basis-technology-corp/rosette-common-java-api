@@ -18,11 +18,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-api</artifactId>
     <name>common-api</name>
-    <version>36.0.1-SNAPSHOT</version>
+    <version>36.0.1</version>
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>rosette-common-api</artifactId>
-        <version>36.0.1-SNAPSHOT</version>
+        <version>36.0.1</version>
     </parent>
     <packaging>bundle</packaging>
     <description>Common Java API classes for Rosette</description>
@@ -130,7 +130,7 @@
                     <instructions>
                         <Export-Package>com.basistech.rosette.*,com.basistech.util.*</Export-Package>
                         <Bundle-Version>${osgi-version}</Bundle-Version>
-                        <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties};{maven-resources}</Include-Resource>
+                        <Include-Resource>{META-INF/maven/dependencies.properties=${project.build.directory}/classes/META-INF/maven/dependencies.properties},{maven-resources}</Include-Resource>
                     </instructions>
                 </configuration>
             </plugin>
