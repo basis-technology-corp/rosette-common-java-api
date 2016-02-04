@@ -1,10 +1,20 @@
 # Cumulative Release Notes for rosette-common-java
 
-# 36.0.0
+## 36.0.0
 
 ### ROS-209: Split this into two jars.
 
 Put the Jackson-dependent code into its own, independent, module.
+
+We now build two artifacts:
+
+```
+com.basistech:common-api
+com.basistech:common-api-jackson
+```
+
+Folks needing jackson serializaiton for LanguageCode (either within
+ADM or outside of ADM) will need to depend on common-api-jackson.
 
 ## 35.6.0
 
@@ -27,4 +37,10 @@ invalid argument is passed specifically to a Rosette API.
 
 ### COMN-191: Add ZSM language code.
 
+`LanguageCode.STANDARD_MALAY` was added.  iso639-3 code is "zsm".
+iso639-1 code is "ms_sd".  This is a micro-language.  The existing
+`LanguageCode.MALAY` ("msa", "ms") is a macro-language.
+
 ### RCB-237: Add enum for part of speech tag sets.
+
+`PartOfSpeechTagSet` was added.
