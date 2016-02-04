@@ -41,12 +41,6 @@
             <artifactId>junit</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.basistech</groupId>
-            <artifactId>pax-exam-test-composite</artifactId>
-            <version>0.0.5</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <scope>test</scope>
