@@ -30,8 +30,6 @@ public class TextDomainTest {
 
     @Before
     public void setUp() {
-        // have to ref script/language by int directly because the respective classes haven't yet moved from
-        // rlp
         td1 = new TextDomain(ISO15924.Zyyy, LanguageCode.UNKNOWN, TransliterationScheme.BASIS);
         td2 = new TextDomain(ISO15924.Zyyy, LanguageCode.UNKNOWN, TransliterationScheme.BASIS);
         td3 = new TextDomain(ISO15924.Zyyy, LanguageCode.UNKNOWN, TransliterationScheme.BASIS);
@@ -74,5 +72,12 @@ public class TextDomainTest {
         TextDomain prs = new TextDomain(LanguageCode.DARI);
         TextDomain pes = new TextDomain(LanguageCode.WESTERN_FARSI);
         assertFalse(prs.toString().equals(pes.toString()));
+        // test that we don't crash on some null cases.
+        TextDomain ntd = new TextDomain(null, null, null);
+        ntd.toString();
+        ntd.hashCode();
+        ntd.equals(ntd);
+        ntd.equals(prs);
+        pes.equals(ntd);
     }
 }

@@ -17,11 +17,12 @@
 package com.basistech.util;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Collection of linguistic properties of a text which are independent of its message; this currently includes
  * script, language, and transliteration scheme. Any text is in a domain (with zero or more components under
- * specified). Instances of this class are immutable.
+ * specified).
  */
 public class TextDomain implements Serializable, Comparable<TextDomain> {
 
@@ -32,8 +33,8 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
     /**
      * Create a TextDomain object.
      * 
-     * @param script the ISO 15924 numeric script id
-     * @param language the ISO 639 numeric langauge id
+     * @param script the ISO 15924 code
+     * @param language the language code
      * @param scheme the TransliterationScheme
      */
     public TextDomain(ISO15924 script, LanguageCode language, TransliterationScheme scheme) {
@@ -44,9 +45,9 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
 
     /**
      * Create a TextDomain object for the "native" domain of the language (see
-     * LanguageCode.getDefaulatScript())
+     * LanguageCode.getDefaultScript())
      * 
-     * @param language the ISO 639 numeric langauge id
+     * @param language the language.
      */
     public TextDomain(LanguageCode language) {
         theScript = language.getDefaultScript();
@@ -54,7 +55,8 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
         theScheme = TransliterationScheme.NATIVE;
     }
     /**
-     * Create a TextDomain object 
+     * Create a TextDomain object with
+     * unspecified values.
      * 
      */
     TextDomain() {
@@ -63,33 +65,23 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
         theScheme = TransliterationScheme.UNKNOWN;
     }
 
-    /**
-     * Determine if the contents of this TextDomain object are equal those in the given object.
-     * 
-     * @param o object to compare
-     * @return true if contents are equal.
-     */
+    @Override
     public boolean equals(Object o) {
-        if (!(o instanceof TextDomain)) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        return this.getScript() == ((TextDomain)o).getScript()
-               && this.getLanguage() == ((TextDomain)o).getLanguage()
-               && this.getTransliterationScheme() == ((TextDomain)o).getTransliterationScheme();
-
+        TextDomain that = (TextDomain) o;
+        return theScript == that.theScript
+                && theLanguage == that.theLanguage
+                && theScheme == that.theScheme;
     }
 
-    /**
-     * Returns the hash code for this TextDomain.
-     * 
-     * @return hash code
-     */
+    @Override
     public int hashCode() {
-        int result = 17;
-        result = 37 * result + this.getScript().hashCode();
-        result = 37 * result + this.getLanguage().hashCode();
-        result = 37 * result + this.getTransliterationScheme().hashCode();
-        return result;
+        return Objects.hash(theScript, theLanguage, theScheme);
     }
 
     /**
@@ -149,29 +141,62 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * @return String representation of the TextDomain.
      */
     public String toString() {
-        return "[" + theScript.code4() + "/" + theLanguage.ISO639_3() + "/" + theScheme.getName() + "]";
+        return "["
+                + (theScript == null ? "null" : theScript.code4())
+                + "/"
+                + (theLanguage == null ? "null" : theLanguage.ISO639_3())
+                + "/"
+                + (theScheme == null ? "null" : theScheme.getName())
+                + "]";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public int compareTo(TextDomain o) {
-        if (theScript.numeric() > o.getScript().numeric()) {
+        int n = 0;
+        if (theScript != null) {
+            n = theScript.numeric();
+        }
+        int otherN = 0;
+        if (o.getScript() != null) {
+            otherN = o.getScript().numeric();
+        }
+
+        if (n > otherN) {
             return 1;
-        } else if (theScript.numeric() < o.getScript().numeric()) {
+        } else if (n < otherN) {
             return -1;
         }
-        if (theLanguage.languageID() > o.getLanguage().languageID()) {
+
+        n = 0;
+        if (theLanguage != null) {
+            n = theLanguage.languageID();
+        }
+        otherN = 0;
+        if (o.getLanguage() != null) {
+            otherN = o.getLanguage().languageID();
+
+        }
+
+        if (n > otherN) {
             return 1;
-        } else if (theLanguage.languageID() < o.getLanguage().languageID()) {
+        } else if (n < otherN) {
             return -1;
         }
-        if (theScheme.getNativeCode() > o.getTransliterationScheme().getNativeCode()) {
+
+        n = 0;
+        if (theScheme != null) {
+            n = theScheme.getNativeCode();
+        }
+        otherN = 0;
+        if (o.getTransliterationScheme() != null) {
+            otherN = o.getTransliterationScheme().getNativeCode();
+        }
+
+        if (n > otherN) {
             return 1;
-        } else if (theScheme.getNativeCode() < o.getTransliterationScheme().getNativeCode()) {
+        } else if (n < otherN) {
             return -1;
         }
- 
+
         return 0;
     }
 }
