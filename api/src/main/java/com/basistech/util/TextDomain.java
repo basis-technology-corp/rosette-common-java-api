@@ -38,9 +38,9 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * @param scheme the TransliterationScheme
      */
     public TextDomain(ISO15924 script, LanguageCode language, TransliterationScheme scheme) {
-        theScript = script;
-        theLanguage = language;
-        theScheme = scheme;
+        theScript = script == null ? ISO15924.Zyyy : script;
+        theLanguage = language == null ? LanguageCode.UNKNOWN : language;
+        theScheme = scheme == null ? TransliterationScheme.UNKNOWN : scheme;
     }
 
     /**
@@ -50,6 +50,9 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * @param language the language.
      */
     public TextDomain(LanguageCode language) {
+        if (language == null) {
+            language = LanguageCode.UNKNOWN;
+        }
         theScript = language.getDefaultScript();
         theLanguage = language;
         theScheme = TransliterationScheme.NATIVE;
@@ -142,23 +145,17 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      */
     public String toString() {
         return "["
-                + (theScript == null ? "null" : theScript.code4())
+                + theScript.code4()
                 + "/"
-                + (theLanguage == null ? "null" : theLanguage.ISO639_3())
+                + theLanguage.ISO639_3()
                 + "/"
-                + (theScheme == null ? "null" : theScheme.getName())
+                + theScheme.getName()
                 + "]";
     }
 
     public int compareTo(TextDomain o) {
-        int n = 0;
-        if (theScript != null) {
-            n = theScript.numeric();
-        }
-        int otherN = 0;
-        if (o.getScript() != null) {
-            otherN = o.getScript().numeric();
-        }
+        int n = theScript.numeric();
+        int otherN = o.getScript().numeric();
 
         if (n > otherN) {
             return 1;
@@ -166,15 +163,8 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
             return -1;
         }
 
-        n = 0;
-        if (theLanguage != null) {
-            n = theLanguage.languageID();
-        }
-        otherN = 0;
-        if (o.getLanguage() != null) {
-            otherN = o.getLanguage().languageID();
-
-        }
+        n = theLanguage.languageID();
+        otherN = o.getLanguage().languageID();
 
         if (n > otherN) {
             return 1;
@@ -182,14 +172,8 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
             return -1;
         }
 
-        n = 0;
-        if (theScheme != null) {
-            n = theScheme.getNativeCode();
-        }
-        otherN = 0;
-        if (o.getTransliterationScheme() != null) {
-            otherN = o.getTransliterationScheme().getNativeCode();
-        }
+        n = theScheme.getNativeCode();
+        otherN = o.getTransliterationScheme().getNativeCode();
 
         if (n > otherN) {
             return 1;

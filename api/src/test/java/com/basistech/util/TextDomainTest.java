@@ -19,6 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -27,6 +28,7 @@ public class TextDomainTest {
     private TextDomain td1;
     private TextDomain td2;
     private TextDomain td3;
+    private TextDomain tdDefault = new TextDomain();
 
     @Before
     public void setUp() {
@@ -63,6 +65,7 @@ public class TextDomainTest {
     public void testhashCode() {
         assertTrue(td1.hashCode() == td2.hashCode());
         assertTrue(td2.hashCode() == td3.hashCode());
+        assertNotEquals(td1.hashCode(), tdDefault.hashCode());
     }
 
     @Test
