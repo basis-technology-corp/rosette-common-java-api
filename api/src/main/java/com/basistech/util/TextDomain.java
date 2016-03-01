@@ -32,10 +32,11 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
 
     /**
      * Create a TextDomain object.
+     * {@code null} values supplied here are mapped to their corresponding defaults.
      * 
-     * @param script the ISO 15924 code
-     * @param language the language code
-     * @param scheme the TransliterationScheme
+     * @param script the ISO 15924 code. {@code null} is mapped to {@link ISO15924#Zyyy}.
+     * @param language the language code. {@code null} is mapped to {@link LanguageCode#UNKNOWN}.
+     * @param scheme the TransliterationScheme. {@code null} is mapped to {@link TransliterationScheme#UNKNOWN}.
      */
     public TextDomain(ISO15924 script, LanguageCode language, TransliterationScheme scheme) {
         theScript = script == null ? ISO15924.Zyyy : script;
@@ -48,6 +49,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * LanguageCode.getDefaultScript())
      * 
      * @param language the language.
+     *                 {@code null} is mapped to {@link LanguageCode#UNKNOWN}.
      */
     public TextDomain(LanguageCode language) {
         if (language == null) {
