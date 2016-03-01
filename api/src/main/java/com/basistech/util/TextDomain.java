@@ -100,10 +100,13 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
 
     /**
      * Set the script of this domain.
+     * @param script the new script value.
+     *     {@code null} is mapped to {@link ISO15924#Zyyy}.
      * 
      */
+    @Deprecated
     void setScript(ISO15924 script) {
-        theScript = script;
+        theScript = script == null ? ISO15924.Zyyy : script;
     }
 
     /**
@@ -117,10 +120,13 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
 
     /**
      * Set the language of this domain.
+     * @param lang the new language value.
+     *             {@code null} is mapped to {@link LanguageCode#UNKNOWN}.
      * 
      */
+    @Deprecated
     void setLanguage(LanguageCode lang) {
-        theLanguage = lang;
+        theLanguage = lang == null ? LanguageCode.UNKNOWN : lang;
     }
  
     /**
@@ -134,10 +140,13 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
 
     /**
      * set the transliteration scheme of this domain.
+     * @param scheme the new scheme value.
+     *               {@code null} is mapped to {@link TransliterationScheme#UNKNOWN}.
      * 
      */
+    @Deprecated
     void setTransliterationScheme(TransliterationScheme scheme) {
-        theScheme = scheme;
+        theScheme = scheme == null ? TransliterationScheme.UNKNOWN : scheme;
     }
 
     /**
