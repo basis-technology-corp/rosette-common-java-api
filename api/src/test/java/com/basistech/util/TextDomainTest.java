@@ -18,6 +18,7 @@ package com.basistech.util;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -40,7 +41,7 @@ public class TextDomainTest {
     @Test
     public void testequals() {
         // reflexive
-        assertTrue(td1.equals(td1));
+        assertEquals(td1, td1);
         // symmetric
         assertTrue(td1.equals(td2) && td2.equals(td1));
         // transitive
@@ -80,8 +81,7 @@ public class TextDomainTest {
         // some silly asserts to try to shut up intelliJ.
         assertNotNull(ntd.toString());
         assertNotNull(ntd.hashCode());
-        //noinspection EqualsWithItself
-        assertNotNull(ntd.equals(ntd));
+        assertEquals(ntd, ntd);
         assertNotNull(ntd.equals(prs));
         assertNotNull(pes.equals(ntd));
     }
