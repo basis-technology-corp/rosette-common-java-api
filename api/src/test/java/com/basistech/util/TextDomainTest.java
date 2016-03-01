@@ -77,10 +77,12 @@ public class TextDomainTest {
         assertFalse(prs.toString().equals(pes.toString()));
         // test that we don't crash on some null cases.
         TextDomain ntd = new TextDomain(null, null, null);
-        ntd.toString();
-        ntd.hashCode();
-        ntd.equals(ntd);
-        ntd.equals(prs);
-        pes.equals(ntd);
+        // some silly asserts to try to shut up intelliJ.
+        assertNotNull(ntd.toString());
+        assertNotNull(ntd.hashCode());
+        //noinspection EqualsWithItself
+        assertNotNull(ntd.equals(ntd));
+        assertNotNull(ntd.equals(prs));
+        assertNotNull(pes.equals(ntd));
     }
 }
