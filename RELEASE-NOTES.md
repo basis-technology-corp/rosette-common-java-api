@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java
 
+## 36.0.1
+
+### ROS-217: correct TextDomain to map null inputs to defaults.
+
 ## 36.0.0
 
 ### ROS-209: Split this into two jars.
