@@ -18,7 +18,9 @@ package com.basistech.util;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -27,11 +29,10 @@ public class TextDomainTest {
     private TextDomain td1;
     private TextDomain td2;
     private TextDomain td3;
+    private TextDomain tdDefault = new TextDomain();
 
     @Before
     public void setUp() {
-        // have to ref script/language by int directly because the respective classes haven't yet moved from
-        // rlp
         td1 = new TextDomain(ISO15924.Zyyy, LanguageCode.UNKNOWN, TransliterationScheme.BASIS);
         td2 = new TextDomain(ISO15924.Zyyy, LanguageCode.UNKNOWN, TransliterationScheme.BASIS);
         td3 = new TextDomain(ISO15924.Zyyy, LanguageCode.UNKNOWN, TransliterationScheme.BASIS);
@@ -40,7 +41,7 @@ public class TextDomainTest {
     @Test
     public void testequals() {
         // reflexive
-        assertTrue(td1.equals(td1));
+        assertEquals(td1, td1);
         // symmetric
         assertTrue(td1.equals(td2) && td2.equals(td1));
         // transitive
@@ -55,7 +56,7 @@ public class TextDomainTest {
     public void testNativeDomainConstructor() {
 
         TextDomain tdArabicByHand = new TextDomain(ISO15924.Arab, LanguageCode.ARABIC,
-                                                   TransliterationScheme.NATIVE);
+                                                   TransliterationScheme.UNKNOWN);
         TextDomain tdArabicNative = new TextDomain(LanguageCode.ARABIC);
         assertTrue(tdArabicByHand.equals(tdArabicNative));
 
@@ -65,6 +66,7 @@ public class TextDomainTest {
     public void testhashCode() {
         assertTrue(td1.hashCode() == td2.hashCode());
         assertTrue(td2.hashCode() == td3.hashCode());
+        assertNotEquals(td1.hashCode(), tdDefault.hashCode());
     }
 
     @Test
@@ -74,5 +76,13 @@ public class TextDomainTest {
         TextDomain prs = new TextDomain(LanguageCode.DARI);
         TextDomain pes = new TextDomain(LanguageCode.WESTERN_FARSI);
         assertFalse(prs.toString().equals(pes.toString()));
+        // test that we don't crash on some null cases.
+        TextDomain ntd = new TextDomain(null, null, null);
+        // some silly asserts to try to shut up intelliJ.
+        assertNotNull(ntd.toString());
+        assertNotNull(ntd.hashCode());
+        assertEquals(ntd, ntd);
+        assertNotNull(ntd.equals(prs));
+        assertNotNull(pes.equals(ntd));
     }
 }
