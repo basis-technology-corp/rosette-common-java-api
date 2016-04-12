@@ -1,5 +1,12 @@
 # Cumulative Release Notes for rosette-common-java
 
+## 36.0.2
+
+### ROS-196: Move to Jackson 2.7.3 and remove workaround.
+
+Use a newer version of jackson and eliminate a complex workaround for
+a Jackson issue.
+
 ## 36.0.1
 
 ### ROS-217: correct TextDomain to map null inputs to defaults.
