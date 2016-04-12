@@ -4,6 +4,9 @@
 
 ### ROS-217: correct TextDomain to map null inputs to defaults.
 
+Note: in all cases now, the transliteration scheme defaults to 
+UNKNOWN, never NATIVE.
+
 ## 36.0.0
 
 ### ROS-209: Split this into two jars.
@@ -17,7 +20,7 @@ com.basistech:common-api
 com.basistech:common-api-jackson
 ```
 
-Folks needing jackson serializaiton for LanguageCode (either within
+Folks needing jackson serialization for LanguageCode (either within
 ADM or outside of ADM) will need to depend on common-api-jackson.
 
 ## 35.6.0
