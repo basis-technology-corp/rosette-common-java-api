@@ -45,7 +45,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
     }
 
     /**
-     * Create a TextDomain object for the "native" domain of the language (see
+     * Create a TextDomain object for the default domain of the language (see
      * LanguageCode.getDefaultScript())
      * 
      * @param language the language.
@@ -102,7 +102,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * Set the script of this domain.
      * @param script the new script value.
      *     {@code null} is mapped to {@link ISO15924#Zyyy}.
-     * 
+     * @deprecated This method will be removed in a future version to allow these objects to be immutable.
      */
     @Deprecated
     void setScript(ISO15924 script) {
@@ -122,6 +122,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * Set the language of this domain.
      * @param lang the new language value.
      *             {@code null} is mapped to {@link LanguageCode#UNKNOWN}.
+     * @deprecated This method will be removed in a future version to allow these objects to be immutable.
      * 
      */
     @Deprecated
@@ -142,7 +143,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * set the transliteration scheme of this domain.
      * @param scheme the new scheme value.
      *               {@code null} is mapped to {@link TransliterationScheme#UNKNOWN}.
-     * 
+     * @deprecated This method will be removed in a future version to allow these objects to be immutable.
      */
     @Deprecated
     void setTransliterationScheme(TransliterationScheme scheme) {
@@ -154,6 +155,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
      * 
      * @return String representation of the TextDomain.
      */
+    @Override
     public String toString() {
         return "["
                 + theScript.code4()
@@ -164,6 +166,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
                 + "]";
     }
 
+    @Override
     public int compareTo(TextDomain o) {
         int n = theScript.numeric();
         int otherN = o.getScript().numeric();
