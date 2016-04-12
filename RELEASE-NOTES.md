@@ -4,8 +4,10 @@
 
 ### ROS-217: correct TextDomain to map null inputs to defaults.
 
-Note: in all cases now, the transliteration scheme defaults to 
-UNKNOWN, never NATIVE.
+null script is mapped `ISO15924#Zyyy`.
+null language is mapped to `LanguageCode#UNKNOWN`.
+null scheme `TransliterationScheme#UNKNOWN`, not `NATIVE`, as it was
+sometimes before this change.
 
 ## 36.0.0
 
