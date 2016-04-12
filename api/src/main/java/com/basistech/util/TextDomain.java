@@ -57,7 +57,7 @@ public class TextDomain implements Serializable, Comparable<TextDomain> {
         }
         theScript = language.getDefaultScript();
         theLanguage = language;
-        theScheme = TransliterationScheme.NATIVE;
+        theScheme = TransliterationScheme.UNKNOWN;
     }
     /**
      * Create a TextDomain object with

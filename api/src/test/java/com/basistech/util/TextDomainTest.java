@@ -56,7 +56,7 @@ public class TextDomainTest {
     public void testNativeDomainConstructor() {
 
         TextDomain tdArabicByHand = new TextDomain(ISO15924.Arab, LanguageCode.ARABIC,
-                                                   TransliterationScheme.NATIVE);
+                                                   TransliterationScheme.UNKNOWN);
         TextDomain tdArabicNative = new TextDomain(LanguageCode.ARABIC);
         assertTrue(tdArabicByHand.equals(tdArabicNative));
 
