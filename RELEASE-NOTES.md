@@ -13,8 +13,8 @@ a Jackson issue.
 
 null script is mapped `ISO15924#Zyyy`.
 null language is mapped to `LanguageCode#UNKNOWN`.
-null scheme `TransliterationScheme#UNKNOWN`, not `NATIVE`, as it was
-sometimes before this change.
+null scheme is mapped to `TransliterationScheme#UNKNOWN`, not
+`NATIVE`, as it was sometimes before this change.
 
 ## 36.0.0
 
