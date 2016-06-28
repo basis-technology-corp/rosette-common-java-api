@@ -37,6 +37,7 @@ public class EnumModule extends SimpleModule {
     }
 
     public void setupModule(SetupContext context) {
+        super.setupModule(context);
         context.setMixInAnnotations(LanguageCode.class, LanguageCodeMixin.class);
         SimpleSerializers keySerializers = new SimpleSerializers();
         keySerializers.addSerializer(new LanguageCodeKeySerializer());
