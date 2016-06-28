@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java
 
+## 36.0.3
+
+Fix EnumModule to call the base class in setupModule.
+
 ## 36.0.2
 
 ### ROS-196: Move to Jackson 2.7.3 and remove workaround.
