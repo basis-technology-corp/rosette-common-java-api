@@ -27,14 +27,20 @@ import java.lang.annotation.Target;
  * This annotation marks factory configuration options that should be included in configuration
  * files in an on-premise deployment.
  */
-public @interface RosetteFactoryConfigurationProperty {
+public @interface RosetteConfigurationProperty {
+
+    /**
+     * Indicates what this option is used to configure: factories, annotators, or both.
+     */
+    RosetteConfigurationType type();
+
     /**
      * The default value of the configuration option as a yaml string.
      */
-    String defaultValue() default "";
+    String defaultValue();
 
     /**
      * A comment describing the configuration option and how use it.
      */
-    String comment() default "";
+    String comment();
 }
