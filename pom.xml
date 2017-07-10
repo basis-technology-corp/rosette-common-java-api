@@ -18,11 +18,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rosette-common-api</artifactId>
     <name>rosette-common-api</name>
-    <version>36.0.3-SNAPSHOT</version>
+    <version>36.1.0-SNAPSHOT</version>
     <parent>
         <artifactId>open-source-parent</artifactId>
         <groupId>com.basistech</groupId>
-        <version>1.1.0</version>
+        <version>1.1.1</version>
     </parent>
     <packaging>pom</packaging>
     <description>Common Java API class libraries for Rosette</description>
