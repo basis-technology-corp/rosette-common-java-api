@@ -1,5 +1,5 @@
 /*
-* Copyright 2015 Basis Technology Corp.
+* Copyright 2017 Basis Technology Corp.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@
 package com.basistech.rosette;
 
 /**
- * This is a marker interface to mark classes that either provide configuration
- * for factories and annotators. The more specific marker interfaces,
- * RosetteFactoryConfiguration and RosetteAnnotatorConfiguration should be used
- * instead.
+ * This is a marker interface to mark classes that provide configuration
+ * for factories.
  */
-public interface RosetteConfiguration {
+public interface RosetteFactoryConfiguration extends RosetteConfiguration {
 }
