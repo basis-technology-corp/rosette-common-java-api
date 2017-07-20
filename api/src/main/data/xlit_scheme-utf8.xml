@@ -182,6 +182,13 @@
 <description>US Intelligence Community - extended</description>
 </scheme>
 <scheme>
+<numeric>103</numeric>
+<name>icu</name>
+<presentationName>ICU</presentationName>
+<description>Transliteration library provided with the International Components for Unicode library</description>
+<doc>http://icu-project.org/apiref/icu4j/com/ibm/icu/text/Transliterator.html</doc>
+</scheme>
+<scheme>
 <numeric>199</numeric>
 <name>basis_dia</name>
 <presentationName>Basis Diacritization</presentationName>
@@ -312,6 +319,20 @@
 <presentationName>ISO :11940</presentationName>
 <description>Romanization of the Thai</description>
 <doc>ISO 11940 is an ISO standard for the romanization of the Thai alphabet, published in 1998 and updated in September 2003. http://en.wikipedia.org/wiki/ISO_11940</doc>
+</scheme>
+<scheme>
+<numeric>311</numeric>
+<name>iso_11940_2</name>
+<presentationName>ISO :11940-2</presentationName>
+<description>Romanization of Thai alphabet</description>
+<doc>ISO 11940-2 is an ISO standard for the romanization of the Thai alphabet almost identical to RTGS, published in 2007. https://en.wikipedia.org/wiki/ISO_11940-2</doc>
+</scheme>
+<scheme>
+<numeric>312</numeric>
+<name>rtgs</name>
+<presentationName>RTGS</presentationName>
+<description> Royal Thai General System of Transcription</description>
+<doc> RTGS is a standard for the romanization of the Thai alphabet, first promulgated in 1932, and updated in 1939, 1968, and 1999. https://en.wikipedia.org/wiki/Royal_Thai_General_System_of_Transcription</doc>
 </scheme>
 <scheme>
 <numeric>400</numeric>
