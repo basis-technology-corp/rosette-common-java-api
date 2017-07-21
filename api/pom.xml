@@ -18,11 +18,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-api</artifactId>
     <name>common-api</name>
-    <version>36.1.2</version>
+    <version>36.1.2-SNAPSHOT</version>
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>rosette-common-api</artifactId>
-        <version>36.1.2</version>
+        <version>36.1.2-SNAPSHOT</version>
     </parent>
     <packaging>bundle</packaging>
     <description>Common Java API classes for Rosette</description>
