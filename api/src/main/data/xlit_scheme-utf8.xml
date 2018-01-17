@@ -156,6 +156,41 @@
 <description>ASCII restricted; possibly a variation on more formal transliteration schemes.</description>
 <doc></doc>
 </scheme>
+<scheme>
+<numeric>23</numeric>
+<name>elot743</name>
+<presentationName>ELOT 743</presentationName>
+<description> Romanization system for Greek</description>
+<doc>From the Hellenic Organization for Standardization. Approved for international use at the Fifth United Nations Conference on the Standard of Geographical Names in 1987</doc>
+</scheme>
+<scheme>
+<numeric>24</numeric>
+<name>iso843_1997</name>
+<presentationName>ISO 843:1997</presentationName>
+<description>Romanization of the Greek alphabet</description>
+<doc>ISO 843 is an ISO standard for the romanization of the Greek alphabet. http://en.wikipedia.org/wiki/ISO_843</doc>
+</scheme>
+<scheme>
+<numeric>25</numeric>
+<name>iso259_1984</name>
+<presentationName>ISO 259:1984</presentationName>
+<description>Transliteration of Hebrew characters into Latin characters</description>
+<doc>ISO 259 is an ISO standard for the transliteration of Hebrew characters into Latin characters. https://en.wikipedia.org/wiki/ISO_259</doc>
+</scheme>
+<scheme>
+<numeric>26</numeric>
+<name>iso259_2_1994</name>
+<presentationName>ISO 259-2:1994</presentationName>
+<description>Transliteration of Hebrew characters into Latin characters</description>
+<doc>Specifies a simplified system for the transliteration of Hebrew characters into Latin characters. This simplification of the stringent rules established by ISO 259:1984 is especially intended to make easier the processing of bibliographic information.</doc>
+</scheme>
+<scheme>
+<numeric>27</numeric>
+<name>ansiz39_25_1975</name>
+<presentationName>ANSI Z39.25-1975</presentationName>
+<description>Transliteration of Hebrew</description>
+<doc>For more information, visit https://webhome.weizmann.ac.il/home/comartin/ivrit/ansi.html</doc>
+</scheme>
 <!-- added for Vietnamese -->
 <scheme>
 <numeric>99</numeric>
@@ -317,15 +352,15 @@
 <numeric>310</numeric>
 <name>iso_11940</name>
 <presentationName>ISO :11940</presentationName>
-<description>Romanization of the Thai</description>
-<doc>ISO 11940 is an ISO standard for the romanization of the Thai alphabet, published in 1998 and updated in September 2003. http://en.wikipedia.org/wiki/ISO_11940</doc>
+<description>DEPRECATED; use ISO11940_1998. Romanization of the Thai</description>
+<doc>DEPRECATED; use ISO11940_1998. ISO 11940 is an ISO standard for the romanization of the Thai alphabet, published in 1998 and updated in September 2003. http://en.wikipedia.org/wiki/ISO_11940</doc>
 </scheme>
 <scheme>
 <numeric>311</numeric>
 <name>iso_11940_2</name>
 <presentationName>ISO :11940-2</presentationName>
-<description>Romanization of Thai alphabet</description>
-<doc>ISO 11940-2 is an ISO standard for the romanization of the Thai alphabet almost identical to RTGS, published in 2007. https://en.wikipedia.org/wiki/ISO_11940-2</doc>
+<description>DEPRECATED; use ISO11940_2_2007. Romanization of Thai alphabet</description>
+<doc>DEPRECATED; use ISO11940_2_2007. ISO 11940-2 is an ISO standard for the romanization of the Thai alphabet almost identical to RTGS, published in 2007. https://en.wikipedia.org/wiki/ISO_11940-2</doc>
 </scheme>
 <scheme>
 <numeric>312</numeric>
@@ -333,6 +368,20 @@
 <presentationName>RTGS</presentationName>
 <description> Royal Thai General System of Transcription</description>
 <doc> RTGS is a standard for the romanization of the Thai alphabet, first promulgated in 1932, and updated in 1939, 1968, and 1999. https://en.wikipedia.org/wiki/Royal_Thai_General_System_of_Transcription</doc>
+</scheme>
+<scheme>
+<numeric>313</numeric>
+<name>iso11940_1998</name>
+<presentationName>ISO 11940:1998</presentationName>
+<description>Transliteration of Thai characters into Latin characters</description>
+<doc>ISO 11940 is an ISO standard for the romanization of the Thai alphabet, published in 1998 and updated in September 2003. http://en.wikipedia.org/wiki/ISO_11940</doc>
+</scheme>
+<scheme>
+<numeric>314</numeric>
+<name>iso11940_2_2007</name>
+<presentationName>ISO 11940-2:2007</presentationName>
+<description>Transliteration of Thai characters into Latin characters</description>
+<doc>ISO 11940-2 is an ISO standard for the romanization of the Thai alphabet almost identical to RTGS, published in 2007. https://en.wikipedia.org/wiki/ISO_11940-2</doc>
 </scheme>
 <scheme>
 <numeric>400</numeric>
@@ -380,6 +429,12 @@
 <presentationName>National Cartography Center (NCC) of Iran</presentationName>
 <description>The Transliteration/Transcription system of the National Cartography Center (NCC) of Iran.</description>
 <doc>developed in partnership with linguists from Tehran University, was approved for use by the NCC in 2003, as the system and procedure for preparing broad transcriptions of toponymic items be (sic)</doc>
+</scheme>
+<scheme>
+<numeric>1000</numeric>
+<name>private_use</name>
+<presentationName>Private use</presentationName>
+<description>Private use</description>
 </scheme>
 <scheme>
 <numeric>1997</numeric>
