@@ -1,6 +1,21 @@
-# Cumulative Release Notes for rosette-common-java
+# Cumulative Release Notes for rosette-common-java-api
 
-## 36.0.3
+## 36.2.0
+
+Add language codes `NORTH_KOREAN` and `SOUTH_KOREAN`.
+
+## 36.1.4
+
+Add transliteration schemes `elot743`, `iso843_1997`, `iso259_1984`, `iso259_2_1994`, `ansiz39_25_1975`,
+`iso11940_1998`, `iso11940_2_2007`, and `private_use`.
+
+Deprecate transliteration schemes `iso_11940` and `iso_11940_2`.
+
+## 36.1.3
+
+Add transliteration schemes `iso_11940_2` and `rtgs`.
+
+## 36.1.0
 
 Fix EnumModule to call the base class in setupModule.
 
