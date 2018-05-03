@@ -378,6 +378,16 @@ QUESTIONS?
 <symbol>MALAYALAM</symbol>
 </language>
 <language>
+<id>84</id>
+<name>Korean, North</name>
+<doc>North Korean</doc>
+<iso639-3>qkp</iso639-3>
+<iso639-1>ko</iso639-1>
+<basis_iso639_1_suffix>_kp</basis_iso639_1_suffix>
+<script>Hang</script>
+<symbol>NORTH_KOREAN</symbol>
+</language>
+<language>
 <id>33</id>
 <name>Norwegian</name>
 <doc>Norwegian</doc>
@@ -582,6 +592,16 @@ QUESTIONS?
 <iso639-1>st</iso639-1>
 <script>Latn</script>
 <symbol>SOUTHERN_SOTHO</symbol>
+</language>
+<language>
+<id>85</id>
+<name>Korean, South</name>
+<doc>South Korean</doc>
+<iso639-3>qkr</iso639-3>
+<iso639-1>ko</iso639-1>
+<basis_iso639_1_suffix>_kr</basis_iso639_1_suffix>
+<script>Hang</script>
+<symbol>SOUTH_KOREAN</symbol>
 </language>
 <language>
 <id>77</id>

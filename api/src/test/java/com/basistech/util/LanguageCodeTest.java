@@ -1,5 +1,5 @@
 /*
-* Copyright 2014 Basis Technology Corp.
+* Copyright 2018 Basis Technology Corp.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -13,14 +13,15 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
+
 package com.basistech.util;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 public class LanguageCodeTest extends Assert {
-    static final int SIZE_OF_ENUM = 84;
-    static final int DONT_TEST_ID = -1;
+    private static final int SIZE_OF_ENUM = 86;
+    private static final int DONT_TEST_ID = -1;
     /**
      * Checks that different lookup paths are consistent with each other.
      */
@@ -136,7 +137,7 @@ public class LanguageCodeTest extends Assert {
             },
         };
         int[] idResults = {
-            0, 1, DONT_TEST_ID, DONT_TEST_ID, DONT_TEST_ID, LanguageCode.values().length - 1,
+            0, 1, DONT_TEST_ID, DONT_TEST_ID, DONT_TEST_ID, 83,
         };
         // This part is white box. We could also test the IDs of the
         // middle ones, but I'm not sure what that would add over
