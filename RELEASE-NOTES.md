@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 37.0.0
+
+Use Guava 26.0-jre and Java 8.
+
 ## 36.2.0
 
 Add language codes `NORTH_KOREAN` and `SOUTH_KOREAN`.
