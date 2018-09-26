@@ -18,11 +18,11 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>common-api-jackson</artifactId>
     <name>common-api-jackson</name>
-    <version>37.0.0</version>
+    <version>37.0.1-SNAPSHOT</version>
     <parent>
         <groupId>com.basistech</groupId>
         <artifactId>rosette-common-api</artifactId>
-        <version>37.0.0</version>
+        <version>37.0.1-SNAPSHOT</version>
     </parent>
     <packaging>bundle</packaging>
     <description>Jackson support for Java API classes for Rosette</description>
