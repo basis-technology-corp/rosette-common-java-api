@@ -3,7 +3,7 @@
 [= dne(" * ") =] 
 */
 /*
-* Copyright 2014 Basis Technology Corp.
+* Copyright 2014-2019 Basis Technology Corp.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -67,7 +67,7 @@ public enum TransliterationScheme
         }
     }
 
-    private TransliterationScheme(int BT_Xlit_Scheme, String name, String presentationName,
+    TransliterationScheme(int BT_Xlit_Scheme, String name, String presentationName,
             String description){
         this.BT_Xlit_Scheme = BT_Xlit_Scheme;
         this.name = name;

@@ -18,19 +18,28 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rosette-common-api</artifactId>
     <name>rosette-common-api</name>
-    <version>37.0.1-SNAPSHOT</version>
+    <version>37.0.2-SNAPSHOT</version>
     <parent>
         <artifactId>open-source-parent</artifactId>
         <groupId>com.basistech</groupId>
-        <version>2.0.0</version>
+        <version>3.0.0</version>
     </parent>
     <packaging>pom</packaging>
     <description>Common Java API class libraries for Rosette</description>
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
     <scm>
         <connection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</connection>
         <developerConnection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
+    <properties>
+        <skip-dependency-convergence>true</skip-dependency-convergence>
+    </properties>
     <distributionManagement>
         <site>
             <id>site</id>
@@ -44,6 +53,9 @@
     </modules>
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>com.basistech</groupId>
                 <artifactId>bbh-maven-plugin</artifactId>
