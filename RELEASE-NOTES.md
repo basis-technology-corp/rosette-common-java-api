@@ -1,5 +1,13 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 37.1.0
+
+Add language codes `BELARUSIAN`, `BURMESE`, `KHMER`, and `LAO`.
+
+## 37.0.1
+
+Consume parent pom 3.0.0
+
 ## 37.0.0
 
 Use Guava 26.0-jre and Java 8.
