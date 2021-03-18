@@ -56,6 +56,15 @@ QUESTIONS?
 <symbol>ARABIC</symbol>
 </language>
 <language>
+<id>89</id>
+<name>Belarusian</name>
+<doc>Belarusian</doc>
+<iso639-3>bel</iso639-3>
+<iso639-1>be</iso639-1>
+<script>Cyrl</script>
+<symbol>BELARUSIAN</symbol>
+</language>
+<language>
 <id>3</id>
 <name>Bengali</name>
 <doc>Bengali</doc>
