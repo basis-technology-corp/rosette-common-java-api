@@ -20,7 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class LanguageCodeTest extends Assert {
-    private static final int SIZE_OF_ENUM = 86;
+    private static final int SIZE_OF_ENUM = 89;
     private static final int DONT_TEST_ID = -1;
     /**
      * Checks that different lookup paths are consistent with each other.
