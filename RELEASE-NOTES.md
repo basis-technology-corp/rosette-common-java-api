@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 37.1.2
+
+Add Transliteration Scheme MLCTS for Burmese to Latin
+
 ## 37.1.0
 
 Add language codes `BELARUSIAN`, `BURMESE`, `KHMER`, and `LAO`.
