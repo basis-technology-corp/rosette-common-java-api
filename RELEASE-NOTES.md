@@ -1,6 +1,6 @@
 # Cumulative Release Notes for rosette-common-java-api
 
-## 37.1.2
+## 37.1.1
 
 Add Transliteration Scheme MLCTS for Burmese to Latin
 
