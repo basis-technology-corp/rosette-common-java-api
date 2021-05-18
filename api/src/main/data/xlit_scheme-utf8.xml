@@ -224,6 +224,19 @@
 <doc>http://icu-project.org/apiref/icu4j/com/ibm/icu/text/Transliterator.html</doc>
 </scheme>
 <scheme>
+<numeric>104</numeric>
+<name>ungegn</name>
+<presentationName>UNGEGN</presentationName>
+<description>United Nations Group of Experts on Geographical Names (UNGEGN) deals with the national and international standardization of geographical names.</description>
+</scheme>
+<scheme>
+<numeric>105</numeric>
+<name>ipa</name>
+<presentationName>IPA</presentationName>
+<description>Transliteration scheme into IPA</description>
+<doc>https://en.wikipedia.org/wiki/International_Phonetic_Alphabet</doc>
+</scheme>
+<scheme>
 <numeric>199</numeric>
 <name>basis_dia</name>
 <presentationName>Basis Diacritization</presentationName>
@@ -382,6 +395,20 @@
 <presentationName>ISO 11940-2:2007</presentationName>
 <description>Transliteration of Thai characters into Latin characters</description>
 <doc>ISO 11940-2 is an ISO standard for the romanization of the Thai alphabet almost identical to RTGS, published in 2007. https://en.wikipedia.org/wiki/ISO_11940-2</doc>
+</scheme>
+<scheme>
+<numeric>315</numeric>
+<name>mlcts</name>
+<presentationName>MLCTS</presentationName>
+<description>Myanmar Language Commission Transcription System</description>
+<doc>The Myanmar Language Commission Transcription System (1980), also known as the MLC Transcription System (MLCTS), is a transliteration system for rendering Burmese in the Latin alphabet. https://en.wikipedia.org/wiki/MLC_Transcription_System</doc>
+</scheme>
+<scheme>
+<numeric>316</numeric>
+<name>gdcmlm</name>
+<presentationName>GDCMLM</presentationName>
+<description>The Geographic Department of the Cambodian Ministry of Land Management and Urban Planning has developed a modified version of the UNGEGN system</description>
+<doc>http://www.eki.ee/wgrs/rom1_km.pdf</doc>
 </scheme>
 <scheme>
 <numeric>400</numeric>

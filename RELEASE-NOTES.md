@@ -1,5 +1,11 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 37.2.0
+
+Add Transliteration Schemes for Southeast Asian Languages: Burmese, Khmer, Lao, Indonesian and Malay (the last two predominantly use Latin characters in modern text, but there is a secondary script, that is used secondarily in Brunei, called Jawi that can be transliterated into IPA)
+
+Transliteration Schemes added: `UNGEGN` (a UN standard), `IPA` (International Phonetic Alphabet), `MLCTS` (Burmese), and `GDCMLM` (Khmer)
+
 ## 37.1.0
 
 Add language codes `BELARUSIAN`, `BURMESE`, `KHMER`, and `LAO`.
