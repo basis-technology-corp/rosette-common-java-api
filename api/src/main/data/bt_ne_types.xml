@@ -155,6 +155,10 @@ WARNING:
   <name>PRODUCT</name>
   <doc>Something that you can buy, certain categories excluded.</doc>
 </type>
+<type>
+  <name>LICENSE_PLATE</name>
+  <doc>A representation of a license plate, including issuing authority and number</doc>
+</type>
 </entity_types>
 
 
