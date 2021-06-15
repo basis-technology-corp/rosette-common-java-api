@@ -97,7 +97,7 @@ WARNING:
     </stype>
     <stype>
       <name>PERSONAL_ID_NUM</name>
-      <doc>Personal ID number, such as a US SSN.</doc>
+      <doc>Personal ID number, such as a work ID.</doc>
     </stype>
     <stype>
       <name>LATITUDE_LONGITUDE</name>
@@ -127,6 +127,22 @@ WARNING:
       <name>NUMBER</name>
           <doc>Number</doc>
     </stype>
+    <stype>
+      <name>LICENSE_PLATE</name>
+      <doc>License Plate</doc>
+    </stype>
+    <stype>
+      <name>DRIVERS_LICENSE</name>
+      <doc>Driver's License</doc>
+    </stype>
+    <stype>
+      <name>NATIONAL_ID_NUM</name>
+      <doc>National ID Number, such as a US SSN.</doc>
+    </stype>
+    <stype>
+      <name>GENERIC</name>
+      <doc>An identifier not captured under any other items above</doc>
+    </stype>
   </subtypes>
 </type>
 <type>
@@ -154,10 +170,6 @@ WARNING:
 <type>
   <name>PRODUCT</name>
   <doc>Something that you can buy, certain categories excluded.</doc>
-</type>
-<type>
-  <name>LICENSE_PLATE</name>
-  <doc>A representation of a license plate, including issuing authority and number</doc>
 </type>
 </entity_types>
 
