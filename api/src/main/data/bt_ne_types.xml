@@ -171,6 +171,10 @@ WARNING:
   <doc>Something that you can buy, certain categories excluded.</doc>
 </type>
 <type>
+  <name>PUBLICATION</name>
+  <doc>A document published either in physical or electronic format</doc>
+</type>
+<type>
   <name>ADDRESS_FIELD</name>
   <doc>Component of a mailing address</doc>
   <subtypes>
