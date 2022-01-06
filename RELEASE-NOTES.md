@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 37.4.0
+
+Add types `PUBLICATION` and `ADDRESS_FIELD`.
+
 ## 37.3.0
 
 Adding Identifier subtypes `LICENSE_PLATE`, `DRIVERS_LICENSE`, `NATIONAL_ID_NUM`, and `GENERIC` to allow for expansion of data types handled by Rosette.
