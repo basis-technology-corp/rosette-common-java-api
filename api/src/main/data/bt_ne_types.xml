@@ -66,50 +66,6 @@ WARNING:
     </stype>
   </subtypes>
 </type>
-	
-<type>
-  <name>ADDRESS_FIELD</name>
-  <doc>Component of a mailing address</doc>
-  <subtypes>
-    <stype>
-      <name>HOUSE</name>
-      <doc>A building or complex name</doc>
-    </stype>
-    <stype>
-      <name>ROAD</name>
-      <doc>A road name</doc>
-    </stype>
-    <stype>
-      <name>CITY</name>
-      <doc>A city name</doc>
-    </stype>
-    <stype>
-      <name>STATE</name>
-      <doc>A state name or abbreviation</doc>
-    </stype>
-    <stype>
-      <name>COUNTRY</name>
-      <doc>A country name</doc>
-    </stype>
-    <stype>
-      <name>HOUSE_NUMBER</name>
-      <doc>A house number</doc>
-    </stype>
-    <stype>
-      <name>UNIT</name>
-      <doc>A unit or apartment number</doc>
-    </stype>
-    <stype>
-      <name>PO_BOX</name>
-      <doc>A post office box number</doc>
-    </stype>
-    <stype>
-      <name>POST_CODE</name>
-      <doc>A post address</doc>
-    </stype>
-  </subtypes>
-</type>
-
 <type>
   <name>IDENTIFIER</name>
   <doc>Electronic or other ephemeral identifier.</doc>
@@ -213,6 +169,48 @@ WARNING:
 <type>
   <name>PRODUCT</name>
   <doc>Something that you can buy, certain categories excluded.</doc>
+</type>
+<type>
+  <name>ADDRESS_FIELD</name>
+  <doc>Component of a mailing address</doc>
+  <subtypes>
+    <stype>
+      <name>HOUSE</name>
+      <doc>A building or complex name</doc>
+    </stype>
+    <stype>
+      <name>ROAD</name>
+      <doc>A road name</doc>
+    </stype>
+    <stype>
+      <name>CITY</name>
+      <doc>A city name</doc>
+    </stype>
+    <stype>
+      <name>STATE</name>
+      <doc>A state name or abbreviation</doc>
+    </stype>
+    <stype>
+      <name>COUNTRY</name>
+      <doc>A country name</doc>
+    </stype>
+    <stype>
+      <name>HOUSE_NUMBER</name>
+      <doc>A house number</doc>
+    </stype>
+    <stype>
+      <name>UNIT</name>
+      <doc>A unit or apartment number</doc>
+    </stype>
+    <stype>
+      <name>PO_BOX</name>
+      <doc>A post office box number</doc>
+    </stype>
+    <stype>
+      <name>POST_CODE</name>
+      <doc>A post address</doc>
+    </stype>
+  </subtypes>
 </type>
 </entity_types>
 
