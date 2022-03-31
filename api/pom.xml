@@ -27,7 +27,7 @@
     <packaging>bundle</packaging>
     <description>Common Java API classes for Rosette</description>
     <properties>
-        <spring.version>2.5.4</spring.version>
+        <spring.version>5.3.18</spring.version>
     </properties>
     <dependencies>
         <dependency>
