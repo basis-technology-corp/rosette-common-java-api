@@ -16,14 +16,21 @@
 package com.basistech.util;
 
 import org.junit.Test;
-import org.springframework.test.AbstractDependencyInjectionSpringContextTests;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-public class PropertyEditorTest extends AbstractDependencyInjectionSpringContextTests {
-    protected String[] getConfigLocations() {
-        return new String[] {
-            "classpath:com/basistech/util/test-util-enums.xml"
-        };
-    }
+import static org.junit.Assert.assertEquals;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:com/basistech/util/test-util-enums.xml"})
+public class PropertyEditorTest {
+
+    @Autowired
+    ApplicationContext applicationContext;
 
     @Test
     public void testProperties() throws Exception {
