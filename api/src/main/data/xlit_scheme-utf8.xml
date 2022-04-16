@@ -191,6 +191,34 @@
 <description>Transliteration of Hebrew</description>
 <doc>For more information, visit https://webhome.weizmann.ac.il/home/comartin/ivrit/ansi.html</doc>
 </scheme>
+<scheme>
+<numeric>28</numeric>
+<name>gost_16876_71_a</name>
+<presentationName>GOST 16876-71, system B</presentationName>
+<description>Romanization of Cyrillic into Latin characters</description>
+<doc>For more information, visit https://en.wikipedia.org/wiki/GOST_16876-71</doc>
+</scheme>
+<scheme>
+<numeric>29</numeric>
+<name>gost_7_79_2000</name>
+<presentationName>GOST 7.79-2000, table 2</presentationName>
+<description>Romanization of Cyrillic into Latin characters</description>
+<doc>For more information, visit https://en.wikipedia.org/wiki/GOST_16876-71</doc>
+</scheme>
+<scheme>
+<numeric>30</numeric>
+<name>iso9984_1996</name>
+<presentationName>ISO 9984:1996</presentationName>
+<description>Transliteration of Georgian characters into Latin characters</description>
+<doc>For more information, visit https://en.wikipedia.org/wiki/Romanization_of_Georgian</doc>
+</scheme>
+<scheme>
+<numeric>31</numeric>
+<name>national_2002</name>
+<presentationName>National 2002</presentationName>
+<description>Georgian National Academy of Sciences national system for the romanization of Georgian characters into Latin characters</description>
+<doc>For more information, visit https://transliteration.eki.ee/pdf/Georgian.pdf</doc>
+</scheme>
 <!-- added for Vietnamese -->
 <scheme>
 <numeric>99</numeric>
@@ -411,6 +439,59 @@
 <doc>http://www.eki.ee/wgrs/rom1_km.pdf</doc>
 </scheme>
 <scheme>
+<numeric>317</numeric>
+<name>jyutping</name>
+<presentationName>LSHK</presentationName>
+<description>Linguistic Society of Hong Kong Cantonese Romanization Scheme</description>
+<doc>The Linguistic Society of Hong Kong Cantonese Romanization Scheme was developed by the Linguistic Society of Hong Kong in 1993. https://en.wikipedia.org/wiki/Jyutping</doc>
+</scheme>
+<scheme>
+<numeric>318</numeric>
+<name>pingyim</name>
+<presentationName>Bbanlam pingyim</presentationName>
+<description>Southern Min Language Spelling System</description>
+<doc>This Pinyin scheme of the southern Fujian dialect is recorded from the "Mandarin South Fujian Dialect Dictionary" published by Xiamen University in 1982. https://web.archive.org/web/20110604044719/http://homepage.mac.com/rj_/minnanpinyin.html</doc>
+</scheme>
+<scheme>
+<numeric>319</numeric>
+<name>cantonese</name>
+<presentationName>Cantonese Pinyin</presentationName>
+<doc>This Pinyin scheme is a romanization system for Cantonese developed by the Rev. Yu Ping Chiu in 1971. https://en.wikipedia.org/wiki/Cantonese_Pinyin</doc>
+</scheme>
+<scheme>
+<numeric>319</numeric>
+<name>hakka</name>
+<presentationName>Hakka Pinyin</presentationName>
+<description>Taiwanese Hakka Romanization System</description>
+<doc>This Pinyin scheme is a romanization system for Taiwanese Hakka. It was published by the Ministry of Education, Taiwan, in 2012. https://en.wikipedia.org/wiki/Taiwanese_Hakka_Romanization_System</doc>
+</scheme>
+<scheme>
+<numeric>320</numeric>
+<name>wugniu</name>
+<presentationName>Wugniu pinyin</presentationName>
+<doc>This Pinyin scheme is a romanization system for Wu Chinese.  It was developed through the Wuyuxuetang website was established in 2016. https://en.wikipedia.org/wiki/Romanization_of_Wu_Chinese  </doc>
+</scheme>
+<scheme>
+<numeric>321</numeric>
+<name>qians_pin</name>
+<presentationName>Qian's Pin</presentationName>
+<description>Shanghainese Pinyin</description>
+<doc>This Pinyin scheme was developed by Qian Nairong in 2006 to romanize Shanghainese, a dialect of Wu Chinese. https://en.wikipedia.org/wiki/Romanization_of_Wu_Chinese</doc>
+</scheme>
+<scheme>
+<numeric>322</numeric>
+<name>wu_pinyin</name>
+<presentationName>Wu Chinese Society pinyin</presentationName>
+<doc>This Pinyin scheme was developed by Qian Nairong in 2006 to romanize Shanghainese, a dialect of Wu Chinese. https://en.wikipedia.org/wiki/Romanization_of_Wu_Chinese</doc>
+</scheme>
+<scheme>
+<numeric>323</numeric>
+<name>sasm_gnc_broad</name>
+<presentationName>SASM/GNC (broad)</presentationName>
+<description>State Administration of Surveying and Mapping and Geographical Names Committee romanization schemes.</description>
+<doc>These schemes are used to romanize Mongolian, Tibetan and Uyghur. https://en.wikipedia.org/wiki/SASM/GNC_romanization</doc>
+</scheme>
+<scheme>
 <numeric>400</numeric>
 <name>hebon</name>
 <presentationName>Hebon Romaji</presentationName>
@@ -451,11 +532,36 @@
 <doc>Linguistic Survey of India. G.A Grierson (ed.). Delhi/Varanasi/Patna 1927 (Reprint 1967).</doc>
 </scheme>
 <scheme>
+<numeric>504</numeric>
+<name>iso15919_2001</name>
+<presentationName>ISO 15919:2001</presentationName>
+<doc>Transliteration of Devanagari and related Indic scripts into Latin characters. https://en.wikipedia.org/wiki/ISO_15919</doc>
+</scheme>
+<scheme>
+<numeric>505</numeric>
+<name>iabt</name>
+<presentationName>International Alphabet of Bengali Transliteration</presentationName>
+<doc>Transliteration of Bengali into Latin characters. https://en.wikipedia.org/wiki/Romanisation_of_Bengali</doc>
+</scheme>
+<scheme>
+<numeric>506</numeric>
+<name>itrans</name>
+<presentationName>Indian languages TRANSliteration</presentationName>
+<doc>ITRANS is an ASCII transliteration scheme for Indic scripts, particularly for the Devanagari script. https://www.aczoom.com/itrans/online/</doc>
+</scheme>
+<scheme>
 <numeric>600</numeric>
 <name>ncc</name>
 <presentationName>National Cartography Center (NCC) of Iran</presentationName>
 <description>The Transliteration/Transcription system of the National Cartography Center (NCC) of Iran.</description>
 <doc>developed in partnership with linguists from Tehran University, was approved for use by the NCC in 2003, as the system and procedure for preparing broad transcriptions of toponymic items be (sic)</doc>
+</scheme>
+<scheme>
+<numeric>601</numeric>
+<name>iso9985_996</name>
+<presentationName>ISO 9985 (1996)</presentationName>
+<description>ISO 9985 (1996) is the international standard for transliteration of the modern Armenian alphabet.</description>
+<doc>This system is recommended for international bibliographic text interchange. https://en.wikipedia.org/wiki/Romanization_of_Armenian</doc>
 </scheme>
 <scheme>
 <numeric>1996</numeric>
