@@ -200,8 +200,8 @@
 </scheme>
 <scheme>
 <numeric>29</numeric>
-<name>gost_7_79_2000</name>
-<presentationName>GOST 7.79-2000, table 2</presentationName>
+<name>gost_7_79_2000_2</name>
+<presentationName>GOST 7.79-2000_2</presentationName>
 <description>Romanization of Cyrillic into Latin characters</description>
 <doc>For more information, visit https://en.wikipedia.org/wiki/GOST_16876-71</doc>
 </scheme>
@@ -218,6 +218,13 @@
 <presentationName>National 2002</presentationName>
 <description>Georgian National Academy of Sciences national system for the romanization of Georgian characters into Latin characters</description>
 <doc>For more information, visit https://transliteration.eki.ee/pdf/Georgian.pdf</doc>
+</scheme>
+<scheme>
+<numeric>32</numeric>
+<name>sasm_gnc_broad</name>
+<presentationName>SASM/GNC (broad)</presentationName>
+<description>State Administration of Surveying and Mapping and Geographical Names Committee romanization schemes.</description>
+<doc>These schemes are used to romanize Mongolian, Tibetan and Uyghur. https://en.wikipedia.org/wiki/SASM/GNC_romanization</doc>
 </scheme>
 <!-- added for Vietnamese -->
 <scheme>
@@ -269,7 +276,7 @@
 <name>basis_dia</name>
 <presentationName>Basis Diacritization</presentationName>
 <description>Diacritization according to a private-use standard by Basis Technology Corp.</description>
-</scheme>  
+</scheme>
 <scheme>
 <numeric>200</numeric>
 <name>korda</name>
@@ -485,13 +492,6 @@
 <doc>This Pinyin scheme was developed by Qian Nairong in 2006 to romanize Shanghainese, a dialect of Wu Chinese. https://en.wikipedia.org/wiki/Romanization_of_Wu_Chinese</doc>
 </scheme>
 <scheme>
-<numeric>323</numeric>
-<name>sasm_gnc_broad</name>
-<presentationName>SASM/GNC (broad)</presentationName>
-<description>State Administration of Surveying and Mapping and Geographical Names Committee romanization schemes.</description>
-<doc>These schemes are used to romanize Mongolian, Tibetan and Uyghur. https://en.wikipedia.org/wiki/SASM/GNC_romanization</doc>
-</scheme>
-<scheme>
 <numeric>400</numeric>
 <name>hebon</name>
 <presentationName>Hebon Romaji</presentationName>
@@ -540,13 +540,15 @@
 <scheme>
 <numeric>505</numeric>
 <name>iabt</name>
-<presentationName>International Alphabet of Bengali Transliteration</presentationName>
+<presentationName>IABT</presentationName>
+<description>International Alphabet of Bengali Transliteration</description>
 <doc>Transliteration of Bengali into Latin characters. https://en.wikipedia.org/wiki/Romanisation_of_Bengali</doc>
 </scheme>
 <scheme>
 <numeric>506</numeric>
 <name>itrans</name>
-<presentationName>Indian languages TRANSliteration</presentationName>
+<presentationName>ITRANS</presentationName>
+<description>Indian languages TRANSliteration</description>
 <doc>ITRANS is an ASCII transliteration scheme for Indic scripts, particularly for the Devanagari script. https://www.aczoom.com/itrans/online/</doc>
 </scheme>
 <scheme>
@@ -559,8 +561,8 @@
 <scheme>
 <numeric>601</numeric>
 <name>iso9985_996</name>
-<presentationName>ISO 9985 (1996)</presentationName>
-<description>ISO 9985 (1996) is the international standard for transliteration of the modern Armenian alphabet.</description>
+<presentationName>ISO 9985:1996</presentationName>
+<description>ISO 9985:1996 is the international standard for transliteration of the modern Armenian alphabet.</description>
 <doc>This system is recommended for international bibliographic text interchange. https://en.wikipedia.org/wiki/Romanization_of_Armenian</doc>
 </scheme>
 <scheme>
