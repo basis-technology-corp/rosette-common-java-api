@@ -373,7 +373,7 @@
 <name>ctpy</name>
 <presentationName>Cantonese Pinyin</presentationName>
 <description>Standard Cantonese Pinyin</description>
-<doc>A romanization system for Standard Cantonese developed by Yu Bingzhao in 1971, and subsequently modified by the Education Department (merged into the Education and Manpower Bureau since 2003) and Zhan Bohui.  . It is the only romanization system accepted by Education and Manpower Bureau of Hong Kong and Hong Kong Examinations and Assessment Authority. source: http://en.wikipedia.org/wiki/Standard_Cantonese_Pinyin</doc>
+<doc>A romanization system for Standard Cantonese developed by Yu Bingzhao in 1971, and subsequently modified by the Education Department (merged into the Education and Manpower Bureau since 2003) and Zhan Bohui. It is the only romanization system accepted by Education and Manpower Bureau of Hong Kong and Hong Kong Examinations and Assessment Authority. source: http://en.wikipedia.org/wiki/Standard_Cantonese_Pinyin</doc>
 </scheme>
 <scheme>
 <numeric>307</numeric>
@@ -476,7 +476,7 @@
 <numeric>320</numeric>
 <name>wugniu</name>
 <presentationName>Wugniu pinyin</presentationName>
-<doc>This Pinyin scheme is a romanization system for Wu Chinese.  It was developed through the Wuyuxuetang website was established in 2016. https://en.wikipedia.org/wiki/Romanization_of_Wu_Chinese  </doc>
+<doc>This Pinyin scheme is a romanization system for Wu Chinese.  It was developed through the Wuyuxuetang website was established in 2016. https://en.wikipedia.org/wiki/Romanization_of_Wu_Chinese</doc>
 </scheme>
 <scheme>
 <numeric>321</numeric>
@@ -560,7 +560,7 @@
 </scheme>
 <scheme>
 <numeric>601</numeric>
-<name>iso9985_996</name>
+<name>iso9985_1996</name>
 <presentationName>ISO 9985:1996</presentationName>
 <description>ISO 9985:1996 is the international standard for transliteration of the modern Armenian alphabet.</description>
 <doc>This system is recommended for international bibliographic text interchange. https://en.wikipedia.org/wiki/Romanization_of_Armenian</doc>

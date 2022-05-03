@@ -60,18 +60,10 @@ QUESTIONS?
 <name>Armenian</name>
 <doc>Armenian</doc>
 <iso639-3>hye</iso639-3>
-<iso639-1>ar</iso639-1>
+<iso639-1>hy</iso639-1>
 <script>Armn</script>
 <symbol>ARMENIAN</symbol>
 <aux_name0>Eastern Armenian</aux_name0>
-</language>
-<language>
-<id>99</id>
-<name>Armenian, Western</name>
-<doc>Western Armenian</doc>
-<iso639-3>hyw</iso639-3>
-<script>Armn</script>
-<symbol>WESTERN_ARMENIAN</symbol>
 </language>
 <language>
 <id>89</id>
@@ -167,10 +159,11 @@ QUESTIONS?
 <aux_name0>Eastern Farsi</aux_name0>
 </language>
 <language>
-<id>102</id>
+<id>94</id>
 <name>Dotyali</name>
 <doc>Dotyali</doc>
 <iso639-3>dty</iso639-3>
+<iso639-1>zz</iso639-1>
 <script>Deva</script>
 <symbol>DOTYALI</symbol>
 </language>
@@ -441,14 +434,6 @@ QUESTIONS?
 <symbol>STANDARD_MALAY</symbol>
 </language>
 <language>
-<id>106</id>
-<name>Malay(i)</name>
-<doc>Malay(i)</doc>
-<iso639-3>zlm</iso639-3>
-<script>Latn</script>
-<symbol>MALAY(I)</symbol>
-</language>
-<language>
 <id>32</id>
 <name>Malayalam</name>
 <doc>Malayalam</doc>
@@ -458,7 +443,7 @@ QUESTIONS?
 <symbol>MALAYALAM</symbol>
 </language>
 <language>
-<id>107</id>
+<id>96</id>
 <name>Marathi</name>
 <doc>Marathi</doc>
 <iso639-3>mar</iso639-3>
@@ -467,50 +452,22 @@ QUESTIONS?
 <symbol>MARATHI</symbol>
 </language>
 <language>
-<id>103</id>
+<id>100</id>
 <name>Mongolian</name>
 <doc>Mongolian</doc>
 <iso639-3>mon</iso639-3>
 <iso639-1>mn</iso639-1>
-<script>Mong</script>
+<script>Zyyy</script>
 <symbol>MONGOLIAN</symbol>
-<aux_name0>Mongolian (macrolanguage)</aux_name0>
 </language>
 <language>
-<id>104</id>
-<name>Mongolian, Halh</name>
-<doc>Halh Mongolian</doc>
-<iso639-3>khk</iso639-3>
-<script>Mong</script>
-<symbol>HALH_MONGOLIAN</symbol>
-</language>
-<language>
-<id>105</id>
-<name>Mongolian, Peripheral</name>
-<doc>Peripheral Mongolian</doc>
-<iso639-3>mvf</iso639-3>
-<script>Mong</script>
-<symbol>PERIPHERAL_MONGOLIAN</symbol>
-</language>
-<language>
-<id>100</id>
+<id>95</id>
 <name>Nepali</name>
 <doc>Nepali</doc>
 <iso639-3>nep</iso639-3>
 <iso639-1>ne</iso639-1>
 <script>Deva</script>
 <symbol>NEPALI</symbol>
-<aux_name0>Nepali (macrolanguage)</aux_name0>
-</language>
-<language>
-</language>
-<language>
-<id>101</id>
-<name>Nepali(i)</name>
-<doc>Nepali(i)</doc>
-<iso639-3>npi</iso639-3>
-<script>Deva</script>
-<symbol>NEPALI(I)</symbol>
 </language>
 <language>
 <id>84</id>
@@ -842,59 +799,48 @@ QUESTIONS?
 </language>
 <language>
 <id>90</id>
-<name>Chinese, Mandarin</name>
+<name>Mandarin Chinese</name>
 <doc>Mandarin Chinese</doc>
 <iso639-3>cmn</iso639-3>
+<iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>MANDARIN_CHINESE</symbol>
 </language>
 <language>
 <id>91</id>
-<name>Chinese, Yue</name>
+<name>Yue Chinese</name>
 <doc>Yue Chinese</doc>
 <iso639-3>yue</iso639-3>
+<iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>YUE_CHINESE</symbol>
 <aux_name0>Cantonese</aux_name0>
 </language>
 <language>
 <id>92</id>
-<name>Chinese, Min Nan</name>
+<name>Min Nan Chinese</name>
 <doc>Min Nan Chinese</doc>
 <iso639-3>nan</iso639-3>
+<iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>MIN_NAN_CHINESE</symbol>
 <aux_name0>Minnan</aux_name0>
 </language>
 <language>
 <id>93</id>
-<name>Chinese, Hakka</name>
+<name>Hakka Chinese</name>
 <doc>Hakka Chinese</doc>
 <iso639-3>hak</iso639-3>
+<iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>HAKKA_CHINESE</symbol>
 </language>
 <language>
-<id>94</id>
-<name>Chinese, Gan</name>
-<doc>Gan Chinese</doc>
-<iso639-3>gan</iso639-3>
-<script>Hani</script>
-<symbol>GAN_CHINESE</symbol>
-</language>
-<language>
-<id>95</id>
-<name>Chinese, Xiang</name>
-<doc>Xiang Chinese</doc>
-<iso639-3>hsn</iso639-3>
-<script>Hani</script>
-<symbol>XIANG_CHINESE</symbol>
-</language>
-<language>
-<id>96</id>
-<name>Chinese, Wu</name>
+<id>99</id>
+<name>Wu Chinese</name>
 <doc>Wu Chinese</doc>
 <iso639-3>wuu</iso639-3>
+<iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>WU_CHINESE</symbol>
 </language>
