@@ -56,6 +56,16 @@ QUESTIONS?
 <symbol>ARABIC</symbol>
 </language>
 <language>
+<id>98</id>
+<name>Armenian</name>
+<doc>Armenian</doc>
+<iso639-3>hye</iso639-3>
+<iso639-1>hy</iso639-1>
+<script>Armn</script>
+<symbol>ARMENIAN</symbol>
+<aux_name0>Eastern Armenian</aux_name0>
+</language>
+<language>
 <id>89</id>
 <name>Belarusian</name>
 <doc>Belarusian</doc>
@@ -109,6 +119,7 @@ QUESTIONS?
 <iso639-1>zh</iso639-1>
 <script>Hani</script>
 <symbol>CHINESE</symbol>
+<aux_name0>Chinese (macrolanguage)</aux_name0>
 </language>
 <language>
 <id>7</id>
@@ -146,6 +157,15 @@ QUESTIONS?
 <script>Arab</script>
 <symbol>DARI</symbol>
 <aux_name0>Eastern Farsi</aux_name0>
+</language>
+<language>
+<id>94</id>
+<name>Dotyali</name>
+<doc>Dotyali</doc>
+<iso639-3>dty</iso639-3>
+<iso639-1>zz</iso639-1>
+<script>Deva</script>
+<symbol>DOTYALI</symbol>
 </language>
 <language>
 <id>10</id>
@@ -202,6 +222,15 @@ QUESTIONS?
 <iso639-1>fr</iso639-1>
 <script>Latn</script>
 <symbol>FRENCH</symbol>
+</language>
+<language>
+<id>97</id>
+<name>Georgian</name>
+<doc>Georgian</doc>
+<iso639-3>kat</iso639-3>
+<iso639-1>ka</iso639-1>
+<script>Geor</script>
+<symbol>GEORGIAN</symbol>
 </language>
 <language>
 <id>15</id>
@@ -412,6 +441,33 @@ QUESTIONS?
 <iso639-1>ml</iso639-1>
 <script>Mlym</script>
 <symbol>MALAYALAM</symbol>
+</language>
+<language>
+<id>96</id>
+<name>Marathi</name>
+<doc>Marathi</doc>
+<iso639-3>mar</iso639-3>
+<iso639-1>mr</iso639-1>
+<script>Deva</script>
+<symbol>MARATHI</symbol>
+</language>
+<language>
+<id>100</id>
+<name>Mongolian</name>
+<doc>Mongolian</doc>
+<iso639-3>mon</iso639-3>
+<iso639-1>mn</iso639-1>
+<script>Zyyy</script>
+<symbol>MONGOLIAN</symbol>
+</language>
+<language>
+<id>95</id>
+<name>Nepali</name>
+<doc>Nepali</doc>
+<iso639-3>nep</iso639-3>
+<iso639-1>ne</iso639-1>
+<script>Deva</script>
+<symbol>NEPALI</symbol>
 </language>
 <language>
 <id>84</id>
@@ -740,6 +796,53 @@ QUESTIONS?
 <basis_iso639_1_suffix>_tc</basis_iso639_1_suffix>
 <script>Hant</script>
 <symbol>TRADITIONAL_CHINESE</symbol>
+</language>
+<language>
+<id>90</id>
+<name>Mandarin Chinese</name>
+<doc>Mandarin Chinese</doc>
+<iso639-3>cmn</iso639-3>
+<iso639-1>zz</iso639-1>
+<script>Hani</script>
+<symbol>MANDARIN_CHINESE</symbol>
+</language>
+<language>
+<id>91</id>
+<name>Yue Chinese</name>
+<doc>Yue Chinese</doc>
+<iso639-3>yue</iso639-3>
+<iso639-1>zz</iso639-1>
+<script>Hani</script>
+<symbol>YUE_CHINESE</symbol>
+<aux_name0>Cantonese</aux_name0>
+</language>
+<language>
+<id>92</id>
+<name>Min Nan Chinese</name>
+<doc>Min Nan Chinese</doc>
+<iso639-3>nan</iso639-3>
+<iso639-1>zz</iso639-1>
+<script>Hani</script>
+<symbol>MIN_NAN_CHINESE</symbol>
+<aux_name0>Minnan</aux_name0>
+</language>
+<language>
+<id>93</id>
+<name>Hakka Chinese</name>
+<doc>Hakka Chinese</doc>
+<iso639-3>hak</iso639-3>
+<iso639-1>zz</iso639-1>
+<script>Hani</script>
+<symbol>HAKKA_CHINESE</symbol>
+</language>
+<language>
+<id>99</id>
+<name>Wu Chinese</name>
+<doc>Wu Chinese</doc>
+<iso639-3>wuu</iso639-3>
+<iso639-1>zz</iso639-1>
+<script>Hani</script>
+<symbol>WU_CHINESE</symbol>
 </language>
 <language>
 <id>82</id>
