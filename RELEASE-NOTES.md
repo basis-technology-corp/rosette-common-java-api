@@ -1,5 +1,18 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 37.5.0
+
+Add language codes `Armenian`, `Dotyali`, `Georgian`, `Marathi`, `Mongolian`,  
+`Nepali`, `Mandarin Chinese`, `Yue Chinese`,  `Min Nan Chinese`, `Hakka Chinese`,  
+`Wu Chinese`  
+Transliteration Schemes added:     
+`GOST 16876-71, system B` `GOST 7.79-2000_2` (Cyrillic), `ISO 9985:1996` (Armenian),  
+`ISO 9984:1996` `National 2002` (Georgian), `LSHK` `Cantonese Pinyin` (Yue Chinese),  
+`Wugniu pinyin` `Quian's Pin` `Wu Chinese Society pinyin` (Wu Chinese),  
+`Hakka Pinyin` (Hakka Chinese), `SASM/GNC (broad)` (Mongolian, Tibetan, Uyghur),  
+`Bbanlam pingyim` (Min Nan Chinese), `ISO 15919:2001` `ITRANS` (Devangari/Indic scripts),  
+`IABT` (Bengali)
+
 ## 37.4.0
 
 Add types `PUBLICATION` and `ADDRESS_FIELD`.
