@@ -11,7 +11,7 @@ Transliteration Schemes added:
 `Wugniu pinyin` `Quian's Pin` `Wu Chinese Society pinyin` (Wu Chinese),  
 `Hakka Pinyin` (Hakka Chinese), `SASM/GNC (broad)` (Mongolian, Tibetan, Uyghur),  
 `Bbanlam pingyim` (Min Nan Chinese), `ISO 15919:2001` `ITRANS` (Devangari/Indic scripts),  
-`IAB
+`IABT` (Bengali)
 
 ## 37.4.0
 
