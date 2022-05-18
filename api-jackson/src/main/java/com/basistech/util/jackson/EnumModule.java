@@ -30,12 +30,6 @@ import com.fasterxml.jackson.databind.module.SimpleSerializers;
  * instead.
  */
 public class EnumModule extends SimpleModule {
-
-
-    public EnumModule() {
-        super(ModuleVersion.VERSION);
-    }
-
     public void setupModule(SetupContext context) {
         super.setupModule(context);
         context.setMixInAnnotations(LanguageCode.class, LanguageCodeMixin.class);
@@ -56,5 +50,11 @@ public class EnumModule extends SimpleModule {
         final EnumModule module = new EnumModule();
         mapper.registerModule(module);
         return mapper;
+    }
+
+    @Override
+    public Object getTypeId() {
+        // To match the behavior with Jackson 2.12
+        return getClass().getName();
     }
 }

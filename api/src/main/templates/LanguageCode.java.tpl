@@ -114,7 +114,8 @@ if (include_aux_name):
 declaration += ")"
 
 %]
-    /** <table border="1" summary='Language Codes'>
+    /** <table border="1">
+        <caption>Language Codes</caption>
         <tr >
             <td style='width: 100;'>[= language['name'] =]</td >
             <td style='width: 100;'>[= language['iso639-3'] =]</td >

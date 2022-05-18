@@ -17,7 +17,7 @@
 package com.basistech.rosette;
 
 /**
- * Unchecked exception thrown when Rosette detects that {@link java.lang.Thread#interrupted()} returns <tt>true</tt>.
+ * Unchecked exception thrown when Rosette detects that {@link java.lang.Thread#interrupted()} returns {@code true}.
  * Several Rosette components check for interrupts during long-running computations to allow applications
  * to follow the interrupt pattern documented in the {@link java.lang.Thread} class. Because most Rosette applications
  * are not concerned with thread interrupts, Rosette throws this unchecked exception rather than include
