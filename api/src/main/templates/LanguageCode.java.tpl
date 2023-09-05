@@ -36,6 +36,9 @@ The nonstandard <code>LanguageCodes</code> are:
 <li>{@link #SIMPLIFIED_CHINESE SIMPLIFIED_CHINESE}</li>
 <li>{@link #TRADITIONAL_CHINESE TRADITIONAL_CHINESE}</li>
 <li>{@link #ENGLISH_UPPERCASE ENGLISH_UPPERCASE}</li>
+<li>{@link #STANDARD_MALAY STANDARD_MALAY}</li>
+<li>{@link #NORTH_KOREAN NORTH_KOREAN}</li>
+<li>{@link #SOUTH_KOREAN SOUTH_KOREAN}</li>
 </ul>
 
 <code>LanguageCodes</code> have the following attributes.
