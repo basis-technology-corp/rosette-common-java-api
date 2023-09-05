@@ -54,6 +54,32 @@ For standard <code>LanguageCodes</code>, it is a three-letter ISO 639-3 code.  F
 <code>LanguageCodes</code>, it is a three-letter code different from any ISO 639-3 code.  No two
 <code>LanguageCodes</code> have the same value of this attribute.
 
+<li>{@linkplain #ISO639_2B() ISO 639-2B code}:
+
+For standard <code>LanguageCodes</code>, it is a three-letter ISO 639-2B code.  For nonstandard
+<code>LanguageCodes</code>, it is a three-letter code different from any ISO 639-2B code.  No two
+<code>LanguageCodes</code> have the same value of this attribute. ISO 639-2B codes are the same as
+ISO 639-3 codes in most cases; however there are 16 <code>LanguageCodes</code> where they differ:
+
+<ul>
+<li>{@link #ALBANIAN ALBANIAN}</li>
+<li>{@link #ARMENIAN ARMENIAN}</li>
+<li>{@link #BURMESE BURMESE}</li>
+<li>{@link #CHINESE CHINESE}</li>
+<li>{@link #CZECH CZECH}</li>
+<li>{@link #DUTCH DUTCH}</li>
+<li>{@link #FRENCH FRENCH}</li>
+<li>{@link #GEORGIAN GEORGIAN}</li>
+<li>{@link #GERMAN GERMAN}</li>
+<li>{@link #GREEK GREEK}</li>
+<li>{@link #ICELANDIC ICELANDIC}</li>
+<li>{@link #MACEDONIAN MACEDONIAN}</li>
+<li>{@link #MALAY MALAY}</li>
+<li>{@link #PERSIAN PERSIAN}</li>
+<li>{@link #ROMANIAN ROMANIAN}</li>
+<li>{@link #SLOVAK SLOVAK}</li>
+</ul>
+
 <li>{@linkplain #ISO639_1() ISO 639-1 code}:
 
 In the ISO 639-3 specification, all languages have a three-letter code, and some languages also have a two-letter ISO
@@ -81,8 +107,8 @@ A unique integer for each LanguageCode.  It is not necessarily the same value as
 
 [< if 0 >]  
 Set include_aux_name to be non-zero (e.g 1) if the code related to auxiliary names are to be included in the auto
-generated file.  This will add a new String[] field to the enum LanguageCode, which is a String[] of all the auxilary
-names for the lanugage.
+generated file.  This will add a new String[] field to the enum LanguageCode, which is a String[] of all the auxiliary
+names for the language.
 [< end-if >] 
 [% include_aux_name = 0 %]  
 public enum LanguageCode {
@@ -97,6 +123,7 @@ if "basis_iso639_1_suffix" in language:
 declaration  = (                    language['symbol']
                 + " ("            + language['id']
                 + ", \""          + language['iso639-3']
+                + "\", \""        + language['iso639-2b']
                 + "\", \""        + iso639_1
                 + "\", \""        + language['name']
                 + "\", ISO15924." + language['script']
@@ -119,6 +146,7 @@ declaration += ")"
         <tr >
             <td style='width: 100;'>[= language['name'] =]</td >
             <td style='width: 100;'>[= language['iso639-3'] =]</td >
+            <td style='width: 100;'>[= language['iso639-2b'] =]</td >
             <td style='width: 100;'>[= iso639_1 =]</td >
             <td style='width: 100;'>[= language['script'] =]</td >
             <td style='width: 100;'>[= language['id'] =]</td >
@@ -130,15 +158,17 @@ declaration += ")"
 	
     private int id;
     private String iso3;
+    private String iso2b;
     private String iso1;
     private String name;
     private ISO15924 defaultScript;
     [< if include_aux_name >]private String[] aux_names;[< end-if >]
     
 [% aux_name_param = ", String[] aux_names " if include_aux_name else ""
-%]    LanguageCode(int id, String iso3, String iso1, String name, ISO15924 defaultScript [= aux_name_param =]) {
+%]    LanguageCode(int id, String iso3, String iso2b, String iso1, String name, ISO15924 defaultScript [= aux_name_param =]) {
         this.id = id;
         this.iso3 = iso3;
+        this.iso2b = iso2b;
         this.iso1 = iso1;
         this.name = name;
         this.defaultScript = defaultScript;
@@ -160,7 +190,15 @@ declaration += ")"
     public String ISO639_1() {
         return iso1;
     }
-    
+
+    /**
+     * Returns the ISO639-2b code attribute.
+     * @return the ISO639-2b code attribute.
+     */
+    public String ISO639_2B() {
+        return iso2b;
+    }
+
     /**
      * Returns the ISO639-3 code attribute.
      * @return the ISO639-3 code attribute.
@@ -279,7 +317,9 @@ declaration += ")"
         else
             result = iso639_3_index.get(iso639);
         if (result == null)
-            throw new IllegalArgumentException("Invalid ISO639 " + iso639);
+            result = iso639_2b_index.get(iso639);
+            if (result == null)
+                throw new IllegalArgumentException("Invalid ISO639 " + iso639);
         else
             return result;
     }
@@ -319,6 +359,7 @@ declaration += ")"
     // version used linear search), but I'm making this sub-linear because the C++ version is sub-linear.
     private static Map<String, LanguageCode> iso639_1_index;
     private static Map<String, LanguageCode> iso639_3_index;
+    private static Map<String, LanguageCode> iso639_2b_index;
     private static int[] id_index; // id_index[id] = position of language code #id in values()
     private static final float HASHMAP_DEFAULT_LOAD_FACTOR = 0.75f;
     //
@@ -331,6 +372,7 @@ declaration += ")"
         int indexCapacity = (int) (values().length / HASHMAP_DEFAULT_LOAD_FACTOR);
         iso639_1_index = new HashMap<String, LanguageCode>(indexCapacity);
         iso639_3_index = new HashMap<String, LanguageCode>(indexCapacity);
+        iso639_2b_index = new HashMap<String, LanguageCode>(indexCapacity);
         id_index = new int[values().length];
         LanguageCode[] values = values();
         for (int valuesIdx = 0; valuesIdx < values.length; valuesIdx++)
@@ -339,6 +381,7 @@ declaration += ")"
             if (! code.ISO639_1().equals(UNCODED_ISO639_1))
                 iso639_1_index.put(code.ISO639_1(), code);
             iso639_3_index.put(code.ISO639_3(), code);
+            iso639_2b_index.put(code.ISO639_2B(), code);
             id_index[code.languageID()] = valuesIdx;
         }
     }
