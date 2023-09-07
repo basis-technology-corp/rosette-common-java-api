@@ -288,9 +288,9 @@ declaration += ")"
 
     /**
      * Returns whether there is a <code>LanguageCode</code> with ISO code attribute <code>iso639</code>.
-     * @param iso639 An ISO code attribute of a <code>LanguageCode</code>: either its ISO 639-3 code attribute, or its
-     * ISO 639-1 code attribute.  The comparison is case-sensitive.  Returns <code>false</code> for {@link
-     * #UNCODED_ISO639_1 UNCODED_ISO639_1}.
+     * @param iso639 An ISO code attribute of a <code>LanguageCode</code>: either its ISO 639-3 code attribute, its
+     * ISO 639-2B code attribute, or its ISO 639-1 code attribute.  The comparison is case-sensitive.  Returns
+     * <code>false</code> for {@link #UNCODED_ISO639_1 UNCODED_ISO639_1}.
      * @return whether there is a <code>LanguageCode</code> with ISO code attribute <code>iso639</code>.
      */
     // See LanguageIDIsValid for notes.
@@ -305,9 +305,9 @@ declaration += ")"
     
     /**
      * Returns the <code>LanguageCode</code> with ISO code attribute <code>iso639</code>.
-     * @param iso639 An ISO code attribute of a <code>LanguageCode</code>: either its ISO 639-3 code attribute, or its
-     * ISO 639-1 code attribute (but not {@link #UNCODED_ISO639_1 UNCODED_ISO639_1}, because that value does not
-     * uniquely identify a language code.)  The comparison is case-sensitive.
+     * @param iso639 An ISO code attribute of a <code>LanguageCode</code>: either its ISO 639-3 code attribute, its
+     * ISO 639-2B attribute, or its ISO 639-1 code attribute (but not {@link #UNCODED_ISO639_1 UNCODED_ISO639_1},
+     * because that value does not uniquely identify a language code.)  The comparison is case-sensitive.
      * @return the <code>LanguageCode</code> with ISO code attribute <code>iso639</code>.
      * @throws IllegalArgumentException if there is no such <code>LanguageCode</code>, or if <code>iso639</code> equals
      * {@link #UNCODED_ISO639_1 UNCODED_ISO639_1}.
