@@ -325,8 +325,7 @@ declaration += ")"
                 throw new IllegalArgumentException("Invalid ISO639 " + iso639);
             }
         }
-        else
-            return result;
+        return result;
     }
     
     /**
