@@ -36,7 +36,6 @@ The nonstandard <code>LanguageCodes</code> are:
 <li>{@link #SIMPLIFIED_CHINESE SIMPLIFIED_CHINESE}</li>
 <li>{@link #TRADITIONAL_CHINESE TRADITIONAL_CHINESE}</li>
 <li>{@link #ENGLISH_UPPERCASE ENGLISH_UPPERCASE}</li>
-<li>{@link #STANDARD_MALAY STANDARD_MALAY}</li>
 <li>{@link #NORTH_KOREAN NORTH_KOREAN}</li>
 <li>{@link #SOUTH_KOREAN SOUTH_KOREAN}</li>
 </ul>
@@ -89,7 +88,8 @@ In the ISO 639-3 specification, all languages have a three-letter code, and some
 639-1 code.
 
 For standard <code>LanguageCodes</code>, this attribute is either a two-letter ISO 639-1 code, or {@link
-#UNCODED_ISO639_1 UNCODED_ISO639_1} (<code>"zz"</code>).  For nonstandard <code>LanguageCodes</code>, this attribute is
+#UNCODED_ISO639_1 UNCODED_ISO639_1} (<code>"zz"</code>), with the exception of {@link #STANDARD_MALAY STANDARD_MALAY},
+which uses a nonstandard five-character code.  For nonstandard <code>LanguageCodes</code>, this attribute is
 either <code>"xx"</code> for {@link #UNKNOWN UNKNOWN}, or a five-letter code of the form <code>ab_cde</code>.  Except
 for {@link #UNCODED_ISO639_1 UNCODED_ISO639_1}, no two <code>LanguageCodes</code> have the same value of this attribute.
 
@@ -319,10 +319,12 @@ declaration += ")"
             result = iso639_1_index.get(iso639);
         else
             result = iso639_3_index.get(iso639);
-        if (result == null)
+        if (result == null) {
             result = iso639_2b_index.get(iso639);
-            if (result == null)
+            if (result == null) {
                 throw new IllegalArgumentException("Invalid ISO639 " + iso639);
+            }
+        }
         else
             return result;
     }
