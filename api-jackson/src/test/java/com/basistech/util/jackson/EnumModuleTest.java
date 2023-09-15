@@ -66,6 +66,15 @@ public class EnumModuleTest {
     }
 
     @Test
+    public void languageCode2B() throws Exception {
+        // can we still deserialize 2B codes?
+        LanguageCode code = mapper.readValue("\"chi\"", LanguageCode.class);
+        assertEquals(LanguageCode.CHINESE, code);
+        // should still serialize to 3 code
+        assertEquals("\"zho\"", mapper.writeValueAsString(LanguageCode.CHINESE));
+    }
+
+    @Test
     public void languageCodeKey() throws Exception {
         Map<LanguageCode, String> map = Maps.newHashMap();
         map.put(LanguageCode.CHINESE, "dumpling");

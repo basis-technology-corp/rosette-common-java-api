@@ -15,6 +15,7 @@ QUESTIONS?
 <name>Unknown</name>
 <doc>Unknown</doc>
 <iso639-3>xxx</iso639-3>
+<iso639-2b>xxx</iso639-2b>
 <iso639-1>xx</iso639-1>
 <script>Zyyy</script>
 <symbol>UNKNOWN</symbol>
@@ -24,6 +25,7 @@ QUESTIONS?
 <name>Afrikaans</name>
 <doc>Afrikaans</doc>
 <iso639-3>afr</iso639-3>
+<iso639-2b>afr</iso639-2b>
 <iso639-1>af</iso639-1>
 <script>Latn</script>
 <symbol>AFRIKAANS</symbol>
@@ -33,6 +35,7 @@ QUESTIONS?
 <name>Albanian</name>
 <doc>Albanian</doc>
 <iso639-3>sqi</iso639-3>
+<iso639-2b>alb</iso639-2b>
 <iso639-1>sq</iso639-1>
 <script>Latn</script>
 <symbol>ALBANIAN</symbol>
@@ -42,6 +45,7 @@ QUESTIONS?
 <name>Amharic</name>
 <doc>Amharic</doc>
 <iso639-3>amh</iso639-3>
+<iso639-2b>amh</iso639-2b>
 <iso639-1>am</iso639-1>
 <script>Ethi</script>
 <symbol>AMHARIC</symbol>
@@ -51,6 +55,7 @@ QUESTIONS?
 <name>Arabic</name>
 <doc>Arabic</doc>
 <iso639-3>ara</iso639-3>
+<iso639-2b>ara</iso639-2b>
 <iso639-1>ar</iso639-1>
 <script>Arab</script>
 <symbol>ARABIC</symbol>
@@ -60,6 +65,7 @@ QUESTIONS?
 <name>Armenian</name>
 <doc>Armenian</doc>
 <iso639-3>hye</iso639-3>
+<iso639-2b>arm</iso639-2b>
 <iso639-1>hy</iso639-1>
 <script>Armn</script>
 <symbol>ARMENIAN</symbol>
@@ -70,6 +76,7 @@ QUESTIONS?
 <name>Belarusian</name>
 <doc>Belarusian</doc>
 <iso639-3>bel</iso639-3>
+<iso639-2b>bel</iso639-2b>
 <iso639-1>be</iso639-1>
 <script>Cyrl</script>
 <symbol>BELARUSIAN</symbol>
@@ -79,6 +86,7 @@ QUESTIONS?
 <name>Bengali</name>
 <doc>Bengali</doc>
 <iso639-3>ben</iso639-3>
+<iso639-2b>ben</iso639-2b>
 <iso639-1>bn</iso639-1>
 <script>Beng</script>
 <symbol>BENGALI</symbol>
@@ -88,6 +96,7 @@ QUESTIONS?
 <name>Bulgarian</name>
 <doc>Bulgarian</doc>
 <iso639-3>bul</iso639-3>
+<iso639-2b>bul</iso639-2b>
 <iso639-1>bg</iso639-1>
 <script>Cyrl</script>
 <symbol>BULGARIAN</symbol>
@@ -97,6 +106,7 @@ QUESTIONS?
 <name>Burmese</name>
 <doc>Burmese</doc>
 <iso639-3>mya</iso639-3>
+<iso639-2b>bur</iso639-2b>
 <iso639-1>my</iso639-1>
 <script>Mymr</script>
 <symbol>BURMESE</symbol>
@@ -106,6 +116,7 @@ QUESTIONS?
 <name>Catalan</name>
 <doc>Catalan</doc>
 <iso639-3>cat</iso639-3>
+<iso639-2b>cat</iso639-2b>
 <iso639-1>ca</iso639-1>
 <script>Latn</script>
 <symbol>CATALAN</symbol>
@@ -116,6 +127,7 @@ QUESTIONS?
 <name>Chinese</name>
 <doc>Chinese</doc>
 <iso639-3>zho</iso639-3>
+<iso639-2b>chi</iso639-2b>
 <iso639-1>zh</iso639-1>
 <script>Hani</script>
 <symbol>CHINESE</symbol>
@@ -126,6 +138,7 @@ QUESTIONS?
 <name>Croatian</name>
 <doc>Croatian</doc>
 <iso639-3>hrv</iso639-3>
+<iso639-2b>hrv</iso639-2b>
 <iso639-1>hr</iso639-1>
 <script>Latn</script>
 <symbol>CROATIAN</symbol>
@@ -135,6 +148,7 @@ QUESTIONS?
 <name>Czech</name>
 <doc>Czech</doc>
 <iso639-3>ces</iso639-3>
+<iso639-2b>cze</iso639-2b>
 <iso639-1>cs</iso639-1>
 <script>Latn</script>
 <symbol>CZECH</symbol>
@@ -144,6 +158,7 @@ QUESTIONS?
 <name>Danish</name>
 <doc>Danish</doc>
 <iso639-3>dan</iso639-3>
+<iso639-2b>dan</iso639-2b>
 <iso639-1>da</iso639-1>
 <script>Latn</script>
 <symbol>DANISH</symbol>
@@ -153,6 +168,7 @@ QUESTIONS?
 <name>Dari</name>
 <doc>Dari</doc>
 <iso639-3>prs</iso639-3>
+<iso639-2b>prs</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Arab</script>
 <symbol>DARI</symbol>
@@ -163,6 +179,7 @@ QUESTIONS?
 <name>Dotyali</name>
 <doc>Dotyali</doc>
 <iso639-3>dty</iso639-3>
+<iso639-2b>dty</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Deva</script>
 <symbol>DOTYALI</symbol>
@@ -172,6 +189,7 @@ QUESTIONS?
 <name>Dutch</name>
 <doc>Dutch</doc>
 <iso639-3>nld</iso639-3>
+<iso639-2b>dut</iso639-2b>
 <iso639-1>nl</iso639-1>
 <script>Latn</script>
 <symbol>DUTCH</symbol>
@@ -182,6 +200,7 @@ QUESTIONS?
 <name>English</name>
 <doc>English</doc>
 <iso639-3>eng</iso639-3>
+<iso639-2b>eng</iso639-2b>
 <iso639-1>en</iso639-1>
 <script>Latn</script>
 <symbol>ENGLISH</symbol>
@@ -191,6 +210,7 @@ QUESTIONS?
 <name>English Uppercase</name>
 <doc>English Uppercase</doc>
 <iso639-3>uen</iso639-3>
+<iso639-2b>uen</iso639-2b>
 <iso639-1>en</iso639-1>
 <basis_iso639_1_suffix>_uc</basis_iso639_1_suffix>
 <script>Latn</script>
@@ -201,6 +221,7 @@ QUESTIONS?
 <name>Estonian</name>
 <doc>Estonian</doc>
 <iso639-3>est</iso639-3>
+<iso639-2b>est</iso639-2b>
 <iso639-1>et</iso639-1>
 <script>Latn</script>
 <symbol>ESTONIAN</symbol>
@@ -210,6 +231,7 @@ QUESTIONS?
 <name>Finnish</name>
 <doc>Finnish</doc>
 <iso639-3>fin</iso639-3>
+<iso639-2b>fin</iso639-2b>
 <iso639-1>fi</iso639-1>
 <script>Latn</script>
 <symbol>FINNISH</symbol>
@@ -219,6 +241,7 @@ QUESTIONS?
 <name>French</name>
 <doc>French</doc>
 <iso639-3>fra</iso639-3>
+<iso639-2b>fre</iso639-2b>
 <iso639-1>fr</iso639-1>
 <script>Latn</script>
 <symbol>FRENCH</symbol>
@@ -228,6 +251,7 @@ QUESTIONS?
 <name>Georgian</name>
 <doc>Georgian</doc>
 <iso639-3>kat</iso639-3>
+<iso639-2b>geo</iso639-2b>
 <iso639-1>ka</iso639-1>
 <script>Geor</script>
 <symbol>GEORGIAN</symbol>
@@ -237,6 +261,7 @@ QUESTIONS?
 <name>German</name>
 <doc>German</doc>
 <iso639-3>deu</iso639-3>
+<iso639-2b>ger</iso639-2b>
 <iso639-1>de</iso639-1>
 <script>Latn</script>
 <symbol>GERMAN</symbol>
@@ -246,6 +271,7 @@ QUESTIONS?
 <name>Greek</name>
 <doc>Greek</doc>
 <iso639-3>ell</iso639-3>
+<iso639-2b>gre</iso639-2b>
 <iso639-1>el</iso639-1>
 <script>Grek</script>
 <symbol>GREEK</symbol>
@@ -256,6 +282,7 @@ QUESTIONS?
 <name>Gujarati</name>
 <doc>Gujarati</doc>
 <iso639-3>guj</iso639-3>
+<iso639-2b>guj</iso639-2b>
 <iso639-1>gu</iso639-1>
 <script>Gujr</script>
 <symbol>GUJARATI</symbol>
@@ -265,6 +292,7 @@ QUESTIONS?
 <name>Hebrew</name>
 <doc>Hebrew</doc>
 <iso639-3>heb</iso639-3>
+<iso639-2b>heb</iso639-2b>
 <iso639-1>he</iso639-1>
 <script>Hebr</script>
 <symbol>HEBREW</symbol>
@@ -274,6 +302,7 @@ QUESTIONS?
 <name>Hindi</name>
 <doc>Hindi</doc>
 <iso639-3>hin</iso639-3>
+<iso639-2b>hin</iso639-2b>
 <iso639-1>hi</iso639-1>
 <script>Deva</script>
 <symbol>HINDI</symbol>
@@ -283,6 +312,7 @@ QUESTIONS?
 <name>Hungarian</name>
 <doc>Hungarian</doc>
 <iso639-3>hun</iso639-3>
+<iso639-2b>hun</iso639-2b>
 <iso639-1>hu</iso639-1>
 <script>Latn</script>
 <symbol>HUNGARIAN</symbol>
@@ -292,6 +322,7 @@ QUESTIONS?
 <name>Icelandic</name>
 <doc>Icelandic</doc>
 <iso639-3>isl</iso639-3>
+<iso639-2b>ice</iso639-2b>
 <iso639-1>is</iso639-1>
 <script>Latn</script>
 <symbol>ICELANDIC</symbol>
@@ -301,6 +332,7 @@ QUESTIONS?
 <name>Indonesian</name>
 <doc>Indonesian</doc>
 <iso639-3>ind</iso639-3>
+<iso639-2b>ind</iso639-2b>
 <iso639-1>id</iso639-1>
 <script>Latn</script>
 <symbol>INDONESIAN</symbol>
@@ -310,6 +342,7 @@ QUESTIONS?
 <name>Italian</name>
 <doc>Italian</doc>
 <iso639-3>ita</iso639-3>
+<iso639-2b>ita</iso639-2b>
 <iso639-1>it</iso639-1>
 <script>Latn</script>
 <symbol>ITALIAN</symbol>
@@ -319,6 +352,7 @@ QUESTIONS?
 <name>Japanese</name>
 <doc>Japanese</doc>
 <iso639-3>jpn</iso639-3>
+<iso639-2b>jpn</iso639-2b>
 <iso639-1>ja</iso639-1>
 <script>Hani</script>
 <symbol>JAPANESE</symbol>
@@ -328,6 +362,7 @@ QUESTIONS?
 <name>Kannada</name>
 <doc>Kannada</doc>
 <iso639-3>kan</iso639-3>
+<iso639-2b>kan</iso639-2b>
 <iso639-1>kn</iso639-1>
 <script>Knda</script>
 <symbol>KANNADA</symbol>
@@ -337,6 +372,7 @@ QUESTIONS?
 <name>Khmer</name>
 <doc>Khmer</doc>
 <iso639-3>khm</iso639-3>
+<iso639-2b>khm</iso639-2b>
 <iso639-1>km</iso639-1>
 <script>Khmr</script>
 <symbol>KHMER</symbol>
@@ -346,6 +382,7 @@ QUESTIONS?
 <name>Kinyarwanda</name>
 <doc>Kinyarwanda</doc>
 <iso639-3>kin</iso639-3>
+<iso639-2b>kin</iso639-2b>
 <iso639-1>rw</iso639-1>
 <script>Latn</script>
 <symbol>KINYARWANDA</symbol>
@@ -355,6 +392,7 @@ QUESTIONS?
 <name>Korean</name>
 <doc>Korean</doc>
 <iso639-3>kor</iso639-3>
+<iso639-2b>kor</iso639-2b>
 <iso639-1>ko</iso639-1>
 <script>Hang</script>
 <symbol>KOREAN</symbol>
@@ -364,6 +402,7 @@ QUESTIONS?
 <name>Kurdish</name>
 <doc>Kurdish</doc>
 <iso639-3>kur</iso639-3>
+<iso639-2b>kur</iso639-2b>
 <iso639-1>ku</iso639-1>
 <script>Arab</script>
 <symbol>KURDISH</symbol>
@@ -373,6 +412,7 @@ QUESTIONS?
 <name>Lao</name>
 <doc>Lao</doc>
 <iso639-3>lao</iso639-3>
+<iso639-2b>lao</iso639-2b>
 <iso639-1>lo</iso639-1>
 <script>Laoo</script>
 <symbol>LAO</symbol>
@@ -382,6 +422,7 @@ QUESTIONS?
 <name>Latvian</name>
 <doc>Latvian</doc>
 <iso639-3>lav</iso639-3>
+<iso639-2b>lav</iso639-2b>
 <iso639-1>lv</iso639-1>
 <script>Latn</script>
 <symbol>LATVIAN</symbol>
@@ -391,6 +432,7 @@ QUESTIONS?
 <name>Lithuanian</name>
 <doc>Lithuanian</doc>
 <iso639-3>lit</iso639-3>
+<iso639-2b>lit</iso639-2b>
 <iso639-1>lt</iso639-1>
 <script>Latn</script>
 <symbol>LITHUANIAN</symbol>
@@ -400,6 +442,7 @@ QUESTIONS?
 <name>Macedonian</name>
 <doc>Macedonian</doc>
 <iso639-3>mkd</iso639-3>
+<iso639-2b>mac</iso639-2b>
 <iso639-1>mk</iso639-1>
 <script>Cyrl</script>
 <symbol>MACEDONIAN</symbol>
@@ -409,6 +452,7 @@ QUESTIONS?
 <name>Malagasy</name>
 <doc>Malagasy</doc>
 <iso639-3>mlg</iso639-3>
+<iso639-2b>mlg</iso639-2b>
 <iso639-1>mg</iso639-1>
 <script>Latn</script>
 <symbol>MALAGASY</symbol>
@@ -418,6 +462,7 @@ QUESTIONS?
 <name>Malay</name>
 <doc>Malay</doc>
 <iso639-3>msa</iso639-3>
+<iso639-2b>may</iso639-2b>
 <iso639-1>ms</iso639-1>
 <script>Latn</script>
 <symbol>MALAY</symbol>
@@ -428,6 +473,7 @@ QUESTIONS?
 <name>Malay, Standard</name>
 <doc>Standard Malay</doc>
 <iso639-3>zsm</iso639-3>
+<iso639-2b>zsm</iso639-2b>
 <iso639-1>ms</iso639-1>
 <basis_iso639_1_suffix>_sd</basis_iso639_1_suffix>
 <script>Latn</script>
@@ -438,6 +484,7 @@ QUESTIONS?
 <name>Malayalam</name>
 <doc>Malayalam</doc>
 <iso639-3>mal</iso639-3>
+<iso639-2b>mal</iso639-2b>
 <iso639-1>ml</iso639-1>
 <script>Mlym</script>
 <symbol>MALAYALAM</symbol>
@@ -447,6 +494,7 @@ QUESTIONS?
 <name>Marathi</name>
 <doc>Marathi</doc>
 <iso639-3>mar</iso639-3>
+<iso639-2b>mar</iso639-2b>
 <iso639-1>mr</iso639-1>
 <script>Deva</script>
 <symbol>MARATHI</symbol>
@@ -456,6 +504,7 @@ QUESTIONS?
 <name>Mongolian</name>
 <doc>Mongolian</doc>
 <iso639-3>mon</iso639-3>
+<iso639-2b>mon</iso639-2b>
 <iso639-1>mn</iso639-1>
 <script>Zyyy</script>
 <symbol>MONGOLIAN</symbol>
@@ -465,6 +514,7 @@ QUESTIONS?
 <name>Nepali</name>
 <doc>Nepali</doc>
 <iso639-3>nep</iso639-3>
+<iso639-2b>nep</iso639-2b>
 <iso639-1>ne</iso639-1>
 <script>Deva</script>
 <symbol>NEPALI</symbol>
@@ -474,6 +524,7 @@ QUESTIONS?
 <name>Korean, North</name>
 <doc>North Korean</doc>
 <iso639-3>qkp</iso639-3>
+<iso639-2b>qkp</iso639-2b>
 <iso639-1>ko</iso639-1>
 <basis_iso639_1_suffix>_kp</basis_iso639_1_suffix>
 <script>Hang</script>
@@ -484,6 +535,7 @@ QUESTIONS?
 <name>Norwegian</name>
 <doc>Norwegian</doc>
 <iso639-3>nor</iso639-3>
+<iso639-2b>nor</iso639-2b>
 <iso639-1>no</iso639-1>
 <script>Latn</script>
 <symbol>NORWEGIAN</symbol>
@@ -493,6 +545,7 @@ QUESTIONS?
 <name>Norwegian Bokmal</name>
 <doc>Norwegian Bokmal</doc>
 <iso639-3>nob</iso639-3>
+<iso639-2b>nob</iso639-2b>
 <iso639-1>nb</iso639-1>
 <script>Latn</script>
 <symbol>NORWEGIAN_BOKMAL</symbol>
@@ -503,6 +556,7 @@ QUESTIONS?
 <name>Norwegian Nynorsk</name>
 <doc>Norwegian Nynorsk</doc>
 <iso639-3>nno</iso639-3>
+<iso639-2b>nno</iso639-2b>
 <iso639-1>nn</iso639-1>
 <script>Latn</script>
 <symbol>NORWEGIAN_NYNORSK</symbol>
@@ -512,6 +566,7 @@ QUESTIONS?
 <name>Nyanja</name>
 <doc>Nyanja</doc>
 <iso639-3>nya</iso639-3>
+<iso639-2b>nya</iso639-2b>
 <iso639-1>ny</iso639-1>
 <script>Latn</script>
 <symbol>NYANJA</symbol>
@@ -523,6 +578,7 @@ QUESTIONS?
 <name>Pedi</name>
 <doc>Pedi</doc>
 <iso639-3>nso</iso639-3>
+<iso639-2b>nso</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Latn</script>
 <symbol>PEDI</symbol>
@@ -534,6 +590,7 @@ QUESTIONS?
 <name>Persian</name>
 <doc>Persian</doc>
 <iso639-3>fas</iso639-3>
+<iso639-2b>per</iso639-2b>
 <iso639-1>fa</iso639-1>
 <script>Arab</script>
 <symbol>PERSIAN</symbol>
@@ -543,6 +600,7 @@ QUESTIONS?
 <name>Plateau Malagasy</name>
 <doc>Plateau Malagasy</doc>
 <iso639-3>plt</iso639-3>
+<iso639-2b>plt</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Latn</script>
 <symbol>PLATEAU_MALAGASY</symbol>
@@ -552,6 +610,7 @@ QUESTIONS?
 <name>Polish</name>
 <doc>Polish</doc>
 <iso639-3>pol</iso639-3>
+<iso639-2b>pol</iso639-2b>
 <iso639-1>pl</iso639-1>
 <script>Latn</script>
 <symbol>POLISH</symbol>
@@ -561,6 +620,7 @@ QUESTIONS?
 <name>Portuguese</name>
 <doc>Portuguese</doc>
 <iso639-3>por</iso639-3>
+<iso639-2b>por</iso639-2b>
 <iso639-1>pt</iso639-1>
 <script>Latn</script>
 <symbol>PORTUGUESE</symbol>
@@ -570,6 +630,7 @@ QUESTIONS?
 <name>Pushto</name>
 <doc>Pushto</doc>
 <iso639-3>pus</iso639-3>
+<iso639-2b>pus</iso639-2b>
 <iso639-1>ps</iso639-1>
 <script>Arab</script>
 <symbol>PUSHTO</symbol>
@@ -579,6 +640,7 @@ QUESTIONS?
 <name>Romanian</name>
 <doc>Romanian</doc>
 <iso639-3>ron</iso639-3>
+<iso639-2b>rum</iso639-2b>
 <iso639-1>ro</iso639-1>
 <script>Latn</script>
 <symbol>ROMANIAN</symbol>
@@ -590,6 +652,7 @@ QUESTIONS?
 <name>Rundi</name>
 <doc>Rundi</doc>
 <iso639-3>run</iso639-3>
+<iso639-2b>run</iso639-2b>
 <iso639-1>rn</iso639-1>
 <script>Latn</script>
 <symbol>RUNDI</symbol>
@@ -599,6 +662,7 @@ QUESTIONS?
 <name>Russian</name>
 <doc>Russian</doc>
 <iso639-3>rus</iso639-3>
+<iso639-2b>rus</iso639-2b>
 <iso639-1>ru</iso639-1>
 <script>Cyrl</script>
 <symbol>RUSSIAN</symbol>
@@ -608,6 +672,7 @@ QUESTIONS?
 <name>Sango</name>
 <doc>Sango</doc>
 <iso639-3>sag</iso639-3>
+<iso639-2b>sag</iso639-2b>
 <iso639-1>sg</iso639-1>
 <script>Latn</script>
 <symbol>SANGO</symbol>
@@ -617,6 +682,7 @@ QUESTIONS?
 <name>Serbian</name>
 <doc>Serbian</doc>
 <iso639-3>srp</iso639-3>
+<iso639-2b>srp</iso639-2b>
 <iso639-1>sr</iso639-1>
 <script>Zyyy</script>
 <symbol>SERBIAN</symbol>
@@ -626,6 +692,7 @@ QUESTIONS?
 <name>Seselwa Creole French</name>
 <doc>Seselwa Creole French</doc>
 <iso639-3>crs</iso639-3>
+<iso639-2b>crs</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Latn</script>
 <symbol>SESELWA_CREOLE_FRENCH</symbol>
@@ -635,6 +702,7 @@ QUESTIONS?
 <name>Shona</name>
 <doc>Shona</doc>
 <iso639-3>sna</iso639-3>
+<iso639-2b>sna</iso639-2b>
 <iso639-1>sn</iso639-1>
 <script>Latn</script>
 <symbol>SHONA</symbol>
@@ -644,6 +712,7 @@ QUESTIONS?
 <name>Chinese, Simplified</name>
 <doc>Simplified Chinese</doc>
 <iso639-3>zhs</iso639-3>
+<iso639-2b>zhs</iso639-2b>
 <iso639-1>zh</iso639-1>
 <basis_iso639_1_suffix>_sc</basis_iso639_1_suffix>
 <script>Hans</script>
@@ -654,6 +723,7 @@ QUESTIONS?
 <name>Slovak</name>
 <doc>Slovak</doc>
 <iso639-3>slk</iso639-3>
+<iso639-2b>slo</iso639-2b>
 <iso639-1>sk</iso639-1>
 <script>Latn</script>
 <symbol>SLOVAK</symbol>
@@ -663,6 +733,7 @@ QUESTIONS?
 <name>Slovenian</name>
 <doc>Slovenian</doc>
 <iso639-3>slv</iso639-3>
+<iso639-2b>slv</iso639-2b>
 <iso639-1>sl</iso639-1>
 <script>Latn</script>
 <symbol>SLOVENIAN</symbol>
@@ -672,6 +743,7 @@ QUESTIONS?
 <name>Somali</name>
 <doc>Somali</doc>
 <iso639-3>som</iso639-3>
+<iso639-2b>som</iso639-2b>
 <iso639-1>so</iso639-1>
 <script>Latn</script>
 <symbol>SOMALI</symbol>
@@ -681,6 +753,7 @@ QUESTIONS?
 <name>Southern Sotho</name>
 <doc>Southern Sotho</doc>
 <iso639-3>sot</iso639-3>
+<iso639-2b>sot</iso639-2b>
 <iso639-1>st</iso639-1>
 <script>Latn</script>
 <symbol>SOUTHERN_SOTHO</symbol>
@@ -690,6 +763,7 @@ QUESTIONS?
 <name>Korean, South</name>
 <doc>South Korean</doc>
 <iso639-3>qkr</iso639-3>
+<iso639-2b>qkr</iso639-2b>
 <iso639-1>ko</iso639-1>
 <basis_iso639_1_suffix>_kr</basis_iso639_1_suffix>
 <script>Hang</script>
@@ -700,6 +774,7 @@ QUESTIONS?
 <name>South Ndebele</name>
 <doc>South Ndebele</doc>
 <iso639-3>nbl</iso639-3>
+<iso639-2b>nbl</iso639-2b>
 <iso639-1>nr</iso639-1>
 <script>Latn</script>
 <symbol>SOUTH_NDEBELE</symbol>
@@ -709,6 +784,7 @@ QUESTIONS?
 <name>Spanish</name>
 <doc>Spanish</doc>
 <iso639-3>spa</iso639-3>
+<iso639-2b>spa</iso639-2b>
 <iso639-1>es</iso639-1>
 <script>Latn</script>
 <symbol>SPANISH</symbol>
@@ -719,6 +795,7 @@ QUESTIONS?
 <name>Swahili</name>
 <doc>Swahili</doc>
 <iso639-3>swa</iso639-3>
+<iso639-2b>swa</iso639-2b>
 <iso639-1>sw</iso639-1>
 <script>Latn</script>
 <symbol>SWAHILI</symbol>
@@ -729,6 +806,7 @@ QUESTIONS?
 <name>Swati</name>
 <doc>Swati</doc>
 <iso639-3>ssw</iso639-3>
+<iso639-2b>ssw</iso639-2b>
 <iso639-1>ss</iso639-1>
 <script>Latn</script>
 <symbol>SWATI</symbol>
@@ -738,6 +816,7 @@ QUESTIONS?
 <name>Swedish</name>
 <doc>Swedish</doc>
 <iso639-3>swe</iso639-3>
+<iso639-2b>swe</iso639-2b>
 <iso639-1>sv</iso639-1>
 <script>Latn</script>
 <symbol>SWEDISH</symbol>
@@ -747,6 +826,7 @@ QUESTIONS?
 <name>Tagalog</name>
 <doc>Tagalog</doc>
 <iso639-3>tgl</iso639-3>
+<iso639-2b>tgl</iso639-2b>
 <iso639-1>tl</iso639-1>
 <script>Latn</script>
 <symbol>TAGALOG</symbol>
@@ -756,6 +836,7 @@ QUESTIONS?
 <name>Tamil</name>
 <doc>Tamil</doc>
 <iso639-3>tam</iso639-3>
+<iso639-2b>tam</iso639-2b>
 <iso639-1>ta</iso639-1>
 <script>Taml</script>
 <symbol>TAMIL</symbol>
@@ -765,6 +846,7 @@ QUESTIONS?
 <name>Telugu</name>
 <doc>Telugu</doc>
 <iso639-3>tel</iso639-3>
+<iso639-2b>tel</iso639-2b>
 <iso639-1>te</iso639-1>
 <script>Telu</script>
 <symbol>TELUGU</symbol>
@@ -774,6 +856,7 @@ QUESTIONS?
 <name>Thai</name>
 <doc>Thai</doc>
 <iso639-3>tha</iso639-3>
+<iso639-2b>tha</iso639-2b>
 <iso639-1>th</iso639-1>
 <script>Thai</script>
 <symbol>THAI</symbol>
@@ -783,6 +866,7 @@ QUESTIONS?
 <name>Tigrinya</name>
 <doc>Tigrinya</doc>
 <iso639-3>tir</iso639-3>
+<iso639-2b>tir</iso639-2b>
 <iso639-1>ti</iso639-1>
 <script>Ethi</script>
 <symbol>TIGRINYA</symbol>
@@ -792,6 +876,7 @@ QUESTIONS?
 <name>Chinese, Traditional</name>
 <doc>Traditional Chinese</doc>
 <iso639-3>zht</iso639-3>
+<iso639-2b>zht</iso639-2b>
 <iso639-1>zh</iso639-1>
 <basis_iso639_1_suffix>_tc</basis_iso639_1_suffix>
 <script>Hant</script>
@@ -802,6 +887,7 @@ QUESTIONS?
 <name>Mandarin Chinese</name>
 <doc>Mandarin Chinese</doc>
 <iso639-3>cmn</iso639-3>
+<iso639-2b>cmn</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>MANDARIN_CHINESE</symbol>
@@ -811,6 +897,7 @@ QUESTIONS?
 <name>Yue Chinese</name>
 <doc>Yue Chinese</doc>
 <iso639-3>yue</iso639-3>
+<iso639-2b>yue</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>YUE_CHINESE</symbol>
@@ -821,6 +908,7 @@ QUESTIONS?
 <name>Min Nan Chinese</name>
 <doc>Min Nan Chinese</doc>
 <iso639-3>nan</iso639-3>
+<iso639-2b>nan</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>MIN_NAN_CHINESE</symbol>
@@ -831,6 +919,7 @@ QUESTIONS?
 <name>Hakka Chinese</name>
 <doc>Hakka Chinese</doc>
 <iso639-3>hak</iso639-3>
+<iso639-2b>hak</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>HAKKA_CHINESE</symbol>
@@ -840,6 +929,7 @@ QUESTIONS?
 <name>Wu Chinese</name>
 <doc>Wu Chinese</doc>
 <iso639-3>wuu</iso639-3>
+<iso639-2b>wuu</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Hani</script>
 <symbol>WU_CHINESE</symbol>
@@ -849,6 +939,7 @@ QUESTIONS?
 <name>Tsonga</name>
 <doc>Tsonga</doc>
 <iso639-3>tso</iso639-3>
+<iso639-2b>tso</iso639-2b>
 <iso639-1>ts</iso639-1>
 <script>Latn</script>
 <symbol>TSONGA</symbol>
@@ -858,6 +949,7 @@ QUESTIONS?
 <name>Tswana</name>
 <doc>Tswana</doc>
 <iso639-3>tsn</iso639-3>
+<iso639-2b>tsn</iso639-2b>
 <iso639-1>tn</iso639-1>
 <script>Latn</script>
 <symbol>TSWANA</symbol>
@@ -867,6 +959,7 @@ QUESTIONS?
 <name>Turkish</name>
 <doc>Turkish</doc>
 <iso639-3>tur</iso639-3>
+<iso639-2b>tur</iso639-2b>
 <iso639-1>tr</iso639-1>
 <script>Latn</script>
 <symbol>TURKISH</symbol>
@@ -876,6 +969,7 @@ QUESTIONS?
 <name>Ukrainian</name>
 <doc>Ukrainian</doc>
 <iso639-3>ukr</iso639-3>
+<iso639-2b>ukr</iso639-2b>
 <iso639-1>uk</iso639-1>
 <script>Cyrl</script>
 <symbol>UKRAINIAN</symbol>
@@ -885,6 +979,7 @@ QUESTIONS?
 <name>Urdu</name>
 <doc>Urdu</doc>
 <iso639-3>urd</iso639-3>
+<iso639-2b>urd</iso639-2b>
 <iso639-1>ur</iso639-1>
 <script>Arab</script>
 <symbol>URDU</symbol>
@@ -894,6 +989,7 @@ QUESTIONS?
 <name>Uzbek</name>
 <doc>Uzbek</doc>
 <iso639-3>uzb</iso639-3>
+<iso639-2b>uzb</iso639-2b>
 <iso639-1>uz</iso639-1>
 <script>Zyyy</script>
 <symbol>UZBEK</symbol>
@@ -903,6 +999,7 @@ QUESTIONS?
 <name>Venda</name>
 <doc>Venda</doc>
 <iso639-3>ven</iso639-3>
+<iso639-2b>ven</iso639-2b>
 <iso639-1>ve</iso639-1>
 <script>Latn</script>
 <symbol>VENDA</symbol>
@@ -912,6 +1009,7 @@ QUESTIONS?
 <name>Vietnamese</name>
 <doc>Vietnamese</doc>
 <iso639-3>vie</iso639-3>
+<iso639-2b>vie</iso639-2b>
 <iso639-1>vi</iso639-1>
 <script>Latn</script>
 <symbol>VIETNAMESE</symbol>
@@ -921,6 +1019,7 @@ QUESTIONS?
 <name>Western Farsi</name>
 <doc>Western Farsi</doc>
 <iso639-3>pes</iso639-3>
+<iso639-2b>pes</iso639-2b>
 <iso639-1>zz</iso639-1>
 <script>Arab</script>
 <symbol>WESTERN_FARSI</symbol>
@@ -930,6 +1029,7 @@ QUESTIONS?
 <name>Xhosa</name>
 <doc>Xhosa</doc>
 <iso639-3>xho</iso639-3>
+<iso639-2b>xho</iso639-2b>
 <iso639-1>xh</iso639-1>
 <script>Latn</script>
 <symbol>XHOSA</symbol>
@@ -939,6 +1039,7 @@ QUESTIONS?
 <name>Zulu</name>
 <doc>Zulu</doc>
 <iso639-3>zul</iso639-3>
+<iso639-2b>zul</iso639-2b>
 <iso639-1>zu</iso639-1>
 <script>Latn</script>
 <symbol>ZULU</symbol>

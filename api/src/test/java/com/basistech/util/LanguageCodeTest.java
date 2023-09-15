@@ -205,4 +205,32 @@ public class LanguageCodeTest extends Assert {
         Assert.assertEquals(11, language);
     }
 
+    @Test
+    public void testLookupISO639_2B() {
+        int language = LanguageCode.lookupByISO639("geo").languageID();
+        assertEquals(LanguageCode.GEORGIAN.languageID(), language);
+        language = LanguageCode.lookupByISO639("chi").languageID();
+        assertEquals(LanguageCode.CHINESE.languageID(), language);
+        language = LanguageCode.lookupByISO639("gre").languageID();
+        assertEquals(LanguageCode.GREEK.languageID(), language);
+        language = LanguageCode.lookupByISO639("may").languageID();
+        assertEquals(LanguageCode.MALAY.languageID(), language);
+    }
+
+    @Test
+    public void testISO639_2B() {
+        assertEquals("alb", LanguageCode.ALBANIAN.ISO639_2B());
+        assertEquals("slo", LanguageCode.SLOVAK.ISO639_2B());
+        assertEquals("arm", LanguageCode.ARMENIAN.ISO639_2B());
+        assertEquals("bur", LanguageCode.BURMESE.ISO639_2B());
+    }
+
+    @Test
+    public void testISO639_2BIsValid() {
+        assertTrue(LanguageCode.ISO639IsValid("ger"));
+        assertTrue(LanguageCode.ISO639IsValid("per"));
+        assertTrue(LanguageCode.ISO639IsValid("mac"));
+        assertTrue(LanguageCode.ISO639IsValid("ice"));
+    }
+
 }

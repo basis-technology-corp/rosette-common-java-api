@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 37.6.0
+
+Add ISO 639-2B support to all language codes
+
 ## 37.5.4
 
 Consume parent POM 16.0.0
