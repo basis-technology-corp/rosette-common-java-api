@@ -1,5 +1,5 @@
 /*
-* Copyright 2014 Basis Technology Corp.
+* Copyright 2015-2024 Basis Technology Corp.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -22,8 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Mark a package for inclusion in the system bundle
- * when Rosette is deployed in an embedded OSGi container..
+ * Mark a package that contains classes relevant to Rosette Server.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.PACKAGE })
