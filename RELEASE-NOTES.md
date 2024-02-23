@@ -1,6 +1,10 @@
 # Cumulative Release Notes for rosette-common-java-api
 
-## 37.6.0
+## 38.0.0
+
+OSGi support has been removed.
+
+## 37.5.5
 
 Add ISO 639-2B support to all language codes
 
