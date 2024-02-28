@@ -18,7 +18,4 @@
  * The classes in this package are less-frequently used parts
  * of the API, including some Spring support.
  */
-@RosetteSystemBundlePackage
 package com.basistech.util;
-
-import com.basistech.rosette.RosetteSystemBundlePackage;
