@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rosette-common-api</artifactId>
     <name>rosette-common-api</name>
-    <version>38.0.2-SNAPSHOT</version>
+    <version>38.0.2</version>
     <parent>
         <artifactId>open-source-parent</artifactId>
         <groupId>com.basistech</groupId>
@@ -35,7 +35,7 @@
     <scm>
         <connection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</connection>
         <developerConnection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</developerConnection>
-        <tag>rosette-common-api-37.5.3</tag>
+        <tag>rosette-common-api-38.0.2</tag>
     </scm>
     <distributionManagement>
         <site>
