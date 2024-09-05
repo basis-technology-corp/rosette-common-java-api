@@ -1,5 +1,13 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 38.0.2
+
+Consume parent POM 20.0.0
+
+## 38.0.1
+
+Consume parent POM 19.0.0
+
 ## 38.0.0
 
 OSGi support has been removed.
