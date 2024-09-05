@@ -35,7 +35,7 @@
     <scm>
         <connection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</connection>
         <developerConnection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</developerConnection>
-        <tag>rosette-common-api-37.5.3</tag>
+        <tag>HEAD</tag>
     </scm>
     <distributionManagement>
         <site>
