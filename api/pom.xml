@@ -26,7 +26,7 @@
     </parent>
     <description>Common Java API classes for Rosette</description>
     <properties>
-        <spring.version>6.2.7</spring.version>
+        <spring.version>6.2.8</spring.version>
     </properties>
     <dependencies>
         <dependency>
