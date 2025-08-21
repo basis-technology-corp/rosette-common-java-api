@@ -33,6 +33,7 @@
         </license>
     </licenses>
     <scm>
+        <url>https://github.com/basis-technology-corp/rosette-common-java-api</url>
         <connection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</connection>
         <developerConnection>scm:git:git@github.com:basis-technology-corp/rosette-common-java-api.git</developerConnection>
         <tag>HEAD</tag>
