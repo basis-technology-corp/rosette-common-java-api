@@ -1,29 +1,17 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.basistech/rosette-common-api/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.basistech/rosette-common-api)
 
-## Rosette Common Java API
+# Rosette Common Java API
 
 This project provides enums, exception, and small utilities used across the Rosette Platform in Java.
 
 ## Build & Release Process
 
-#### Development Build
+### Development Build
 
 ```
 mvn clean install -DskipITs
 ```
 
-#### Maven Central
+### Maven Central
 
-```
-mvn --batch-mode \
-    --activate-profiles release \
-    release:prepare \
-    release:perform \
-    -Darguments='-Dgpg.passphrase=MY_PASSPHRASE -DskipITs'
-```
-
-#### Internal Release
-
-TBD
-
-
+See [`open-source-parent`](https://github.com/basis-technology-corp/open-source-parent#release-instructions)
