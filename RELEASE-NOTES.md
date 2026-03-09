@@ -2,7 +2,7 @@
 
 ## 38.0.9
 
-Consume parent POM 26.0.0
+Consume parent POM 26.0.1
 
 ## 38.0.8
 
