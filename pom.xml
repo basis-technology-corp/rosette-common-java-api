@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  Copyright 2010-2025 Basis Technology Corp.
+  Copyright 2010-2026 Babel Street Rosette Ltd.
  
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>rosette-common-api</artifactId>
     <name>rosette-common-api</name>
-    <version>38.0.9-SNAPSHOT</version>
+    <version>38.0.10-SNAPSHOT</version>
     <parent>
         <artifactId>open-source-parent</artifactId>
         <groupId>com.basistech</groupId>
