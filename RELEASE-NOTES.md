@@ -1,5 +1,9 @@
 # Cumulative Release Notes for rosette-common-java-api
 
+## 38.0.12
+
+Consume parent POM 29.0.1
+
 ## 38.0.11
 
 Consume parent POM 28.0.0
